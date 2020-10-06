@@ -5380,7 +5380,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			transaction_Acquirer_Conversion_Rate = obj.get(nodeName).toString();
 		}
 		
-		System.out.println("transaction_Acquirer_Conversion_Rate: "+transaction_Acquirer_Conversion_Rate);
+//		System.out.println("transaction_Acquirer_Conversion_Rate: "+transaction_Acquirer_Conversion_Rate);
 		SimpleDateFormat localDateFormat = new SimpleDateFormat("dd-MM-yy");
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("SPIMPORTNPCIACQUIEREFILE");
 		query.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
