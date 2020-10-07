@@ -596,11 +596,10 @@ public class Controller {
 		return joinedJsonList;
 	}
 
-	@PostMapping("importFileNpciATMFiles")
-	public List<JSONObject> importFileNpciATMFiles(/* @PathVariable("clientid") String clientid, */
+	@PostMapping("importFileNpciATMFiles/{clientid}")
+	public List<JSONObject> importFileNpciATMFiles(@PathVariable("clientid") String clientid,
 			@RequestParam("npci") MultipartFile npci) throws Exception {
-		String createdby = "suyog";
-		String clientid = "1";
+		String createdby =username.getUsername();
 		List<JSONObject> importFileNpciATMFiles = traceService.importFileNpciATMFiles(npci, clientid, createdby);
 		return importFileNpciATMFiles;
 	}
