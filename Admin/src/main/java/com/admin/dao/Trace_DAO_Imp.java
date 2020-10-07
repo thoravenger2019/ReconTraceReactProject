@@ -78,28 +78,19 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("splogindetails");
 
-		// Declare the parameters in the same order
 		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(4, String.class, ParameterMode.REF_CURSOR);
 
-		// Pass the parameter values
-
 		query.setParameter(1, username);
 		query.setParameter(2, password);
 		query.setParameter(3, "1");
 
-		// Execute query
 		query.execute();
-
-		// Get output parameters
-
-		// List list=query.getResultList();
 
 		List<Object[]> res = query.getResultList();
 		List<User> list = new ArrayList<User>();
-		// JSONObject obj = new JSONObject();
 		Iterator it = res.iterator();
 		while (it.hasNext()) {
 			Object[] line = (Object[]) it.next();
@@ -112,17 +103,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			eq.setBranchID(String.valueOf(line[4]));
 
 			list.add(eq);
-
-//            System.out.println(eq.getUsername()); 
-//            System.out.println(eq.getRoleID()); 
-//            System.out.println(eq.getClientID()); 
-//            System.out.println(eq.getBranchID()); 
-
-			// And set all the Equip fields here
-			// And last thing add it to the list
-
-			// getMenuData(eq.getUsername(),eq.getRoleID(),eq.getClientID());
-			// getMenuData(eq);
 		}
 
 		return list;
@@ -134,34 +114,21 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 		JSONArray menuArray = new JSONArray();
 
-		System.out.println(userName + ":1 " + roleID + ":2 " + " " + clientID + ":3");
-
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("spgetmenuaccess");
-		// Declare the parameters in the same order
 		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(2, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(3, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(4, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(5, String.class, ParameterMode.REF_CURSOR);
 
-		System.out.println();
-
 		query.setParameter(1, userName.toUpperCase());
 		query.setParameter(2, Integer.parseInt(roleID));
 		query.setParameter(3, 1);
 		query.setParameter(4, Integer.parseInt(clientID));
 
-//       query.setParameter(1,"MUSTAFA");
-//       query.setParameter(2,1);
-//       query.setParameter(3,1);
-//       query.setParameter(4,1);
-
 		query.execute();
 		List<Object[]> res = query.getResultList();
-		System.out.println("in 1" + res);
-		// List<Object[]> res = query.getResultList();
 		List<MenuModel> menuList = new ArrayList<MenuModel>();
-		// JSONObject obj = new JSONObject();
 
 		Iterator it = res.iterator();
 		while (it.hasNext()) {
@@ -185,24 +152,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			object.put("ParentMenuID", String.valueOf(line[4]));
 			object.put("SequenceNo", String.valueOf(line[5]));
 			menuArray.add(object);
-
-			System.out.println(object.toString());
-			// And set all the Equip fields here
-			// And last thing add it to the list
 		}
-
-//   
-//       System.out.println(menu.getMenuName());
-//       System.out.println(menu.getMenuID());
-//       System.out.println(menu.getMenuLevel());
-//       System.out.println(menu.getFilePath());
-//       System.out.println(menu.getParentMenuID());
-//       System.out.println(menu.getSequenceNo());
-
-		System.out.println(menuList);
-
-		// getSubMenuData(eq);
-
 		return menuArray.toString();
 	}
 
@@ -213,7 +163,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		JSONArray subMenuArray = new JSONArray();
 		System.out.println("In 2");
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("spgetmenuaccess");
-		// Declare the parameters in the same order
 		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(2, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(3, Integer.class, ParameterMode.IN);
@@ -224,19 +173,13 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query.setParameter(2, Integer.parseInt(roleID));
 		query.setParameter(3, 2);
 		query.setParameter(4, Integer.parseInt(clientID));
-
-//       query.setParameter(1,"MUSTAFA");
-//       query.setParameter(2,1);
-//       query.setParameter(3,1);
-//       query.setParameter(4,1);
-
 		query.execute();
 
 		List<Object[]> res = query.getResultList();
 		System.out.println("in 2" + res);
-		// List<Object[]> res = query.getResultList();
+
 		List<SubMenuModel> subMenuList = new ArrayList<SubMenuModel>();
-		// JSONObject obj = new JSONObject();
+
 		Iterator it = res.iterator();
 		while (it.hasNext()) {
 			Object[] line = (Object[]) it.next();
@@ -249,8 +192,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			menu.setFilePath(String.valueOf(line[3]));
 			menu.setParentMenuID(String.valueOf(line[4]));
 			menu.setSequenceNo(String.valueOf(line[5]));
-			// And set all the Equip fields here
-			// And last thing add it to the list
 
 			subMenuList.add(menu);
 
@@ -264,15 +205,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			subMenuobject.put("SequenceNo", String.valueOf(line[5]));
 			subMenuArray.add(subMenuobject);
 		}
-
-		System.out.println(menu.getMenuName());
-		System.out.println(menu.getMenuID());
-		System.out.println(menu.getMenuLevel());
-		System.out.println(menu.getFilePath());
-		System.out.println(menu.getParentMenuID());
-		System.out.println(menu.getSequenceNo());
-		System.out.println(subMenuList);
-
 		List<User> list = new ArrayList<>();
 
 		return subMenuArray.toString();
@@ -282,16 +214,13 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	@Override
 	public String getRoleDetails(String clientID) {
 
-		System.out.println(clientID);
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("GETROLEDETAILS");
-		// Declare the parameters in the same order
+
 		query.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(2, String.class, ParameterMode.REF_CURSOR);
 		query.setParameter(1, Integer.parseInt(clientID));
 		query.execute();
 		List<Object[]> res = query.getResultList();
-		// List<Object[]> res = query.getResultList();
-		// JSONObject obj = new JSONObject();
 		Iterator it = res.iterator();
 
 		JSONArray roleArray = new JSONArray();
@@ -313,23 +242,14 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 		}
 
-		System.out.println(roleArray.toString());
-
 		return roleArray.toString();
 
-	}
-
-	@Override
-	public List<String> getData() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
 	public String getRoleMaster(String roleName, String homePage, String mode, String roleID, String clientID) {
 
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("sprolemaster");
-		// Declare the parameters in the same order
 		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(2, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(3, Integer.class, ParameterMode.IN);
@@ -338,23 +258,12 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query.registerStoredProcedureParameter(6, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(7, Integer.class, ParameterMode.REF_CURSOR);
 
-		System.out.println(roleName + ":" + homePage + ":" + mode + ":" + roleID + ":" + clientID);
-
 		query.setParameter(1, String.valueOf(mode));
 		query.setParameter(2, Integer.parseInt(roleID));
 		query.setParameter(3, Integer.parseInt(clientID));
 		query.setParameter(4, String.valueOf(roleName));
 		query.setParameter(5, String.valueOf(homePage));
 		query.setParameter(6, "ROY");
-
-//		  query.setParameter(1,mode);
-//		  query.setParameter(2,Integer.parseInt(roleID));
-//		  query.setParameter(3,Integer.parseInt(clientID));
-//		  query.setParameter(4,"Test");
-//		  query.setParameter(5,homePage);
-//		  query.setParameter(6,"ROY");
-//		  
-
 		query.execute();
 
 		String rowsInserted = null;
@@ -362,39 +271,11 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		int count = query.getMaxResults();
 
 		if (count != 0) {
-
-			System.out.println("Inserted row :" + String.valueOf(count));
 			rowsInserted = String.valueOf(count);
 
 		} else {
 
-			System.out.println("Inserted row :" + String.valueOf(count));
 		}
-
-		// List<Object[]> res = query.getResultList();
-
-		// JSONObject obj = new JSONObject();
-//	       Iterator it = res.iterator();
-//	       JSONObject roleObject=new JSONObject();
-//	       JSONArray roleArray=new JSONArray();
-//           
-//	       while(it.hasNext()){
-//	    	   
-//	           Object[] line = (Object[]) it.next();
-//	           
-
-//	           
-//	           System.out.println(String.valueOf(line[0]));
-//	           System.out.println(String.valueOf(line[1]));
-//	           System.out.println(String.valueOf(line[2]));
-//	           System.out.println(String.valueOf(line[3]));
-//	           
-//	           
-//	           roleObject.put("roleID",String.valueOf(line[0]));
-//	           roleObject.put("roleNAme",String.valueOf(line[1]));
-//	           roleObject.put("clientID",String.valueOf(line[2]));
-//	           roleObject.put("homePAge",String.valueOf(line[3]));
-//	           roleArray.add(roleObject);
 
 		return rowsInserted;
 
@@ -404,7 +285,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	public String getRoleAccessRights(String roleID, String clientID) {
 
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("spgetroleaccessrights");
-		// Declare the parameters in the same order
 		query.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(2, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(3, String.class, ParameterMode.REF_CURSOR);
@@ -416,23 +296,11 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 		List<Object[]> res = query.getResultList();
 
-		// List<Object[]> res = query.getResultList();
-
-		// JSONObject obj = new JSONObject();
-
 		JSONArray roleArray = new JSONArray();
 		Iterator it = res.iterator();
 
 		while (it.hasNext()) {
 			Object[] line = (Object[]) it.next();
-
-//	           System.out.println(String.valueOf(line[0]));
-//	           System.out.println(String.valueOf(line[1]));
-//	           System.out.println(String.valueOf(line[2]));
-//	           System.out.println(String.valueOf(line[3]));
-//	           System.out.println(String.valueOf(line[4]));
-//	           System.out.println(String.valueOf(line[5]));
-//	           System.out.println(String.valueOf(line[6]));
 
 			JSONObject roleObject = new JSONObject();
 			roleObject.put("menuName", String.valueOf(line[0]));
@@ -448,7 +316,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		}
 
 		return roleArray.toString();
-		// TODO Auto-generated method stub
 
 	}
 
@@ -456,7 +323,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	public String getBranchDetails(String clientID, String branchID) {
 
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("spgetbranchdetails");
-		// Declare the parameters in the same order
+
 		query.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(2, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(3, String.class, ParameterMode.REF_CURSOR);
@@ -468,39 +335,20 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 		List<Object[]> res = query.getResultList();
 
-		// List<Object[]> res = query.getResultList();
-
-		// JSONObject obj = new JSONObject();
-
 		JSONArray roleArray = new JSONArray();
 		Iterator it = res.iterator();
 
 		while (it.hasNext()) {
 			Object[] line = (Object[]) it.next();
 
-//	           System.out.println(String.valueOf(line[0]));
-//	           System.out.println(String.valueOf(line[1]));
-//	           System.out.println(String.valueOf(line[2]));
-//	           System.out.println(String.valueOf(line[3]));
-//	           System.out.println(String.valueOf(line[4]));
-//	           System.out.println(String.valueOf(line[5]));
-//	           System.out.println(String.valueOf(line[6]));
-
 			JSONObject roleObject = new JSONObject();
 			roleObject.put("branchCode", String.valueOf(line[0]));
 			roleObject.put("branchName", String.valueOf(line[1]));
-//	           roleObject.put("isActivie",String.valueOf(line[2]));
-//	           roleObject.put("menuLevel",String.valueOf(line[3]));
-//	           roleObject.put("filePath",String.valueOf(line[4]));
-//    		   roleObject.put("parentMenuID",String.valueOf(line[5]));
-//    		   roleObject.put("menuType",String.valueOf(line[6]));
 			roleArray.add(roleObject);
 
 		}
 
 		return roleArray.toString();
-		// TODO Auto-generated method stub
-		// TODO Auto-generated method stub
 
 	}
 
@@ -508,7 +356,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	public String AssignRoleAccessRights(String roleID, String clientID, String menuString, String username) {
 
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("spassignroleaccessrights");
-		// Declare the parameters in the same order
+
 		query.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(2, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
@@ -522,43 +370,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 		boolean result = query.execute();
 
-		if (result == true) {
-			System.out.println("inserted sucessfullyyy");
-		}
-
 		List<Object[]> res = query.getResultList();
-
-		// List<Object[]> res = query.getResultList();
-
-		// JSONObject obj = new JSONObject();
-
-		/*
-		 * JSONArray roleArray=new JSONArray(); Iterator it = res.iterator();
-		 * 
-		 * while(it.hasNext()){ Object[] line = (Object[]) it.next();
-		 * 
-		 * // System.out.println(String.valueOf(line[0])); //
-		 * System.out.println(String.valueOf(line[1])); //
-		 * System.out.println(String.valueOf(line[2])); //
-		 * System.out.println(String.valueOf(line[3])); //
-		 * System.out.println(String.valueOf(line[4])); //
-		 * System.out.println(String.valueOf(line[5])); //
-		 * System.out.println(String.valueOf(line[6]));
-		 * 
-		 * JSONObject roleObject=new JSONObject();
-		 * roleObject.put("branchCode",String.valueOf(line[0]));
-		 * roleObject.put("branchName",String.valueOf(line[1])); //
-		 * roleObject.put("isActivie",String.valueOf(line[2])); //
-		 * roleObject.put("menuLevel",String.valueOf(line[3])); //
-		 * roleObject.put("filePath",String.valueOf(line[4])); //
-		 * roleObject.put("parentMenuID",String.valueOf(line[5])); //
-		 * roleObject.put("menuType",String.valueOf(line[6]));
-		 * roleArray.add(roleObject);
-		 * 
-		 * }
-		 * 
-		 * 
-		 */
 
 		return res.toString();
 	}
@@ -566,10 +378,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	@Override
 	public String getUserDetails(String username, String clientID, String branchID, String roleID) {
 
-		// TODO Auto-generated method stub
-		// String branchID="";
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("spgetuserdetails");
-		// Declare the parameters in the same order
+
 		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(2, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
@@ -585,10 +395,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 		List<Object[]> res = query.getResultList();
 
-		// List<Object[]> res = query.getResultList();
-
-		// JSONObject obj = new JSONObject();
-
 		System.out.println("res" + res);
 
 		JSONArray roleArray = new JSONArray();
@@ -596,14 +402,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 		while (it.hasNext()) {
 			Object[] line = (Object[]) it.next();
-
-//	           System.out.println(String.valueOf(line[0]));
-//	           System.out.println(String.valueOf(line[1]));
-//	           System.out.println(String.valueOf(line[2]));
-//	           System.out.println(String.valueOf(line[3]));
-//	           System.out.println(String.valueOf(line[4]));
-//	           System.out.println(String.valueOf(line[5]));
-//	           System.out.println(String.valueOf(line[6]));
 
 			JSONObject roleObject = new JSONObject();
 			roleObject.put("ID", String.valueOf(line[0]));
@@ -626,7 +424,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 	@Override
 	public String resetPassword() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
@@ -634,7 +432,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	public String AddUser(String userName, String password, String firstName, String lastName, String roleID,
 			String clientID, String branchID, String emailID, String contactNo, String securityq, String securitya,
 			String createBy, String p_salt, String channel) {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
@@ -644,32 +442,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("spgetuploadfiletype");
 		query.registerStoredProcedureParameter(1, String.class, ParameterMode.REF_CURSOR);
 		query.execute();
-		// JSONObject jsonResult = new JSONObject();
+
 		List<Object[]> result = query.getResultList();
-		// System.out.println("resultlenght"+result.);
-//		String jsonText=null;
-//		for (Object record : result) {
-//		    Object[] fields = (Object[]) record;
-//		    int fileid = ((BigDecimal) fields[0]).intValue();
-//		    String filename = (String) fields[1];
-//		    System.out.printf("fileid: "+fileid);
-//		    System.out.printf("filename: "+filename);
-//		    System.out.println();
-//		    jsonResult.put("id",fileid);
-//		    jsonResult.put("filename", filename);
-//		    
-//		}
-//		StringWriter out = new StringWriter();
-//	    try
-//	    {
-//			jsonResult.writeJSONString(out);
-//		} 
-//	    catch (IOException e)
-//	    {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	    jsonText = out.toString();
 
 		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
 		for (Object record : result) {
@@ -684,7 +458,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 	@Override
 	public List<JSONObject> getChannelID() {
-		// TODO Auto-generated method stub
+
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("SPGETCHANNELMASTER");
 		query.registerStoredProcedureParameter(1, String.class, ParameterMode.REF_CURSOR);
 		query.execute();
@@ -705,25 +479,22 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	public String addUser(String userid, String password, String firstname, String lastname, String roleid,
 			String clientid, String branchid, String emailid, String contactno, String securityq, String securitya,
 			String createdby, String salt, String channel) {
-		System.out.println("userid" + userid);
-		System.out.println("password" + password);
-		System.out.println("emaild" + emailid);
 
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("spadduser");
-		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);// userid
-		query.registerStoredProcedureParameter(2, Long.class, ParameterMode.IN);// pssword
-		query.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);// firstname
-		query.registerStoredProcedureParameter(4, String.class, ParameterMode.IN);// lastname
-		query.registerStoredProcedureParameter(5, Integer.class, ParameterMode.IN);// roleid
-		query.registerStoredProcedureParameter(6, Integer.class, ParameterMode.IN);// clientid
-		query.registerStoredProcedureParameter(7, Integer.class, ParameterMode.IN);// branchid
-		query.registerStoredProcedureParameter(8, String.class, ParameterMode.IN);// emailid
-		query.registerStoredProcedureParameter(9, String.class, ParameterMode.IN);// contactno
-		query.registerStoredProcedureParameter(10, String.class, ParameterMode.IN);// sequrrityq
-		query.registerStoredProcedureParameter(11, String.class, ParameterMode.IN);// a
-		query.registerStoredProcedureParameter(12, String.class, ParameterMode.IN);// createdby
-		query.registerStoredProcedureParameter(13, long.class, ParameterMode.IN);// salt
-		query.registerStoredProcedureParameter(14, String.class, ParameterMode.IN);// channel
+		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(2, Long.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(4, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(5, Integer.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(6, Integer.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(7, Integer.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(8, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(9, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(10, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(11, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(12, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(13, long.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(14, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(15, String.class, ParameterMode.REF_CURSOR);
 
 		query.setParameter(1, userid);
@@ -1024,26 +795,12 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			String cpcontactno, String isbank, String isactive, String countryid, String currencyid, String ftp_ip,
 			String ftpusername, String ftppassword, String ftpport, MultipartFile logofile, String userlimit,
 			String terminalcount, String reporttime, String username, String colorcode, String logoName) {
-		// TODO Auto-generated method stub
-		/*
-		 * Blob blob = null; try { blob = new SerialBlob(logoArray); } catch
-		 * (SerialException e) { // TODO Auto-generated catch block e.printStackTrace();
-		 * } catch (SQLException e) { // TODO Auto-generated catch block
-		 * e.printStackTrace(); }
-		 */
-		// String strlogoarray=new String(logoArray);
-		System.out.println(" 1" + clientid + " 2" + mode + " 3" + domainid + " 4" + moduleid + " 5" + clientcode + " 6"
-				+ clientname + " 7" + address + " 8" + contactno + " 9" + emailid + " 10" + concernperson + " 11"
-				+ cpemailid + " 12" + cpcontactno + " 13" + isbank + " 14" + isactive + " 15" + countryid + " 16"
-				+ currencyid + " 17" + ftp_ip + " 18" + ftpusername + " 19" + ftppassword + " 20" + ftpport + " 21"
-				+ logofile + " 22" + userlimit + " 23" + terminalcount + " 24" + reporttime + " 25" + username + " 26"
-				+ colorcode);
-		// InputStream inputStream = new BufferedInputStream(logofile.getInputStream());
+
 		Blob blobValue = null;
 		try {
 			blobValue = new SerialBlob(logofile.getBytes());
 		} catch (SQLException | IOException e1) {
-			// TODO Auto-generated catch block
+
 			e1.printStackTrace();
 		}
 		if (mode.equalsIgnoreCase("ADD")) {
@@ -1177,54 +934,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		} else {
 			return null;
 		}
-//		if (mode.equalsIgnoreCase("ADD") || mode.equalsIgnoreCase("UPDATE")) {
-//			System.out.println("resultsize" + result.size());
-//			List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
-//			for (Object record : result) {
-//				Object[] fields = (Object[]) record;
-//				JSONObject obj = new JSONObject();
-//				obj.put("ClientID", fields[0]);
-//				JSONObjects.add(obj);
-//			}
-//			return JSONObjects;
-//		} else if (mode.equalsIgnoreCase("GET")) {
-//			System.out.println("resultsize" + result.size());
-//			List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
-//			for (Object record : result) {
-//				Object[] fields = (Object[]) record;
-//				JSONObject obj = new JSONObject();
-//				obj.put("ClientID", fields[0]);
-//				obj.put("ClientCode", fields[1]);
-//				obj.put("ClientName", fields[2]);
-//				obj.put("Address", fields[3]);
-//				obj.put("ContactNo", fields[4]);
-//				obj.put("EmailID", fields[5]);
-//				obj.put("ConcernPerson", fields[6]);
-//				obj.put("CPEmailID", fields[7]);
-//				obj.put("CPContactNo", fields[8]);
-//				obj.put("IsBank", fields[9]);
-//				obj.put("CounrtyID", fields[10]);
-//				obj.put("CurrencyID", fields[11]);
-//				obj.put("DomainID", fields[12]);
-//				obj.put("ModuleID", fields[13]);
-//				obj.put("FTP_IP", fields[14]);
-//				obj.put("FTPUserName", fields[15]);
-//				obj.put("FTPPassword", fields[16]);
-//				obj.put("FTPPort", fields[17]);
-//				obj.put("ClientLogo", fields[18]);
-//				obj.put("UserLimit", fields[19]);
-//				obj.put("TerminalCount", fields[20]);
-//				obj.put("ReportCutoffTime", fields[21]);
-//				obj.put("IsActive", fields[22]);
-//				obj.put("CreatedBy", fields[23]);
-////				obj.put("CheckerBy", fields[24]);
-//				obj.put("CreatedOn", fields[24]);
-//				JSONObjects.add(obj);
-//			}
-//			return JSONObjects;
-//		} else {
-//			return null;
-//		}
 	}
 
 	@Override
@@ -1258,7 +967,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		List<Object[]> result = query.getResultList();
 		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
 		for (Object record : result) {
-			// Object[] fields = (Object[]) record;
 			JSONObject obj = new JSONObject();
 			obj.put("ClientCode", result.get(0));
 			JSONObjects.add(obj);
@@ -1275,10 +983,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query.registerStoredProcedureParameter(3, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(4, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(5, String.class, ParameterMode.REF_CURSOR);
-//				String clientid="1";
-//				String mode="GET";
-//				String domainid="1";
-//				String moduleid="1";
 		query.setParameter(1, Integer.parseInt(clientid));
 		query.setParameter(2, mode);
 		query.setParameter(3, Integer.parseInt(domainid));
@@ -1308,7 +1012,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			obj.put("FTPUserName", fields[15]);
 			obj.put("FTPPassword", fields[16]);
 			obj.put("FTPPort", fields[17]);
-			// obj.put("ClientLogo", fields[18]);
 			obj.put("UserLimit", fields[18]);
 			obj.put("TerminalCount", fields[19]);
 			obj.put("ReportCutoffTime", fields[20]);
@@ -1325,20 +1028,15 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 	@Override
 	public byte[] getBranchFile(String clientid) {
-		// TODO Auto-generated method stub
 		int para = Integer.parseInt(clientid);
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("spbranchtemplate");
 		query.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(2, String.class, ParameterMode.REF_CURSOR);
 		query.setParameter(1, para);
-		// query.
 		query.execute();
 		List<Object[]> result1 = query.getResultList();
-//				System.out.println("result"+result1);
-		// JSONArray jsArr=new JSONArray();
 		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result1.size());
 		int rownum = 0;
-		// FileOutputStream fileOutputStream=null;
 		ByteArrayOutputStream bo = new ByteArrayOutputStream();
 		Workbook workbook = new XSSFWorkbook();
 		Cell cell = null;
@@ -1372,16 +1070,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		sheet.autoSizeColumn(5);
 		for (Object record : result1) {
 			Object[] fields = (Object[]) record;
-//					JSONObject obj = new JSONObject();
-//					obj.put("BRANCHCODE", fields[0]);
-//					obj.put("BRANCHNAME", fields[1]);
-//					obj.put("ADDRESS", fields[2]);
-//					obj.put("CONTACTNO", fields[3]);
-//					obj.put("EMAILID", fields[4]);
-//					obj.put("CONCERNPERSON", fields[5]);
-//				//	obj.put("ClientID", fields[6]);
-//					JSONObjects.add(obj);
-//					//jsArr.add(obj);
 			int colnum = 0;
 			row = sheet.createRow(rownum++);
 
@@ -1397,11 +1085,10 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			}
 		}
 
-		// String jsonStr=JSONObjects.toString();
 		try {
 			workbook.write(bo);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 		byte[] bytes = bo.toByteArray();
@@ -1419,11 +1106,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query.setParameter(1, para);
 		query.execute();
 		List<Object[]> result1 = query.getResultList();
-//		System.out.println("result"+result1);
-		// JSONArray jsArr=new JSONArray();
 		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result1.size());
 		int rownum = 0;
-		// FileOutputStream fileOutputStream=null;
 		ByteArrayOutputStream bo = new ByteArrayOutputStream();
 		Workbook workbook = new XSSFWorkbook();
 		Cell cell = null;
@@ -1460,18 +1144,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		sheet.autoSizeColumn(6);
 		for (Object record : result1) {
 			Object[] fields = (Object[]) record;
-//			JSONObject obj = new JSONObject();
-//			obj.put("BRANCHCODE", fields[0]);
-//			obj.put("BRANCHNAME", fields[1]);
-//			obj.put("ADDRESS", fields[2]);
-//			obj.put("CONTACTNO", fields[3]);
-//			obj.put("EMAILID", fields[4]);
-//			obj.put("CONCERNPERSON", fields[5]);
-//		//	obj.put("ClientID", fields[6]);
-//			JSONObjects.add(obj);
-//			//jsArr.add(obj);
 			row = sheet.createRow(rownum++);
-			// sheet.autoSizeColumn(column);
 			int colnum = 0;
 			for (Object value : fields) {
 				cell = row.createCell(colnum++);
@@ -1488,7 +1161,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		try {
 			workbook.write(bo);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		byte[] bytes = bo.toByteArray();
@@ -1508,22 +1180,14 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						emailID = null, concernPerson = null, branchCode = null, isHO = null, isRemoved = null,
 						createdBy = null, createdOn = null, modifiedOn = null, modifiedBy = null, xlsresult = null;
 				List xlsList = new ArrayList();
-				// BranchEntry be=null;
-				// POIFSFileSystem fs = new POIFSFileSystem(reapExcelDataFile.getInputStream());
 				HSSFWorkbook wb = new HSSFWorkbook(reapExcelDataFile.getInputStream());
 				HSSFSheet sheet = wb.getSheetAt(0);
 				System.out.println(sheet.getLastRowNum());
-				// Row row;
-//				for(int i=1;i<=sheet.getLastRowNum();i++)
-//				{
-//					row=sheet.getRow(i);
-//					branchID= row.getCell(0).getStringCellValue();
-//				}
+
 				BranchEntry be = new BranchEntry();
 				Iterator<Row> itr = sheet.iterator();
 				while (itr.hasNext()) {
 					Row row = itr.next();
-					// if(row.)
 					if (row.getRowNum() == 0) {
 						continue;
 					} else {
@@ -1554,7 +1218,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						query.registerStoredProcedureParameter(9, String.class, ParameterMode.IN);
 						query.registerStoredProcedureParameter(10, String.class, ParameterMode.REF_CURSOR);
 
-						query.setParameter(1, branchInNum); // check kar
+						query.setParameter(1, branchInNum);
 						query.setParameter(2, clientInNum);
 						query.setParameter(3, branchName);
 						query.setParameter(4, address);
@@ -1585,33 +1249,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 					}
 
 				}
-				// System.out.println("branchID"+branchID);
-
-				// FormulaEvaluator formulaEvaluator =
-				// wb.getCreationHelper().createFormulaEvaluator();
-				/*
-				 * for (Row row : sheet) { for (Cell cell : row) { switch
-				 * (formulaEvaluator.evaluateInCell(cell).getCellType()) { case
-				 * Cell.CELL_TYPE_NUMERIC: // System.out.print(cell.getNumericCellValue() +
-				 * "\t"); xlsList.add(cell.getNumericCellValue()); // new
-				 * BranchEntry(cell.getNumericCellValue()); break; case Cell.CELL_TYPE_STRING:
-				 * //System.out.print(cell.getStringCellValue() + "\t");
-				 * xlsList.add(cell.getStringCellValue()); // new
-				 * BranchEntry(cell.getStringCellValue()); //
-				 * System.out.println("xlsList"+xlsList);
-				 * 
-				 * break; }
-				 * 
-				 * //if(row.getRowNum())
-				 * 
-				 * 
-				 * 
-				 * //System.out.println("xlsList"+xlsList);
-				 * 
-				 * } System.out.println(); // System.out.println("xlsList"+xlsList);
-				 * 
-				 * } System.out.println("xlsList"+xlsList);
-				 */
 				return xlsList;
 			}
 
@@ -1632,7 +1269,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 				Iterator<Row> itr = sheet.iterator();
 				while (itr.hasNext()) {
 					Row row = itr.next();
-					// if(row.)
+
 					if (row.getRowNum() == 0) {
 						continue;
 					} else {
@@ -1664,7 +1301,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						query.registerStoredProcedureParameter(9, String.class, ParameterMode.IN);
 						query.registerStoredProcedureParameter(10, String.class, ParameterMode.REF_CURSOR);
 
-						query.setParameter(1, branchInNum); // check kar
+						query.setParameter(1, branchInNum);
 						query.setParameter(2, clientInNum);
 						query.setParameter(3, branchName);
 						query.setParameter(4, address);
@@ -1676,9 +1313,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 						query.execute();
 
-						System.out.println();
 						List<Object[]> xlsxresult = query.getResultList();
-						System.out.println("xlsxresult=" + xlsxresult.toString());
+
 						if (xlsxresult.toString().equalsIgnoreCase("[2]")) {
 							xlsxList.add(branchID);
 							xlsxList.add(clientID);
@@ -1693,22 +1329,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 					}
 
 				}
-
-//				FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
-//				for (Row row : sheet) {
-//					for (Cell cell : row) {
-//						switch (formulaEvaluator.evaluateInCell(cell).getCellType()) {
-//						case Cell.CELL_TYPE_NUMERIC:
-//							System.out.print(cell.getNumericCellValue() + "\t\t");
-//							break;
-//						case Cell.CELL_TYPE_STRING:
-//							System.out.print(cell.getStringCellValue() + "\t\t");
-//							break;
-//						}
-//					}
-//					System.out.println();
-//				}
-				System.out.println("xlsxList=" + xlsxList.toString());
 				return xlsxList;
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -1717,31 +1337,31 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		} else {
 			return null;
 		}
-		// return ext;
+
 		return null;
 
 	}
 
 	@Override
 	public List mapTerminalMasterReapExcelDatatoDB(MultipartFile reapExcelDataFile, String user) {
-		// TODO Auto-generated method stub
+
 		String ext = FilenameUtils.getExtension(reapExcelDataFile.getOriginalFilename());
 		if (ext.equalsIgnoreCase("xls")) {
-			System.out.println("xls");
+
 			try {
 				String termID = null, clientID = null, terminalID = null, terminalLocation = null, glAccountNo = null,
 						channel = null, branchCode = null, terminalType = null, contactNo = null, emailID = null,
 						concernPerson = null, isRemoved = null, createdBy = null, checkerBy = null, createdOn = null,
 						modifiedOn = null, modifiedBy = null;
 				List xlstermList = new ArrayList();
-				// POIFSFileSystem fs = new POIFSFileSystem(reapExcelDataFile.getInputStream());
+
 				HSSFWorkbook wb = new HSSFWorkbook(reapExcelDataFile.getInputStream());
 				HSSFSheet sheet = wb.getSheetAt(0);
 				BranchEntry be = new BranchEntry();
 				Iterator<Row> itr = sheet.iterator();
 				while (itr.hasNext()) {
 					Row row = itr.next();
-					// if(row.)
+
 					if (row.getRowNum() == 0) {
 						continue;
 					} else {
@@ -1811,21 +1431,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 					System.out.println();
 
 				}
-
-//				FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
-//				for (Row row : sheet) {
-//					for (Cell cell : row) {
-//						switch (formulaEvaluator.evaluateInCell(cell).getCellType()) {
-//						case Cell.CELL_TYPE_NUMERIC:
-//							System.out.print(cell.getNumericCellValue() + "\t\t");
-//							break;
-//						case Cell.CELL_TYPE_STRING:
-//							System.out.print(cell.getStringCellValue() + "\t\t");
-//							break;
-//						}
-//					}
-//					System.out.println();
-//				}
 				return xlstermList;
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -1916,21 +1521,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 					System.out.println();
 
 				}
-
-//				FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
-//				for (Row row : sheet) {
-//					for (Cell cell : row) {
-//						switch (formulaEvaluator.evaluateInCell(cell).getCellType()) {
-//						case Cell.CELL_TYPE_NUMERIC:
-//							System.out.print(cell.getNumericCellValue() + "\t\t");
-//							break;
-//						case Cell.CELL_TYPE_STRING:
-//							System.out.print(cell.getStringCellValue() + "\t\t");
-//							break;
-//						}
-//					}
-//					System.out.println();
-//				}
 				return xlsxTermList;
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -1947,10 +1537,9 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query.registerStoredProcedureParameter(1, String.class, ParameterMode.REF_CURSOR);
 		query.execute();
 		List<Object[]> result = query.getResultList();
-		System.out.println("resultsize" + result.size());
 		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
 		for (Object record : result) {
-			// Object[] fields = (Object[]) record;
+
 			JSONObject obj = new JSONObject();
 			obj.put("ClientCode", result.get(0));
 			JSONObjects.add(obj);
@@ -1960,7 +1549,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 	@Override
 	public String clientchannelmodeinsert(String channelid, String modeid, String clientcode, String user) {
-		// TODO Auto-generated method stub
+
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("SPCLIENTMODECHANNELINSERTION");
 		query.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(2, Integer.class, ParameterMode.IN);
@@ -1978,19 +1567,18 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		List<Object[]> result = query.getResultList();
 		return result.toString();
 
-		// return null;
 	}
 
 	@Override
 	public List<JSONObject> getChannelData(String clientid) {
-		// TODO Auto-generated method stub
+
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("GETCHAINNELDATA");
 		query.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(2, String.class, ParameterMode.REF_CURSOR);
 		query.setParameter(1, Integer.parseInt(clientid));
 		query.execute();
 		List<Object[]> result = query.getResultList();
-		System.out.println("resultsize" + result.size());
+
 		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
 		for (Object record : result) {
 			Object[] fields = (Object[]) record;
@@ -2031,7 +1619,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query.execute();
 
 		List<Object[]> result = query.getResultList();
-		System.out.println("resultsize" + result.size());
+
 		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
 		for (Object record : result) {
 			Object[] fields = (Object[]) record;
@@ -2051,7 +1639,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query.setParameter(1, Integer.parseInt(clientid));
 		query.execute();
 		List<Object[]> result = query.getResultList();
-		System.out.println("resultsize" + result.size());
+
 		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
 		for (Object record : result) {
 			Object[] fields = (Object[]) record;
@@ -2074,7 +1662,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query.setParameter(2, Integer.parseInt(channelid));
 		query.execute();
 		List<Object[]> result = query.getResultList();
-		System.out.println("resultsize" + result.size());
+
 		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
 		for (Object record : result) {
 			Object[] fields = (Object[]) record;
@@ -2090,7 +1678,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	public List<JSONObject> getinsertfileformat(String p_CLIENTID, String p_VENDORID, String p_FILEEXT,
 			String p_FILEXML, String p_CUTOFFTIME, String p_USER, String p_FILEPREFIX, String p_VENDORTYPE,
 			String p_CHANNELID, String p_MODEID, String p_SEPARATORTYPE) {
-		// TODO Auto-generated method stub
+
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("SPINSERTFILEFORMAT1");
 		query.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(2, Integer.class, ParameterMode.IN);
@@ -2117,7 +1705,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query.setParameter(11, p_SEPARATORTYPE);
 		query.execute();
 		List<Object[]> result = query.getResultList();
-		System.out.println("resultsize" + result.size());
+
 		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
 		for (Object record : result) {
 			Object[] fields = (Object[]) record;
@@ -2136,13 +1724,13 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 	@Override
 	public List<JSONObject> getchanneltype(String clientid, String userid) {
-		// TODO Auto-generated method stub
+
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("SPGETCHANNELTYPE");
 		query.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
-		// query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
+
 		query.registerStoredProcedureParameter(2, String.class, ParameterMode.REF_CURSOR);
 		query.setParameter(1, Integer.parseInt(clientid));
-		// query.setParameter(2,userid);
+
 		query.execute();
 		List<Object[]> result = query.getResultList();
 		System.out.println("resultsize" + result.size());
@@ -2166,7 +1754,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query.setParameter(1, vendortype);
 		query.execute();
 		List<Object[]> result = query.getResultList();
-		System.out.println("resultsize" + result.size());
+
 		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
 		for (Object record : result) {
 			Object[] fields = (Object[]) record;
@@ -2187,7 +1775,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query.setParameter(1, Integer.parseInt(clientid));
 		query.execute();
 		List<Object[]> result = query.getResultList();
-		System.out.println("resultsize" + result.size());
+
 		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
 		for (Object record : result) {
 			Object[] fields = (Object[]) record;
@@ -2222,7 +1810,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query.setParameter(5, Integer.parseInt(p_VendorID));
 		query.execute();
 		List<Object[]> result = query.getResultList();
-		System.out.println("resultsize" + result.size());
+
 		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
 		for (Object record : result) {
 			Object[] fields = (Object[]) record;
@@ -2241,7 +1829,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			obj.put("FilePrefix", fields[11]);
 			obj.put("ChannelID", fields[12]);
 			obj.put("ModeID", fields[13]);
-			// obj.put("SeparatorType", fields[14]);
+
 			JSONObjects.add(obj);
 		}
 		return JSONObjects;
@@ -2269,7 +1857,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query.setParameter(7, Integer.parseInt(p_CHANNELID));
 		query.execute();
 		List<Object[]> result = query.getResultList();
-		System.out.println("resultsize" + result.size());
+
 		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
 		for (Object record : result) {
 			Object[] fields = (Object[]) record;
@@ -2293,221 +1881,57 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 	}
 
-	/*
-	 * @Override public List<JSONObject> importFile(String participant_ID, String
-	 * transaction_Type, String from_Account_Type, String to_Account_Type, String
-	 * transaction_Serial_Number, String response_Code, String pan_Number, String
-	 * member_Number, String approval_Number, String system_Trace_Audit_Number,
-	 * String transaction_Date, String transaction_Time, String
-	 * merchant_Category_Code, String card_Acceptor_Settlement_Date, String
-	 * card_Acceptor_ID, String card_Acceptor_Terminal_ID, String
-	 * card_Acceptor_Terminal_Location, String acquirer_ID, String
-	 * acquirer_Settlement_Date, String transaction_Currency_code, String
-	 * transaction_Amount, String actual_Transaction_Amount, String
-	 * transaction_Acitivity_fee, String acquirer_settlement_Currency_Code, String
-	 * acquirer_settlement_Amount, String acquirer_Settlement_Fee, String
-	 * acquirer_settlement_processing_fee, String
-	 * transaction_Acquirer_Conversion_Rate, String forceMatch, String
-	 * clientid,String cycle,String fileDate, String createdby) throws
-	 * ParseException { // TODO Auto-generated method stub Date
-	 * date=null,date1=null; // System.out.println("suyog");
-	 * 
-	 * SimpleDateFormat localDateFormat = new SimpleDateFormat("dd-MM-yy");
-	 * StoredProcedureQuery query =
-	 * entityManager.createStoredProcedureQuery("SPIMPORTNPCIACQUIEREFILE");
-	 * query.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(4, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(5, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(6, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(7, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(8, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(9, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(10, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(11, Long.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(12, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(13, Long.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(14, Long.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(15, Long.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(16, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(17, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(18, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(19, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(20, Long.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(21, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(22, Long.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(23, Long.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(24, Long.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(25, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(26, Long.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(27, Long.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(28, Long.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(29, Long.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(30, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(31, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(32, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(33, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(34, String.class,
-	 * ParameterMode.REF_CURSOR); System.out.println("before set para");
-	 * 
-	 * query.setParameter(1, Integer.parseInt(clientid)); query.setParameter(2,
-	 * participant_ID); query.setParameter(3, transaction_Type);
-	 * query.setParameter(4, from_Account_Type); query.setParameter(5,
-	 * to_Account_Type); query.setParameter(6, transaction_Serial_Number);
-	 * query.setParameter(7, response_Code); query.setParameter(8, pan_Number);
-	 * query.setParameter(9, member_Number); query.setParameter(10,
-	 * approval_Number); query.setParameter(11,
-	 * Long.parseLong(system_Trace_Audit_Number)); //
-	 * date=localDateFormat.parse(transaction_Date); query.setParameter(12,
-	 * "2019-06-03 17:21:02.000"); query.setParameter(13,
-	 * Long.parseLong(transaction_Time)); query.setParameter(14,
-	 * Long.parseLong(merchant_Category_Code)); query.setParameter(15,
-	 * Long.parseLong(card_Acceptor_Settlement_Date)); query.setParameter(16,
-	 * card_Acceptor_ID); query.setParameter(17, card_Acceptor_Terminal_ID);
-	 * query.setParameter(18, card_Acceptor_Terminal_Location);
-	 * query.setParameter(19, acquirer_ID); query.setParameter(20,
-	 * Long.parseLong(acquirer_Settlement_Date)); query.setParameter(21,
-	 * transaction_Currency_code); query.setParameter(22,
-	 * Long.parseLong(transaction_Amount)); query.setParameter(23,
-	 * Long.parseLong(actual_Transaction_Amount)); query.setParameter(24,
-	 * Long.parseLong(transaction_Acitivity_fee)); query.setParameter(25,
-	 * acquirer_settlement_Currency_Code); query.setParameter(26,
-	 * Long.parseLong(acquirer_settlement_Amount)); query.setParameter(27,
-	 * Long.parseLong(acquirer_Settlement_Fee)); query.setParameter(28,
-	 * Long.parseLong(acquirer_settlement_processing_fee)); query.setParameter(29,
-	 * Long.parseLong(transaction_Acquirer_Conversion_Rate)); query.setParameter(30,
-	 * forceMatch); query.setParameter(31, cycle); //
-	 * date1=localDateFormat.parse(fileDate); query.setParameter(32, "2019-06-03");
-	 * query.setParameter(33, createdby); System.out.println("after set para");
-	 * 
-	 * query.execute(); List<Object[]> result = query.getResultList();
-	 * List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size()); for
-	 * (Object record : result) { //Object[] fields = (Object[]) record; JSONObject
-	 * obj = new JSONObject(); obj.put("resultFromImportFile", result.toString());
-	 * JSONObjects.add(obj); } return JSONObjects; }
-	 * 
-	 * 
-	 */
-
-	/*
-	 * @Override public List<JSONObject> importFileNpciATMFilesACQ(String
-	 * participant_ID, String transaction_Type, String from_Account_Type, String
-	 * to_Account_Type, String transaction_Serial_Number, String response_Code,
-	 * String pan_Number, String member_Number, String approval_Number, String
-	 * system_Trace_Audit_Number, String transaction_Date, String transaction_Time,
-	 * String merchant_Category_Code, String card_Acceptor_Settlement_Date, String
-	 * card_Acceptor_ID, String card_Acceptor_Terminal_ID, String
-	 * card_Acceptor_Terminal_Location, String acquirer_ID, String
-	 * acquirer_Settlement_Date, String transaction_Currency_code, String
-	 * transaction_Amount, String actual_Transaction_Amount, String
-	 * transaction_Acitivity_fee, String acquirer_settlement_Currency_Code, String
-	 * acquirer_settlement_Amount, String acquirer_Settlement_Fee, String
-	 * acquirer_settlement_processing_fee, String
-	 * transaction_Acquirer_Conversion_Rate, String forceMatch, String clientid,
-	 * String cycle, String fileDate, String createdby) throws ParseException { Date
-	 * date = null, date1 = null;
-	 * 
-	 * SimpleDateFormat localDateFormat = new SimpleDateFormat("dd-MM-yy");
-	 * StoredProcedureQuery query =
-	 * entityManager.createStoredProcedureQuery("SPIMPORTNPCIACQUIEREFILE");
-	 * query.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(4, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(5, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(6, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(7, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(8, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(9, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(10, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(11, Long.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(12, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(13, Long.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(14, Long.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(15, Long.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(16, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(17, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(18, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(19, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(20, Long.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(21, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(22, Long.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(23, Long.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(24, Long.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(25, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(26, Long.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(27, Long.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(28, Long.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(29, Long.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(30, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(31, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(32, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(33, String.class, ParameterMode.IN);
-	 * query.registerStoredProcedureParameter(34, String.class,
-	 * ParameterMode.REF_CURSOR); System.out.println("before set para");
-	 * 
-	 * query.setParameter(1, Integer.parseInt(clientid)); query.setParameter(2,
-	 * participant_ID); query.setParameter(3, transaction_Type);
-	 * query.setParameter(4, from_Account_Type); query.setParameter(5,
-	 * to_Account_Type); query.setParameter(6, transaction_Serial_Number);
-	 * query.setParameter(7, response_Code); query.setParameter(8, pan_Number);
-	 * query.setParameter(9, member_Number); query.setParameter(10,
-	 * approval_Number); query.setParameter(11,
-	 * Long.parseLong(system_Trace_Audit_Number)); //
-	 * date=localDateFormat.parse(transaction_Date); query.setParameter(12,
-	 * transaction_Date); query.setParameter(13, Long.parseLong(transaction_Time));
-	 * query.setParameter(14, Long.parseLong(merchant_Category_Code));
-	 * query.setParameter(15, Long.parseLong(card_Acceptor_Settlement_Date));
-	 * query.setParameter(16, card_Acceptor_ID); query.setParameter(17,
-	 * card_Acceptor_Terminal_ID); query.setParameter(18,
-	 * card_Acceptor_Terminal_Location); query.setParameter(19, acquirer_ID);
-	 * query.setParameter(20, Long.parseLong(acquirer_Settlement_Date));
-	 * query.setParameter(21, transaction_Currency_code); query.setParameter(22,
-	 * Long.parseLong(transaction_Amount)); query.setParameter(23,
-	 * Long.parseLong(actual_Transaction_Amount)); query.setParameter(24,
-	 * Long.parseLong(transaction_Acitivity_fee)); query.setParameter(25,
-	 * acquirer_settlement_Currency_Code); query.setParameter(26,
-	 * Long.parseLong(acquirer_settlement_Amount)); query.setParameter(27,
-	 * Long.parseLong(acquirer_Settlement_Fee)); query.setParameter(28,
-	 * Long.parseLong(acquirer_settlement_processing_fee)); query.setParameter(29,
-	 * Long.parseLong(transaction_Acquirer_Conversion_Rate)); query.setParameter(30,
-	 * forceMatch); query.setParameter(31, cycle); //
-	 * date1=localDateFormat.parse(fileDate); query.setParameter(32, fileDate);
-	 * query.setParameter(33, createdby); System.out.println("after set para");
-	 * 
-	 * query.execute(); List<Object[]> result = query.getResultList();
-	 * List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size()); for
-	 * (Object record : result) { // Object[] fields = (Object[]) record; JSONObject
-	 * obj = new JSONObject(); obj.put("resultFromImportFile", result.toString());
-	 * JSONObjects.add(obj); } return JSONObjects; }
-	 */
-
 	@Override
 	public void save(NpciAcqModel npciAcqModel) {
 		System.out.println("in dao");
 		sessionFactory.getCurrentSession().save(npciAcqModel);
-
 	}
 
 	@Override
 	public List<JSONObject> importFileNpciATMFilesISS(JSONObject obj, String clientid, String fileDate, String cycle,
 			String forceMatch, String createdby, NodeList nodeList) {
-		
-		
-		String participant_ID=null; String transaction_Type=null;
-		String from_Account_Type=null; String to_Account_Type=null; String RRN=null; String response_Code=null;
-		String card_number=null; String member_Number=null; String approval_Number=null; String system_Trace_Audit_Number=null;
-		String transaction_Date=null; String transaction_Time=null; String merchant_Category_Code=null;
-		String card_Acceptor_Settlement_Date=null; String card_Acceptor_ID=null; String card_Acceptor_Terminal_ID=null;
-		String card_Acceptor_Terminal_Location=null; String acquirer_ID=null; String networkID=null; String accountNo1=null;
-		String account1BranchId=null; String accountNo2=null; String account2BranchId=null; String transCurrencyCode=null;
-		String txnAmount=null; String actualTransAmount=null; String tranActivityFee=null; String issuerSetCurrencyCode=null;
-		String issuerSetAmount=null; String issuerSetFee=null; String issuerSetProcFee=null; String cardHolderBillcurnCode=null;
-		String cardHolderBillAmount=null; String cardHolderBillActFee=null; String cardHolderBillProcFee=null;
-		String cardHolderBillServiceFee=null; String tRAN_ISSUERCONVERSRATE=null; String tRANS_CARDHOLDERCONVERRATE=null;
-		String fileName=null;String nodeName=null;
-		
+
+		String participant_ID = null;
+		String transaction_Type = null;
+		String from_Account_Type = null;
+		String to_Account_Type = null;
+		String RRN = null;
+		String response_Code = null;
+		String card_number = null;
+		String member_Number = null;
+		String approval_Number = null;
+		String system_Trace_Audit_Number = null;
+		String transaction_Date = null;
+		String transaction_Time = null;
+		String merchant_Category_Code = null;
+		String card_Acceptor_Settlement_Date = null;
+		String card_Acceptor_ID = null;
+		String card_Acceptor_Terminal_ID = null;
+		String card_Acceptor_Terminal_Location = null;
+		String acquirer_ID = null;
+		String networkID = null;
+		String accountNo1 = null;
+		String account1BranchId = null;
+		String accountNo2 = null;
+		String account2BranchId = null;
+		String transCurrencyCode = null;
+		String txnAmount = null;
+		String actualTransAmount = null;
+		String tranActivityFee = null;
+		String issuerSetCurrencyCode = null;
+		String issuerSetAmount = null;
+		String issuerSetFee = null;
+		String issuerSetProcFee = null;
+		String cardHolderBillcurnCode = null;
+		String cardHolderBillAmount = null;
+		String cardHolderBillActFee = null;
+		String cardHolderBillProcFee = null;
+		String cardHolderBillServiceFee = null;
+		String tRAN_ISSUERCONVERSRATE = null;
+		String tRANS_CARDHOLDERCONVERRATE = null;
+		String fileName = null;
+		String nodeName = null;
+
 		nodeName = nodeList.item(0).getNodeName();
 		if (obj.containsKey(nodeName)) {
 			participant_ID = obj.get(nodeName).toString();
@@ -2760,7 +2184,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		List<Object[]> result = query.getResultList();
 		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
 		for (Object record : result) {
-			// Object[] fields = (Object[]) record;
 			JSONObject obj1 = new JSONObject();
 			obj1.put("resultFromImportFile", result.toString());
 			JSONObjects.add(obj1);
@@ -2771,11 +2194,9 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	@Override
 	public List<JSONObject> importPosSettlementSummaryReportFiles(MultipartFile pos, String clientid,
 			String createdby) {
-		// TODO Auto-generated method stub
 		String ext = FilenameUtils.getExtension(pos.getOriginalFilename());
 		if (pos.getOriginalFilename().contains("DSRSummaryReport")) {
 			if (ext.equalsIgnoreCase("xls")) {
-				System.out.println("xls");
 				try {
 					String Settlement_Date = null, Product_Name = null, Bank_Name = null, Settlement_Bin = null,
 							Acq_ID_ISS_Bin = null, Inward_Outward = null, Status_Approved_Declined = null,
@@ -2786,14 +2207,12 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							Oth_Fee_Amt_DR = null, Oth_Fee_Amt_CR = null, Oth_Fee_GST_DR = null, Oth_Fee_GST_CR = null,
 							Final_Sum_Cr = null, Final_Sum_Dr = null, Final_Net = null;
 					List xlstermList = new ArrayList();
-//				POIFSFileSystem fs = new POIFSFileSystem(reapExcelDataFile.getInputStream());
 					XSSFWorkbook wb = new XSSFWorkbook(pos.getInputStream());
 					XSSFSheet sheet = wb.getSheetAt(0);
 					BranchEntry be = new BranchEntry();
 					Iterator<Row> itr = sheet.iterator();
 					while (itr.hasNext()) {
 						Row row = itr.next();
-						// if(row.)
 						if (row.getRowNum() == 0) {
 							continue;
 						} else {
@@ -2939,21 +2358,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						System.out.println();
 
 					}
-
-//				FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
-//				for (Row row : sheet) {
-//					for (Cell cell : row) {
-//						switch (formulaEvaluator.evaluateInCell(cell).getCellType()) {
-//						case Cell.CELL_TYPE_NUMERIC:
-//							System.out.print(cell.getNumericCellValue() + "\t\t");
-//							break;
-//						case Cell.CELL_TYPE_STRING:
-//							System.out.print(cell.getStringCellValue() + "\t\t");
-//							break;
-//						}
-//					}
-//					System.out.println();
-//				}
 					return xlstermList;
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -2977,7 +2381,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 					Iterator<Row> itr = sheet.iterator();
 					while (itr.hasNext()) {
 						Row row = itr.next();
-						// if(row.)
 						if (row.getRowNum() == 0) {
 							continue;
 						} else {
@@ -3122,21 +2525,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						System.out.println();
 
 					}
-
-//				FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
-//				for (Row row : sheet) {
-//					for (Cell cell : row) {
-//						switch (formulaEvaluator.evaluateInCell(cell).getCellType()) {
-//						case Cell.CELL_TYPE_NUMERIC:
-//							System.out.print(cell.getNumericCellValue() + "\t\t");
-//							break;
-//						case Cell.CELL_TYPE_STRING:
-//							System.out.print(cell.getStringCellValue() + "\t\t");
-//							break;
-//						}
-//					}
-//					System.out.println();
-//				}
 					return xlsxTermList;
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -3155,14 +2543,12 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							SET_CCY = null, SETAMTCR = null, SETAMTDR = null, Int_Fee_Amt_CR = null,
 							Int_Fee_Amt_DR = null;
 					List xlstermList = new ArrayList();
-//					POIFSFileSystem fs = new POIFSFileSystem(reapExcelDataFile.getInputStream());
 					XSSFWorkbook wb = new XSSFWorkbook(pos.getInputStream());
 					XSSFSheet sheet = wb.getSheetAt(0);
 					BranchEntry be = new BranchEntry();
 					Iterator<Row> itr = sheet.iterator();
 					while (itr.hasNext()) {
 						Row row = itr.next();
-						// if(row.)
 						if (row.getRowNum() == 0) {
 							continue;
 						} else {
@@ -3251,21 +2637,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						System.out.println();
 
 					}
-
-//					FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
-//					for (Row row : sheet) {
-//						for (Cell cell : row) {
-//							switch (formulaEvaluator.evaluateInCell(cell).getCellType()) {
-//							case Cell.CELL_TYPE_NUMERIC:
-//								System.out.print(cell.getNumericCellValue() + "\t\t");
-//								break;
-//							case Cell.CELL_TYPE_STRING:
-//								System.out.print(cell.getStringCellValue() + "\t\t");
-//								break;
-//							}
-//						}
-//						System.out.println();
-//					}
 					return xlstermList;
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -3279,14 +2650,12 @@ public class Trace_DAO_Imp implements Trace_DAO {
 					String Settlement_Date = null, RTGS_Bank_Name = null, Member_Name = null, Member_Bank_PID = null,
 							Member_Bank_Type = null, DRCR = null, Final_Sum_Cr = null, Final_Sum_Dr = null, net = null;
 					List xlstermList = new ArrayList();
-//					POIFSFileSystem fs = new POIFSFileSystem(reapExcelDataFile.getInputStream());
 					XSSFWorkbook wb = new XSSFWorkbook(pos.getInputStream());
 					XSSFSheet sheet = wb.getSheetAt(0);
 					BranchEntry be = new BranchEntry();
 					Iterator<Row> itr = sheet.iterator();
 					while (itr.hasNext()) {
 						Row row = itr.next();
-						// if(row.)
 						if (row.getRowNum() == 0) {
 							continue;
 						} else {
@@ -3347,21 +2716,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						System.out.println();
 
 					}
-
-//					FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
-//					for (Row row : sheet) {
-//						for (Cell cell : row) {
-//							switch (formulaEvaluator.evaluateInCell(cell).getCellType()) {
-//							case Cell.CELL_TYPE_NUMERIC:
-//								System.out.print(cell.getNumericCellValue() + "\t\t");
-//								break;
-//							case Cell.CELL_TYPE_STRING:
-//								System.out.print(cell.getStringCellValue() + "\t\t");
-//								break;
-//							}
-//						}
-//						System.out.println();
-//					}
 					return xlstermList;
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -3379,7 +2733,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 					Iterator<Row> itr = sheet.iterator();
 					while (itr.hasNext()) {
 						Row row = itr.next();
-						// if(row.)
 						if (row.getRowNum() == 0) {
 							continue;
 						} else {
@@ -3440,21 +2793,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						System.out.println();
 
 					}
-
-//					FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
-//					for (Row row : sheet) {
-//						for (Cell cell : row) {
-//							switch (formulaEvaluator.evaluateInCell(cell).getCellType()) {
-//							case Cell.CELL_TYPE_NUMERIC:
-//								System.out.print(cell.getNumericCellValue() + "\t\t");
-//								break;
-//							case Cell.CELL_TYPE_STRING:
-//								System.out.print(cell.getStringCellValue() + "\t\t");
-//								break;
-//							}
-//						}
-//						System.out.println();
-//					}
 					return xlsxTermList;
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -3468,14 +2806,12 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							Inward_Outward = null, Fee_Code = null, Fee_Desc = null, Fee_Dr_Cr = null, Txn_Count = null,
 							SET_CCY = null, Fee_Amt = null, Fee_Amt_GST = null, Fee = null;
 					List xlstermList = new ArrayList();
-//					POIFSFileSystem fs = new POIFSFileSystem(reapExcelDataFile.getInputStream());
 					XSSFWorkbook wb = new XSSFWorkbook(pos.getInputStream());
 					XSSFSheet sheet = wb.getSheetAt(0);
 					BranchEntry be = new BranchEntry();
 					Iterator<Row> itr = sheet.iterator();
 					while (itr.hasNext()) {
 						Row row = itr.next();
-						// if(row.)
 						if (row.getRowNum() == 0) {
 							continue;
 						} else {
@@ -3552,21 +2888,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						System.out.println();
 
 					}
-
-//					FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
-//					for (Row row : sheet) {
-//						for (Cell cell : row) {
-//							switch (formulaEvaluator.evaluateInCell(cell).getCellType()) {
-//							case Cell.CELL_TYPE_NUMERIC:
-//								System.out.print(cell.getNumericCellValue() + "\t\t");
-//								break;
-//							case Cell.CELL_TYPE_STRING:
-//								System.out.print(cell.getStringCellValue() + "\t\t");
-//								break;
-//							}
-//						}
-//						System.out.println();
-//					}
 					return xlstermList;
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -3575,7 +2896,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			}
 		} else if (pos.getOriginalFilename().contains("Presentment_Report")) {
 			if (ext.equalsIgnoreCase("xls") || ext.equalsIgnoreCase("xlsx") || ext.equalsIgnoreCase("csv")) {
-				System.out.println("xls");
 				try {
 					String ReportDate = null, PresentmentRaiseDate = null, PresentmentSettlementDate = null,
 							FunctionCodeandDescription = null, PrimaryAccountNumber = null, DateLocaTransaction = null,
@@ -3591,20 +2911,17 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							CardAcceptorBusinessCode = null, CardAcceptorIDCode = null, CardAcceptorStateName = null,
 							CardAcceptorCity = null, DaysAged = null, MTI = null;
 					List xlstermList = new ArrayList();
-//					POIFSFileSystem fs = new POIFSFileSystem(reapExcelDataFile.getInputStream());
 					File convFile = new File(pos.getOriginalFilename());
 					convFile.createNewFile();
 					FileOutputStream fos = new FileOutputStream(convFile);
 					fos.write(pos.getBytes());
 					fos.close();
 					Workbook wb = WorkbookFactory.create(convFile);
-//					HSSFWorkbook wb = new HSSFWorkbook(pos.getInputStream());
 					Sheet sheet = wb.getSheetAt(0);
 					BranchEntry be = new BranchEntry();
 					Iterator<Row> itr = sheet.iterator();
 					while (itr.hasNext()) {
 						Row row = itr.next();
-						// if(row.)
 						if (row.getRowNum() == 0) {
 							continue;
 						} else {
@@ -3736,7 +3053,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 							List<Object[]> xlstermResult = query.getResultList();
 						}
-						System.out.println();
 
 					}
 					return xlstermList;
@@ -3788,41 +3104,41 @@ public class Trace_DAO_Imp implements Trace_DAO {
 				}
 
 				if (a != -1 && b != -1) {
-					System.out.println("startIndex" + startIndex + "  " + "endIndex" + endIndex);
+
 					for (int k = a; k <= b; k++) {
 						contentData = content.get(k);
 						if (contentData.contains("ATM ID")) {
 							String terminal_id = contentData.substring(contentData.indexOf(":") + 1);
-							System.out.println("terminal_id " + terminal_id);
+
 						}
 						if (contentData.contains("REF NO") || contentData.contains("RRN NO")) {
 							String reference_number = contentData.substring(contentData.indexOf(":") + 1);
-							System.out.println("reference_number " + reference_number);
+
 						}
 						if (contentData.contains("DATE     :")) {
 							String TxnsDate = contentData.substring(contentData.indexOf(":") + 1);
-							System.out.println("TxnsDate " + TxnsDate);
+
 						}
 						if (contentData.contains("TIME     :") || contentData.contains("Timeout")
 								|| contentData.contains("TIMEOUT")) {
 							String TxnsTime = contentData.substring(contentData.indexOf(":") + 1);
-							System.out.println("TxnsTime " + TxnsTime);
+
 						}
 						if (contentData.contains("CARD NO")) {
 							String CardNumber = contentData.substring(contentData.indexOf(":") + 1);
-							System.out.println("CardNumber " + CardNumber);
+
 						}
 						if (contentData.contains("A/C NO") || contentData.contains("ACCOUNT NO")) {
 							String account_number = contentData.substring(contentData.indexOf(":") + 1);
-							System.out.println("account_number " + account_number);
+
 						}
 						if (contentData.contains("TRANSTYPE")) {
 							TxnsSubType = contentData.substring(contentData.indexOf(":") + 1);
-							System.out.println("TRANSTYPE " + TxnsSubType);
+
 						}
 						if (contentData.contains("RESP CODE")) {
 							String reference_code = contentData.substring(contentData.indexOf(":") + 1);
-							System.out.println("reference_code " + reference_code);
+
 						}
 
 						if (contentData.contains("RESP CODE")) {
@@ -3837,56 +3153,42 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							String amountstr = contentData.substring(contentData.indexOf(":") + 1).replace("RS.", "")
 									.trim();
 							TxnsAmount = Double.parseDouble(amountstr);
-							System.out.println("TxnsAmount:" + TxnsAmount);
+
 						}
 
 						if (contentData.contains("TRANS SEQ NUMBER")) {
 							String TransSeqNo = contentData.substring(contentData.indexOf("[")).trim();
-							System.out.println("TransSeqNo:" + TransSeqNo);
+
 						}
 
 						if (contentData.contains("OPCode") || (contentData.contains("OPCODE"))) {
 							String Opcode = contentData.substring(contentData.indexOf("=") + 2).trim();
-							System.out.println("Opcode=" + Opcode);
+
 						}
 
 						if (contentData.contains("Function ID") || contentData.contains("FUNCTION ID")) {
 							String FunctionId = contentData.substring(contentData.indexOf("[")).trim();
-							System.out.println("FunctionId:" + FunctionId);
-						}
 
-						// if (contentData.Contains("AMOUNT"))
-						// {
-						// string amountstr = contentData.Substring(contentData.IndexOf("[") +
-						// 1).Replace("RS.", "").Trim();
-						// amountstr = amountstr.TrimEnd(']');
-						// Amount = Convert.ToDecimal(amountstr);
-						// }
+						}
 
 						if (contentData.contains("DENOMINATION")) {
 							String Denomination = contentData.substring(contentData.indexOf(" ")).trim();
-							// Denomination = Denomination.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-							System.out.println("Denomination:" + Denomination);
 						}
 
 						if (contentData.contains("DISPENSED")) {
 							String[] Dis = contentData.split(" ");
 							String DispenseCount = Dis[1] + "," + Dis[2] + "," + Dis[3] + "," + Dis[4];
 							DispenseCount = contentData.substring(contentData.indexOf(" ")).trim();
-							System.out.println("DispenseCount:" + DispenseCount);
 						}
 
 						if (contentData.contains("REMAINING")) {
 							String[] Rem = contentData.split(" ");
 							String RemainCount = Rem[1] + "," + Rem[2] + "," + Rem[3] + "," + Rem[4];
-							System.out.println("RemainCount:" + RemainCount);
 						}
 
 						if (contentData.contains("REJECTED")) {
 							String[] Rem = contentData.split(" ");
 							String RejectCount = Rem[1] + "," + Rem[2] + "," + Rem[3] + "," + Rem[4];
-							System.out.println("RejectCount:" + RejectCount);
-
 						}
 
 						if (contentData.contains("NOTES PRESENTED")) {
@@ -3897,17 +3199,9 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							String Cassette2 = Notes[1];
 							String Cassette3 = Notes[2];
 							String Cassette4 = Notes[3];
-
-							System.out.println("Cassette1:" + Cassette1);
-							System.out.println("Cassette2:" + Cassette2);
-							System.out.println("Cassette3:" + Cassette3);
-							System.out.println("Cassette4:" + Cassette4);
 						}
 
 					}
-
-					System.out.println();
-					System.out.println();
 					i = b;
 					a = -1;
 					b = -1;
@@ -4032,7 +3326,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						String key = entry.getKey().toString();
 
 						String temp = row.getCell(Integer.parseInt(key)).toString();
-						System.out.println("Time :" + Time);
 						if (temp.equalsIgnoreCase(str2)) {
 
 						} else {
@@ -4044,7 +3337,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						String key = entry.getKey().toString();
 
 						String temp = row.getCell(Integer.parseInt(key)).toString();
-						System.out.println("Terminal_ID :" + Terminal_ID);
 						if (temp.equalsIgnoreCase(str3)) {
 
 						} else {
@@ -4056,7 +3348,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						String key = entry.getKey().toString();
 
 						String temp = row.getCell(Integer.parseInt(key)).toString();
-						System.out.println("AccountNo :" + AccountNo);
 						if (temp.equalsIgnoreCase(str4)) {
 
 						} else {
@@ -4068,7 +3359,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						String key = entry.getKey().toString();
 
 						String temp = row.getCell(Integer.parseInt(key)).toString();
-						System.out.println("CardNumber :" + CardNumber);
 						if (temp.equalsIgnoreCase(str5)) {
 
 						} else {
@@ -4080,7 +3370,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						String key = entry.getKey().toString();
 
 						String temp = row.getCell(Integer.parseInt(key)).toString();
-						System.out.println("TraceNo :" + TraceNo);
 						if (temp.equalsIgnoreCase(str6)) {
 
 						} else {
@@ -4092,7 +3381,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						String key = entry.getKey().toString();
 
 						String temp = row.getCell(Integer.parseInt(key)).toString();
-						System.out.println("Amount :" + Amount);
 						if (temp.equalsIgnoreCase(str7)) {
 
 						} else {
@@ -4104,7 +3392,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						String key = entry.getKey().toString();
 
 						String temp = row.getCell(Integer.parseInt(key)).toString();
-						System.out.println("WithdrawalFlag :" + WithdrawalFlag);
 						if (temp.equalsIgnoreCase(str8)) {
 
 						} else {
@@ -4116,7 +3403,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						String key = entry.getKey().toString();
 
 						String temp = row.getCell(Integer.parseInt(key)).toString();
-						System.out.println("Response :" + Response);
 						if (temp.equalsIgnoreCase(str9)) {
 
 						} else {
@@ -4128,7 +3414,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						String key = entry.getKey().toString();
 
 						String temp = row.getCell(Integer.parseInt(key)).toString();
-						System.out.println("REVERSALFLAG :" + ReversalFlag);
 						if (temp.equalsIgnoreCase(str10)) {
 
 						} else {
@@ -4140,7 +3425,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						String key = entry.getKey().toString();
 
 						String temp = row.getCell(Integer.parseInt(key)).toString();
-						System.out.println("DRCR :" + Db_Cr);
 						if (temp.equalsIgnoreCase(str11)) {
 
 						} else {
@@ -4152,7 +3436,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						String key = entry.getKey().toString();
 
 						String temp = row.getCell(Integer.parseInt(key)).toString();
-						System.out.println("TransType :" + TransType);
 						if (temp.equalsIgnoreCase(str12)) {
 
 						} else {
@@ -4164,7 +3447,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						String key = entry.getKey().toString();
 
 						String temp = row.getCell(Integer.parseInt(key)).toString();
-						System.out.println("MerchantType :" + MerchantType);
 						if (temp.equalsIgnoreCase(str13)) {
 
 						} else {
@@ -4277,96 +3559,17 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		return null;
 	}
 
-	/*
-	 * // @Override // public List<JSONObject> importGlcbsFileData(MultipartFile
-	 * glCbs, String clientid, String createdby) { // // TODO Auto-generated method
-	 * stub // String ext = FilenameUtils.getExtension(glCbs.getOriginalFilename());
-	 * // List ejTemp = new ArrayList(); // List<EjModel> temp = new ArrayList<>();
-	 * // System.out.println("ext" + ext); // if (ext.equalsIgnoreCase("xls") ||
-	 * ext.equalsIgnoreCase("xlsx") || ext.equalsIgnoreCase("csv")) { //
-	 * System.out.println("xls"); // try { // String SlNo = null, Transdate = null,
-	 * Time = null, Terminal_ID = null, AccountNo = null, // CardNumber = null,
-	 * TraceNo = null, Amount = null, WithdrawalFlag = null, Response = null, //
-	 * ReversalFlag = null, Db_Cr = null, TransType = null, MerchantType = null, //
-	 * FileDate =
-	 * glCbs.getOriginalFilename().substring(glCbs.getOriginalFilename().length() -
-	 * 12, // glCbs.getOriginalFilename().length() - 4); // List xlstermList = new
-	 * ArrayList(); // HSSFWorkbook wb = new HSSFWorkbook(glCbs.getInputStream());
-	 * // HSSFSheet sheet = wb.getSheetAt(0); // BranchEntry be = new BranchEntry();
-	 * // Iterator<Row> itr = sheet.iterator(); // HSSFCell cell = null; // HSSFRow
-	 * tempRow = null; // while (itr.hasNext()) { // Row row = itr.next(); //
-	 * tempRow = sheet.getRow(row.getRowNum()); // // if(row.) // if
-	 * (row.getRowNum() == 0) { // continue; // } else { // SlNo =
-	 * row.getCell(0).toString(); // if (tempRow.getCell(1) == null) { // Transdate
-	 * = null; // } else { // Transdate = row.getCell(1).toString(); // } // if
-	 * (tempRow.getCell(2) == null) { // Time = null; // } else { // Time =
-	 * row.getCell(2).toString(); // } // if (tempRow.getCell(3) == null) { //
-	 * Terminal_ID = null; // } else { // Terminal_ID = row.getCell(3).toString();
-	 * // } // if (tempRow.getCell(4) == null) { // AccountNo = null; // } else { //
-	 * AccountNo = row.getCell(4).toString(); // } // if (tempRow.getCell(5) ==
-	 * null) { // CardNumber = null; // } else { // CardNumber =
-	 * row.getCell(5).toString(); // } // if (tempRow.getCell(6) == null) { //
-	 * TraceNo = null; // } else { // TraceNo = row.getCell(6).toString(); // } //
-	 * if (tempRow.getCell(7) == null) { // Amount = null; // } else { // Amount =
-	 * row.getCell(7).toString(); // } // if (tempRow.getCell(8) == null) { //
-	 * WithdrawalFlag = null; // } else { // WithdrawalFlag =
-	 * row.getCell(7).toString(); // } // if (tempRow.getCell(9) == null) { //
-	 * Response = null; // } else { // Response = row.getCell(9).toString(); // } //
-	 * if (tempRow.getCell(10) == null) { // ReversalFlag = null; // } else { //
-	 * ReversalFlag = row.getCell(10).toString(); // } // if (tempRow.getCell(11) ==
-	 * null) { // Db_Cr = null; // } else { // Db_Cr = row.getCell(11).toString();
-	 * // } // if (tempRow.getCell(12) == null) { // TransType = null; // } else {
-	 * // TransType = row.getCell(12).toString(); // } // if (tempRow.getCell(13) ==
-	 * null) { // MerchantType = null; // } else { // MerchantType =
-	 * row.getCell(13).toString(); // } // System.out.println("CardNumber " +
-	 * CardNumber); // System.out.println("Amount " + Amount); //
-	 * System.out.println("Response " + Response); //
-	 * System.out.println("ReversalFlag " + ReversalFlag); //
-	 * System.out.println("MerchantType " + MerchantType); // //
-	 * StoredProcedureQuery query = entityManager //
-	 * .createStoredProcedureQuery("spbulkinsertcbsdatadbbl"); //
-	 * query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN); //
-	 * query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN); //
-	 * query.registerStoredProcedureParameter(3, String.class, ParameterMode.IN); //
-	 * query.registerStoredProcedureParameter(4, String.class, ParameterMode.IN); //
-	 * query.registerStoredProcedureParameter(5, String.class, ParameterMode.IN); //
-	 * query.registerStoredProcedureParameter(6, String.class, ParameterMode.IN); //
-	 * query.registerStoredProcedureParameter(7, String.class, ParameterMode.IN); //
-	 * query.registerStoredProcedureParameter(8, String.class, ParameterMode.IN); //
-	 * query.registerStoredProcedureParameter(9, String.class, ParameterMode.IN); //
-	 * query.registerStoredProcedureParameter(10, String.class, ParameterMode.IN);
-	 * // query.registerStoredProcedureParameter(11, String.class,
-	 * ParameterMode.IN); // query.registerStoredProcedureParameter(12,
-	 * String.class, ParameterMode.IN); //
-	 * query.registerStoredProcedureParameter(13, String.class, ParameterMode.IN);
-	 * // query.registerStoredProcedureParameter(14, String.class,
-	 * ParameterMode.IN); // query.registerStoredProcedureParameter(15,
-	 * String.class, ParameterMode.IN); //
-	 * query.registerStoredProcedureParameter(16, String.class, ParameterMode.IN);
-	 * // query.registerStoredProcedureParameter(17, String.class,
-	 * ParameterMode.IN); // // query.setParameter(1, clientid); //
-	 * query.setParameter(2, Transdate); // query.setParameter(3, Time); //
-	 * query.setParameter(4, Terminal_ID); // query.setParameter(5, AccountNo); //
-	 * query.setParameter(6, CardNumber); // query.setParameter(7, TraceNo); //
-	 * query.setParameter(8, Amount); // query.setParameter(9, WithdrawalFlag); //
-	 * query.setParameter(10, Response); // query.setParameter(11, ReversalFlag); //
-	 * query.setParameter(12, Db_Cr); // query.setParameter(13, TransType); //
-	 * query.setParameter(14, MerchantType); // query.setParameter(15,
-	 * glCbs.getOriginalFilename()); // query.setParameter(16, FileDate); //
-	 * query.setParameter(17, createdby); // // query.execute(); // } // // } // }
-	 * catch (Exception e) { // // } // } // return ejTemp; // }
-	 */
 	@Override
 	public List<JSONObject> importSwitchFile(MultipartFile sw, String clientid, String createdby) {
-		// TODO Auto-generated method stub
+
 		String ext = FilenameUtils.getExtension(sw.getOriginalFilename());
 		List ejTemp = new ArrayList();
 		List<EjModel> temp = new ArrayList<>();
-		System.out.println("ext" + ext);
+
 		String FileDate = sw.getOriginalFilename().substring(sw.getOriginalFilename().length() - 14,
 				sw.getOriginalFilename().length() - 4);
 		if (ext.equalsIgnoreCase("xls") || ext.equalsIgnoreCase("xlsx") || ext.equalsIgnoreCase("csv")) {
-			System.out.println("xls");
+
 			try {
 				String Trans_Source = null, Trans_Mode = null, Trans_Type = null, Processing_Code = null,
 						Trans_Amt = null, CardNumber = null, Stan = null, Trans_Date_Time = null,
@@ -4391,13 +3594,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 				String RevEntryLeg = null, NoOfDuplicate = null, FileName = null, FilePath = null;
 				String CreatedOn = null, ModifiedOn = null, CreatedBy = null, ModifiedBy = null, stan = null;
 				String InterchangeAccountNo = null, InterchangeBalance = null;
-//				POIFSFileSystem fs = new POIFSFileSystem(reapExcelDataFile.getInputStream());
-//				File convFile = new File(glCbs.getOriginalFilename());
-//				convFile.createNewFile();
-//				FileOutputStream fos = new FileOutputStream(convFile);
-//				fos.write(glCbs.getBytes());
-//				fos.close();
-//				Workbook wb = WorkbookFactory.create(convFile);
 				HSSFWorkbook wb = new HSSFWorkbook(sw.getInputStream());
 				HSSFSheet sheet = wb.getSheetAt(0);
 				BranchEntry be = new BranchEntry();
@@ -4409,7 +3605,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 					tempRow = sheet.getRow(row.getRowNum());
 					int tempCountRow = row.getPhysicalNumberOfCells();
-					System.out.println("row.getRowNum()  " + row.getRowNum());
 					if (row.getRowNum() < 3) {
 						continue;
 					} else {
@@ -4418,7 +3613,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						} else {
 							Trans_Source = row.getCell(0).toString();
 						}
-						System.out.println("Trans_Source " + Trans_Source);
 						if (tempRow.getCell(1) == null) {
 							Trans_Mode = null;
 						} else {
@@ -4509,7 +3703,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						} else {
 							Trans_Status = row.getCell(18).toString();
 						}
-						System.out.println("Trans_Status" + Trans_Status + " " + FileDate);
 
 						StoredProcedureQuery query = entityManager.createStoredProcedureQuery("spinsertswitchdata");
 						query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
@@ -4623,14 +3816,11 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 		List<Object[]> result = query.getResultList();
 
-		System.out.println("result" + result);
-
 	}
 
-//code Add On 9-9-2020
 	@Override
 	public List<JSONObject> getchannelmodeinfo(String clientid) {
-		// TODO Auto-generated method stub
+
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("SPGETCHANNELMODEINFO");
 		query.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(2, String.class, ParameterMode.REF_CURSOR);
@@ -4653,7 +3843,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	@Override
 	public List<JSONObject> getfieldidentification(String clientid, String vendorid, String channelid, String modeid,
 			String formatid) {
-		// TODO Auto-generated method stub
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("SPGETFIELDIDENTIFICATIONDETAILS");
 		query.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(2, Integer.class, ParameterMode.IN);
@@ -4740,7 +3929,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		return JSONObjects;
 	}
 
-	// 10-09-2020
 	@Override
 	public String addfieldconfig(String p_CLIENTID, String p_VENDORID, String p_FORMATID, String p_TERMINALCODE,
 			String p_BINNO, String p_ACQUIRERID, String p_REVCODE1, String p_REVCODE2, String p_REVTYPE,
@@ -4832,7 +4020,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 	@Override
 	public List<JSONObject> getformatid(String clientid, String vendorid) {
-		// TODO Auto- method stub
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("SPGETFORMATID");
 		query.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(2, Integer.class, ParameterMode.IN);
@@ -4845,9 +4032,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		List<Object[]> result = query.getResultList();
 		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
 		for (Object record : result) {
-			// Object[] fields = (Object[]) record;
-			// JSONObject obj = new JSONObject();
-			// obj.put("formatid", fields[0]);
 			JSONObject obj = new JSONObject();
 			obj.put("formatid", result.get(0));
 			JSONObjects.add(obj);
@@ -4858,7 +4042,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 	@Override
 	public List<JSONObject> getchanneldetails(String clientid) {
-		// TODO Auto-generated method stub
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("SPGETCHANNELDETAILS");
 		query.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(2, String.class, ParameterMode.REF_CURSOR);
@@ -5167,7 +4350,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query.setParameter(2, Integer.parseInt(channelid));
 		query.execute();
 		List<Object[]> result = query.getResultList();
-		System.out.println("resultsize" + result.size());
 		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
 		for (Object record : result) {
 			Object[] fields = (Object[]) record;
@@ -5204,7 +4386,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query.setParameter(4, Integer.parseInt(p_VendorID));
 		query.execute();
 		List<Object[]> result = query.getResultList();
-		System.out.println("resultsize" + result.size());
 		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
 		for (Object record : result) {
 			Object[] fields = (Object[]) record;
@@ -5230,7 +4411,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	}
 
 	@Override
-	public List<JSONObject> getformatfileinxml(String clientid,int i) {
+	public List<JSONObject> getformatfileinxml(String clientid, int i) {
 		// TODO Auto-generated method stub
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("SPGETFORMATXMLDESCIPTION");
 		query.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
@@ -5240,10 +4421,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query.setParameter(2, i);
 		query.execute();
 		List<Object[]> result = query.getResultList();
-		System.out.println("resultsize" + result.size());
 		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
 		for (Object record : result) {
-//			Object[] fields = (Object[]) record;
 			JSONObject obj = new JSONObject();
 			obj.put("FormatDescriptionXml", result.get(0));
 			JSONObjects.add(obj);
@@ -5259,10 +4438,12 @@ public class Trace_DAO_Imp implements Trace_DAO {
 				to_Account_Type = null, RRN = null, response_Code = null, card_number = null, member_Number = null,
 				approval_Number = null, system_Trace_Audit_Number = null, transaction_Date = null,
 				transaction_Time = null, merchant_Category_Code = null, card_Acceptor_Settlement_Date = null,
-				card_Acceptor_ID = null, card_Acceptor_Terminal_ID = null, card_Acceptor_Terminal_Location = null,acquirer_ID=null,acquirer_Settlement_Date=null,
-				transaction_Currency_code=null,transaction_Amount=null,actual_Transaction_Amount=null,transaction_Acitivity_fee=null,
-				acquirer_settlement_Currency_Code=null,acquirer_settlement_Amount=null,acquirer_Settlement_Fee=null,
-				acquirer_settlement_processing_fee=null,transaction_Acquirer_Conversion_Rate=null;
+				card_Acceptor_ID = null, card_Acceptor_Terminal_ID = null, card_Acceptor_Terminal_Location = null,
+				acquirer_ID = null, acquirer_Settlement_Date = null, transaction_Currency_code = null,
+				transaction_Amount = null, actual_Transaction_Amount = null, transaction_Acitivity_fee = null,
+				acquirer_settlement_Currency_Code = null, acquirer_settlement_Amount = null,
+				acquirer_Settlement_Fee = null, acquirer_settlement_processing_fee = null,
+				transaction_Acquirer_Conversion_Rate = null;
 		nodeName = nodeList.item(0).getNodeName();
 		if (obj.containsKey(nodeName)) {
 			participant_ID = obj.get(nodeName).toString();
@@ -5379,9 +4560,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		if (obj.containsKey(nodeName)) {
 			transaction_Acquirer_Conversion_Rate = obj.get(nodeName).toString();
 		}
-		
-//		System.out.println("transaction_Acquirer_Conversion_Rate: "+transaction_Acquirer_Conversion_Rate);
-		SimpleDateFormat localDateFormat = new SimpleDateFormat("dd-MM-yy");
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("SPIMPORTNPCIACQUIEREFILE");
 		query.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
@@ -5417,7 +4595,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query.registerStoredProcedureParameter(32, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(33, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(34, String.class, ParameterMode.REF_CURSOR);
-		System.out.println("before set para");
 
 		query.setParameter(1, Integer.parseInt(clientid));
 		query.setParameter(2, participant_ID);
@@ -5430,7 +4607,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query.setParameter(9, member_Number);
 		query.setParameter(10, approval_Number);
 		query.setParameter(11, Long.parseLong(system_Trace_Audit_Number));
-		// date=localDateFormat.parse(transaction_Date);
 		query.setParameter(12, transaction_Date);
 		query.setParameter(13, Long.parseLong(transaction_Time));
 		query.setParameter(14, Long.parseLong(merchant_Category_Code));
@@ -5443,37 +4619,35 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query.setParameter(21, transaction_Currency_code);
 		query.setParameter(22, Long.parseLong(transaction_Amount));
 
-
 		query.setParameter(23, Long.parseLong(actual_Transaction_Amount));
 		query.setParameter(24, Long.parseLong(transaction_Acitivity_fee));
 
-
 		query.setParameter(25, acquirer_settlement_Currency_Code);
-
 
 		query.setParameter(26, Long.parseLong(acquirer_settlement_Amount));
 
 		query.setParameter(27, acquirer_Settlement_Fee);
-		System.out.println("before set para");
 		query.setParameter(28, Long.parseLong(acquirer_settlement_processing_fee));
 
 		query.setParameter(29, Long.parseLong(transaction_Acquirer_Conversion_Rate));
 		query.setParameter(30, forceMatch);
 		query.setParameter(31, cycle);
-//		date1=localDateFormat.parse(fileDate);
 		query.setParameter(32, fileDate);
 		query.setParameter(33, createdby);
-		System.out.println("after set para");
 
 		query.execute();
 		List<Object[]> result = query.getResultList();
 		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
 		for (Object record : result) {
-			// Object[] fields = (Object[]) record;
 			JSONObject obj1 = new JSONObject();
 			obj1.put("resultFromImportFile", result.toString());
 			JSONObjects.add(obj1);
 		}
 		return JSONObjects;
+	}
+
+	@Override
+	public List<String> getData() {
+		return null;
 	}
 }
