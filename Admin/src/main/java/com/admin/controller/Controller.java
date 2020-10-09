@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,6 +32,7 @@ import org.xml.sax.InputSource;
 
 import com.admin.model.FileUploadModel;
 import com.admin.model.User;
+import com.admin.model.XmlClass;
 import com.admin.service.Trace_Service;
 
 @RestController
@@ -463,25 +465,50 @@ public class Controller {
 		return getModeTypeRun;
 	}
 
-	@PostMapping("getinsertfileformat/{P_CLIENTID}/{P_VENDORTYPE}/{P_CHANNELID}/{P_MODEID}/{P_FILEXML}/{P_FILEEXT}/{P_VENDORID}")
-	public List<JSONObject> getinsertfileformat(@PathVariable("P_CLIENTID") String P_CLIENTID,
-			@PathVariable(value = "P_VENDORID") String P_VENDORID, @PathVariable(value = "P_FILEEXT") String P_FILEEXT,
-			@PathVariable(value = "P_FILEXML") String P_FILEXML,
-			@PathVariable(value = "P_VENDORTYPE") String P_VENDORTYPE,
-			@PathVariable(value = "P_CHANNELID") String P_CHANNELID, @PathVariable(value = "P_MODEID") String P_MODEID,
-			@RequestParam(value = "P_SEPARATORTYPE", defaultValue = "0") String P_SEPARATORTYPE,
-			@RequestParam("P_FILEPREFIX") String P_FILEPREFIX,
-			@RequestParam(value = "P_CUTOFFTIME", defaultValue = "0") String P_CUTOFFTIME) {
+	@PostMapping("getxmlfileformat")
+	public List<JSONObject> getSearchUserProfiles(@RequestBody XmlClass xmlcls) {
 		String userid = username.getUsername();
-		if (P_CLIENTID == null) {
-			return null;
-		} else {
-			List<JSONObject> getinsertfileformat = traceService.getinsertfileformat(P_CLIENTID, P_VENDORID, P_FILEEXT,
-					P_FILEXML, P_CUTOFFTIME, userid, P_FILEPREFIX, P_VENDORTYPE, P_CHANNELID, P_MODEID,
-					P_SEPARATORTYPE);
-			return getinsertfileformat;
-		}
+		String P_FILEXML = xmlcls.getMyXmlData();
+		String P_CLIENTID = xmlcls.getClientID();
+		String P_VENDORTYPE = xmlcls.getVendorType();
+		String P_CHANNELID = xmlcls.getChannelID();
+		String P_VENDORID = xmlcls.getVendorID();
+		String P_FILEPREFIX = xmlcls.getFilePre();
+		String P_FILEEXT = xmlcls.getFileExt();
+		String P_MODEID = xmlcls.getModeID();
+		String P_SEPARATORTYPE = "";
+		String P_CUTOFFTIME = "";
+		System.out.println("P_FILEXML" + P_FILEXML);
+		System.out.println("P_VENDORTYPE" + P_VENDORTYPE);
+		System.out.println("P_MODEID" + P_MODEID);
+		System.out.println("P_FILEEXT" + P_FILEEXT);
+		System.out.println("P_FILEPREFIX" + P_FILEPREFIX);
+		System.out.println("P_CHANNELID" + P_CHANNELID);
+		System.out.println("P_VENDORID" + P_VENDORID);
+
+		List<JSONObject> getinsertfileformat = traceService.getinsertfileformat(P_CLIENTID, P_VENDORID, P_FILEEXT,
+				P_FILEXML, P_CUTOFFTIME, userid, P_FILEPREFIX, P_VENDORTYPE, P_CHANNELID, P_MODEID, P_SEPARATORTYPE);
+		return getinsertfileformat;
 	}
+//	@PostMapping("getinsertfileformat/{P_CLIENTID}/{P_VENDORTYPE}/{P_CHANNELID}/{P_MODEID}/{P_FILEXML}/{P_FILEEXT}/{P_VENDORID}")
+//	public List<JSONObject> getinsertfileformat(@PathVariable("P_CLIENTID") String P_CLIENTID,
+//			@PathVariable(value = "P_VENDORID") String P_VENDORID, @PathVariable(value = "P_FILEEXT") String P_FILEEXT,
+//			@PathVariable(value = "P_FILEXML") String P_FILEXML,
+//			@PathVariable(value = "P_VENDORTYPE") String P_VENDORTYPE,
+//			@PathVariable(value = "P_CHANNELID") String P_CHANNELID, @PathVariable(value = "P_MODEID") String P_MODEID,
+//			@RequestParam(value = "P_SEPARATORTYPE", defaultValue = "0") String P_SEPARATORTYPE,
+//			@RequestParam("P_FILEPREFIX") String P_FILEPREFIX,
+//			@RequestParam(value = "P_CUTOFFTIME", defaultValue = "0") String P_CUTOFFTIME) {
+//		String userid = username.getUsername();
+//		if (P_CLIENTID == null) {
+//			return null;
+//		} else {
+//			List<JSONObject> getinsertfileformat = traceService.getinsertfileformat(P_CLIENTID, P_VENDORID, P_FILEEXT,
+//					P_FILEXML, P_CUTOFFTIME, userid, P_FILEPREFIX, P_VENDORTYPE, P_CHANNELID, P_MODEID,
+//					P_SEPARATORTYPE);
+//			return getinsertfileformat;
+//		}
+//	}
 
 	@PostMapping("/uploadBranchMasterFile")
 	public Map<String, String> mapBranchMasterReapExcelDatatoDB(@RequestParam("file") MultipartFile reapExcelDataFile) {
@@ -599,7 +626,7 @@ public class Controller {
 	@PostMapping("importFileNpciATMFiles/{clientid}")
 	public List<JSONObject> importFileNpciATMFiles(@PathVariable("clientid") String clientid,
 			@RequestParam("npci") MultipartFile npci) throws Exception {
-		String createdby =username.getUsername();
+		String createdby = username.getUsername();
 		List<JSONObject> importFileNpciATMFiles = traceService.importFileNpciATMFiles(npci, clientid, createdby);
 		return importFileNpciATMFiles;
 	}
