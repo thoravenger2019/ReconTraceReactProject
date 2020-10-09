@@ -478,38 +478,11 @@ public class Controller {
 		String P_MODEID = xmlcls.getModeID();
 		String P_SEPARATORTYPE = "";
 		String P_CUTOFFTIME = "";
-		System.out.println("P_FILEXML" + P_FILEXML);
-		System.out.println("P_VENDORTYPE" + P_VENDORTYPE);
-		System.out.println("P_MODEID" + P_MODEID);
-		System.out.println("P_FILEEXT" + P_FILEEXT);
-		System.out.println("P_FILEPREFIX" + P_FILEPREFIX);
-		System.out.println("P_CHANNELID" + P_CHANNELID);
-		System.out.println("P_VENDORID" + P_VENDORID);
-
 		List<JSONObject> getinsertfileformat = traceService.getinsertfileformat(P_CLIENTID, P_VENDORID, P_FILEEXT,
 				P_FILEXML, P_CUTOFFTIME, userid, P_FILEPREFIX, P_VENDORTYPE, P_CHANNELID, P_MODEID, P_SEPARATORTYPE);
 		return getinsertfileformat;
 	}
-//	@PostMapping("getinsertfileformat/{P_CLIENTID}/{P_VENDORTYPE}/{P_CHANNELID}/{P_MODEID}/{P_FILEXML}/{P_FILEEXT}/{P_VENDORID}")
-//	public List<JSONObject> getinsertfileformat(@PathVariable("P_CLIENTID") String P_CLIENTID,
-//			@PathVariable(value = "P_VENDORID") String P_VENDORID, @PathVariable(value = "P_FILEEXT") String P_FILEEXT,
-//			@PathVariable(value = "P_FILEXML") String P_FILEXML,
-//			@PathVariable(value = "P_VENDORTYPE") String P_VENDORTYPE,
-//			@PathVariable(value = "P_CHANNELID") String P_CHANNELID, @PathVariable(value = "P_MODEID") String P_MODEID,
-//			@RequestParam(value = "P_SEPARATORTYPE", defaultValue = "0") String P_SEPARATORTYPE,
-//			@RequestParam("P_FILEPREFIX") String P_FILEPREFIX,
-//			@RequestParam(value = "P_CUTOFFTIME", defaultValue = "0") String P_CUTOFFTIME) {
-//		String userid = username.getUsername();
-//		if (P_CLIENTID == null) {
-//			return null;
-//		} else {
-//			List<JSONObject> getinsertfileformat = traceService.getinsertfileformat(P_CLIENTID, P_VENDORID, P_FILEEXT,
-//					P_FILEXML, P_CUTOFFTIME, userid, P_FILEPREFIX, P_VENDORTYPE, P_CHANNELID, P_MODEID,
-//					P_SEPARATORTYPE);
-//			return getinsertfileformat;
-//		}
-//	}
-
+	
 	@PostMapping("/uploadBranchMasterFile")
 	public Map<String, String> mapBranchMasterReapExcelDatatoDB(@RequestParam("file") MultipartFile reapExcelDataFile) {
 		Map<String, String> hm = new HashMap<String, String>();
