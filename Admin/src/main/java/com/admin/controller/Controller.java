@@ -1,6 +1,10 @@
 package com.admin.controller;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -572,14 +576,48 @@ public class Controller {
 			@PathVariable("p_ModeID") String p_ModeID, @PathVariable("p_VendorID") String p_VendorID) throws Exception {
 		List<JSONObject> getFileFormatHistory = traceService.getFileFormatHistory(p_VendorType, p_ClientID, p_ChannelID,
 				p_ModeID, p_VendorID);
-
-		JSONObject xmlFormatDescription = getFileFormatHistory.get(0);
-
-		List<JSONObject> xmlTojsonList = xmlTojson(xmlFormatDescription.get("FormatDescriptionXml"));
-
-		List<JSONObject> joinedJsonList = Stream.concat(getFileFormatHistory.stream(), xmlTojsonList.stream())
-				.collect(Collectors.toList());
-		return joinedJsonList;
+		
+		System.out.println("getFileFormatHistory:  "+getFileFormatHistory);
+		String statusInstr="";
+		JSONObject status = getFileFormatHistory.get(0);
+		try
+		{
+			statusInstr=status.get("Status").toString();
+		}
+		catch(Exception e)
+		{
+			
+		}
+		System.out.println("statusInstr:  "+statusInstr);
+		
+		
+		if(statusInstr.equals("[not exist]"))
+		{	
+			File xmlFile = new File("C:\\\\Users\\\\suyog.mate.MAXIMUS\\\\git\\\\SpringReactProject\\\\Admin\\\\src\\\\main\\\\xmlFiles\\\\acq_ATM_NPCI.xml");
+	        Reader fileReader = new FileReader(xmlFile);
+	        BufferedReader bufReader = new BufferedReader(fileReader);
+	        
+	        StringBuilder sb = new StringBuilder();
+	        String line = bufReader.readLine();
+	        while( line != null){
+	            sb.append(line).append("\n");
+	            line = bufReader.readLine();
+	        }
+	        String xml2String = sb.toString();
+	        System.out.println("xml2String:   "+xml2String);
+		}
+		else
+		{
+			JSONObject xmlFormatDescription = getFileFormatHistory.get(0);
+			
+			List<JSONObject> xmlTojsonList = xmlTojson(xmlFormatDescription.get("FormatDescriptionXml"));
+	
+			List<JSONObject> joinedJsonList = Stream.concat(getFileFormatHistory.stream(), xmlTojsonList.stream())
+					.collect(Collectors.toList());
+			return joinedJsonList;
+		}
+	
+		return null;
 	}
 
 	@GetMapping("getfileformat/{P_VENDORID}/{P_CLIENTID}/{P_FILEPREFIX}/{P_FILEEXT}/{P_SEPARATORTYPE}/{P_MODEID}/{P_CHANNELID}")
@@ -591,7 +629,7 @@ public class Controller {
 		List<JSONObject> getfileformat = traceService.getfileformat(P_VENDORID, P_CLIENTID, P_FILEPREFIX, P_FILEEXT,
 				P_SEPARATORTYPE, P_MODEID, P_CHANNELID);
 		JSONObject xmlFormatDescription = getfileformat.get(0);
-		List<JSONObject> xmlTojsonList = xmlTojson(xmlFormatDescription.get("FormatDescriptionXml"));
+		List<JSONObject> xmlTojsonList = xmlTojson(xmlFormatDescription.get("FormatDescriptionXml").toString());
 		List<JSONObject> joinedJsonList = Stream.concat(getfileformat.stream(), xmlTojsonList.stream())
 				.collect(Collectors.toList());
 		return joinedJsonList;

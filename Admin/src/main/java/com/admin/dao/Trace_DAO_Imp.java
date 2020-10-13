@@ -1809,27 +1809,37 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query.setParameter(5, Integer.parseInt(p_VendorID));
 		query.execute();
 		List<Object[]> result = query.getResultList();
-
+		String tempStr=result.toString();
+		System.out.println("tempStr: "+tempStr);
 		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
-		for (Object record : result) {
-			Object[] fields = (Object[]) record;
-			JSONObject obj = new JSONObject();
-			obj.put("FormatID", fields[0]);
-			obj.put("ClientName", fields[1]);
-			obj.put("FileExtention", fields[2]);
-			obj.put("VendorName", fields[3]);
-			obj.put("FormatDescriptionXml", fields[4]);
-			obj.put("CutOffTime", fields[5]);
-			obj.put("StartIndex", fields[6]);
-			obj.put("EndIndex", fields[7]);
-			obj.put("FormatStatus", fields[8]);
-			obj.put("VendorType", fields[9]);
-			obj.put("FormatStatus", fields[10]);
-			obj.put("FilePrefix", fields[11]);
-			obj.put("ChannelID", fields[12]);
-			obj.put("ModeID", fields[13]);
+		if (tempStr.equals("[not exist]")) {
+			for (Object record : result) {
+//				Object[] fields = (Object[]) record;
+				JSONObject obj = new JSONObject();
+				obj.put("Status", result.toString());
+				JSONObjects.add(obj);
+			}
+		} else {
+			for (Object record : result) {
+				Object[] fields =  (Object[]) record;
+				JSONObject obj = new JSONObject();
+				obj.put("FormatID", fields[0]);
+				obj.put("ClientName", fields[1]);
+				obj.put("FileExtention", fields[2]);
+				obj.put("VendorName", fields[3]);
+				obj.put("FormatDescriptionXml", fields[4]);
+				obj.put("CutOffTime", fields[5]);
+				obj.put("StartIndex", fields[6]);
+				obj.put("EndIndex", fields[7]);
+				obj.put("FormatStatus", fields[8]);
+				obj.put("VendorType", fields[9]);
+				obj.put("FormatStatus", fields[10]);
+				obj.put("FilePrefix", fields[11]);
+				obj.put("ChannelID", fields[12]);
+				obj.put("ModeID", fields[13]);
 
-			JSONObjects.add(obj);
+				JSONObjects.add(obj);
+			}
 		}
 		return JSONObjects;
 
