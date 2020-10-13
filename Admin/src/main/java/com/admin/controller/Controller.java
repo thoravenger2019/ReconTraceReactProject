@@ -477,7 +477,8 @@ public class Controller {
 		String P_FILEEXT = xmlcls.getFileExt();
 		String P_MODEID = xmlcls.getModeID();
 		String P_SEPARATORTYPE = "";
-		String P_CUTOFFTIME = "";
+		String P_CUTOFFTIME = xmlcls.getCutOffTime();
+		System.out.println("P_CUTOFFTIME"+P_CUTOFFTIME);
 		List<JSONObject> getinsertfileformat = traceService.getinsertfileformat(P_CLIENTID, P_VENDORID, P_FILEEXT,
 				P_FILEXML, P_CUTOFFTIME, userid, P_FILEPREFIX, P_VENDORTYPE, P_CHANNELID, P_MODEID, P_SEPARATORTYPE);
 		return getinsertfileformat;
