@@ -600,6 +600,7 @@ public class Controller {
 	        {   
 	        	result.append(line.trim());
 	        }
+//	        Map<String, List<JSONObject>> hm=new HashMap<>();
 	        str=result.toString();
 	        System.out.println("str:  "+str);
 	        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -636,6 +637,8 @@ public class Controller {
 				System.out.println("LengthNodeValueNode:  "+lengthNodeValueNode);
 				JSONObjects.add(obj);
 			}
+//			String concatVendorTypeMode=p_VendorType+p_ModeID;
+//			hm.put(concatVendorTypeMode, JSONObjects);
 			return JSONObjects;
 		}
 		else if(statusInstr.equals("[not exist]")  && p_VendorType.equalsIgnoreCase("NETWORK") && p_ModeID.equalsIgnoreCase("3"))
@@ -649,6 +652,7 @@ public class Controller {
 	        	result.append(line.trim());
 	        }
 	        str=result.toString();
+//	        Map<String, List<JSONObject>> hm=new HashMap<>();
 	        System.out.println("str:  "+str);
 	        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
@@ -684,16 +688,20 @@ public class Controller {
 				System.out.println("LengthNodeValueNode:  "+lengthNodeValueNode);
 				JSONObjects.add(obj);
 			}
+//			String concatVendorTypeMode=p_VendorType+p_ModeID;
+//			hm.put(concatVendorTypeMode, JSONObjects);
 			return JSONObjects;
 		}
 		else
 		{
 			JSONObject xmlFormatDescription = getFileFormatHistory.get(0);
-			
+//			Map<String, List<JSONObject>> hm=new HashMap<>();
 			List<JSONObject> xmlTojsonList = xmlTojson(xmlFormatDescription.get("FormatDescriptionXml"));
 	
 //			List<JSONObject> joinedJsonList = Stream.concat(getFileFormatHistory.stream(), xmlTojsonList.stream())
 //					.collect(Collectors.toList());
+//			String concatVendorTypeMode=p_VendorType+p_ModeID;
+//			hm.put(concatVendorTypeMode, xmlTojsonList);
 			return xmlTojsonList;
 		}
 	}
