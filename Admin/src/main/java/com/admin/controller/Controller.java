@@ -18,6 +18,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.io.FilenameUtils;
+import org.json.XML;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -589,22 +590,101 @@ public class Controller {
 			
 		}
 		System.out.println("statusInstr:  "+statusInstr);
-		
-		
-		if(statusInstr.equals("[not exist]"))
-		{	
-			File xmlFile = new File("C:\\\\Users\\\\suyog.mate.MAXIMUS\\\\git\\\\SpringReactProject\\\\Admin\\\\src\\\\main\\\\xmlFiles\\\\acq_ATM_NPCI.xml");
-	        Reader fileReader = new FileReader(xmlFile);
-	        BufferedReader bufReader = new BufferedReader(fileReader);
-	        
-	        StringBuilder sb = new StringBuilder();
-	        String line = bufReader.readLine();
-	        while( line != null){
-	            sb.append(line).append("\n");
-	            line = bufReader.readLine();
+		if(statusInstr.equals("[not exist]")  && p_VendorType.equalsIgnoreCase("NETWORK") && p_ModeID.equalsIgnoreCase("2"))
+		{
+			String line="",str="";
+			StringBuffer result = new StringBuffer();
+			String link = "C:\\Users\\suyog.mate.MAXIMUS\\git\\SpringReactProject\\Admin\\src\\main\\xmlFiles\\acq_ATM_NPCI.xml";
+			BufferedReader br = new BufferedReader(new FileReader(link));
+	        while ((line = br.readLine()) != null) 
+	        {   
+	        	result.append(line.trim());
 	        }
-	        String xml2String = sb.toString();
-	        System.out.println("xml2String:   "+xml2String);
+	        str=result.toString();
+	        System.out.println("str:  "+str);
+	        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document doc = db.parse(new InputSource(new StringReader(str)));
+			doc.getDocumentElement().normalize();
+			NodeList nodeList = doc.getDocumentElement().getChildNodes();
+			List<JSONObject> JSONObjects = new ArrayList<JSONObject>(nodeList.getLength());
+
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				JSONObject obj = new JSONObject();
+				String nodeName = nodeList.item(i).getNodeName();
+				Node childNode = nodeList.item(i);
+				NodeList childNodeList = childNode.getChildNodes();
+				
+				String startPos = childNodeList.item(0).getNodeName();
+				Node startPosNode = childNodeList.item(0);
+
+				NodeList startPosNodeValue = startPosNode.getChildNodes();
+				String startPosNodeValueNode = startPosNodeValue.item(0).getNodeValue();
+
+				String length = childNodeList.item(1).getNodeName();
+				Node lengthNode = childNodeList.item(1);
+				NodeList lengthNodeValue = lengthNode.getChildNodes();
+				String lengthNodeValueNode = lengthNodeValue.item(0).getNodeValue();
+
+				obj.put("NodeName", nodeName);
+				obj.put("startPosNodeValueNode", startPosNodeValueNode);
+				obj.put("LengthNodeValueNode", lengthNodeValueNode);
+				
+				
+				System.out.println("NodeName:  "+nodeName);
+				System.out.println("startPosNodeValueNode:  "+startPosNodeValueNode);
+				System.out.println("LengthNodeValueNode:  "+lengthNodeValueNode);
+				JSONObjects.add(obj);
+			}
+			return JSONObjects;
+		}
+		else if(statusInstr.equals("[not exist]")  && p_VendorType.equalsIgnoreCase("NETWORK") && p_ModeID.equalsIgnoreCase("3"))
+		{
+			String line="",str="";
+			StringBuffer result = new StringBuffer();
+			String link = "C:\\Users\\suyog.mate.MAXIMUS\\git\\SpringReactProject\\Admin\\src\\main\\xmlFiles\\iss_atm_npci.xml";
+			BufferedReader br = new BufferedReader(new FileReader(link));
+	        while ((line = br.readLine()) != null) 
+	        {   
+	        	result.append(line.trim());
+	        }
+	        str=result.toString();
+	        System.out.println("str:  "+str);
+	        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document doc = db.parse(new InputSource(new StringReader(str)));
+			doc.getDocumentElement().normalize();
+			NodeList nodeList = doc.getDocumentElement().getChildNodes();
+			List<JSONObject> JSONObjects = new ArrayList<JSONObject>(nodeList.getLength());
+
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				JSONObject obj = new JSONObject();
+				String nodeName = nodeList.item(i).getNodeName();
+				Node childNode = nodeList.item(i);
+				NodeList childNodeList = childNode.getChildNodes();
+				
+				String startPos = childNodeList.item(0).getNodeName();
+				Node startPosNode = childNodeList.item(0);
+
+				NodeList startPosNodeValue = startPosNode.getChildNodes();
+				String startPosNodeValueNode = startPosNodeValue.item(0).getNodeValue();
+
+				String length = childNodeList.item(1).getNodeName();
+				Node lengthNode = childNodeList.item(1);
+				NodeList lengthNodeValue = lengthNode.getChildNodes();
+				String lengthNodeValueNode = lengthNodeValue.item(0).getNodeValue();
+
+				obj.put("NodeName", nodeName);
+				obj.put("startPosNodeValueNode", startPosNodeValueNode);
+				obj.put("LengthNodeValueNode", lengthNodeValueNode);
+				
+				
+				System.out.println("NodeName:  "+nodeName);
+				System.out.println("startPosNodeValueNode:  "+startPosNodeValueNode);
+				System.out.println("LengthNodeValueNode:  "+lengthNodeValueNode);
+				JSONObjects.add(obj);
+			}
+			return JSONObjects;
 		}
 		else
 		{
@@ -612,12 +692,10 @@ public class Controller {
 			
 			List<JSONObject> xmlTojsonList = xmlTojson(xmlFormatDescription.get("FormatDescriptionXml"));
 	
-			List<JSONObject> joinedJsonList = Stream.concat(getFileFormatHistory.stream(), xmlTojsonList.stream())
-					.collect(Collectors.toList());
-			return joinedJsonList;
+//			List<JSONObject> joinedJsonList = Stream.concat(getFileFormatHistory.stream(), xmlTojsonList.stream())
+//					.collect(Collectors.toList());
+			return xmlTojsonList;
 		}
-	
-		return null;
 	}
 
 	@GetMapping("getfileformat/{P_VENDORID}/{P_CLIENTID}/{P_FILEPREFIX}/{P_FILEEXT}/{P_SEPARATORTYPE}/{P_MODEID}/{P_CHANNELID}")
@@ -848,6 +926,7 @@ public class Controller {
 
 	public List<JSONObject> xmlTojson(Object xmlstrfromdb) throws Exception {
 		String xmlStr = xmlstrfromdb.toString();
+		System.out.println("xmlStr:  "+xmlStr);
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db = dbf.newDocumentBuilder();
 		Document doc = db.parse(new InputSource(new StringReader(xmlStr)));

@@ -1,115 +1,115 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FileFormat>
    <PARTICIPENTID>
-      <StartPosition>1</StartPosition>
-      <Length>3</Length>
+      <StartPosition>0</StartPosition>
+      <Length>0</Length>
    </PARTICIPENTID>
    <TRANSTYPE>
-      <StartPosition>4</StartPosition>
-      <Length>2</Length>
+      <StartPosition>0</StartPosition>
+      <Length>0</Length>
    </TRANSTYPE>
    <FROMACCTYPE>
-      <StartPosition>6</StartPosition>
-      <Length>2</Length>
+      <StartPosition>0</StartPosition>
+      <Length>0</Length>
    </FROMACCTYPE>
    <TOACCTYPE>
-      <StartPosition>8</StartPosition>
-      <Length>2</Length>
+      <StartPosition>0</StartPosition>
+      <Length>0</Length>
    </TOACCTYPE>
    <ReferenceNumber>
-      <StartPosition>10</StartPosition>
-      <Length>12</Length>
+      <StartPosition>0</StartPosition>
+      <Length>0</Length>
    </ReferenceNumber>
    <RESPONSECODE>
-      <StartPosition>22</StartPosition>
-      <Length>2</Length>
+      <StartPosition>0</StartPosition>
+      <Length>0</Length>
    </RESPONSECODE>
    <CardNumber>
-      <StartPosition>24</StartPosition>
-      <Length>19</Length>
+      <StartPosition>0</StartPosition>
+      <Length>0</Length>
    </CardNumber>
    <MEMNUMBER>
-      <StartPosition>43</StartPosition>
-      <Length>1</Length>
+      <StartPosition>0</StartPosition>
+      <Length>0</Length>
    </MEMNUMBER>
    <APPROVALNO>
-      <StartPosition>44</StartPosition>
-      <Length>6</Length>
+      <StartPosition>0</StartPosition>
+      <Length>0</Length>
    </APPROVALNO>
    <SYSTRACAUDITNO>
-      <StartPosition>50</StartPosition>
-      <Length>12</Length>
+      <StartPosition>0</StartPosition>
+      <Length>0</Length>
    </SYSTRACAUDITNO>
    <TxnsDateTime>
-      <StartPosition>62</StartPosition>
-      <Length>6</Length>
+      <StartPosition>0</StartPosition>
+      <Length>0</Length>
    </TxnsDateTime>
    <TRANSTIME>
-      <StartPosition>68</StartPosition>
-      <Length>6</Length>
+      <StartPosition>0</StartPosition>
+      <Length>0</Length>
    </TRANSTIME>
    <MERCHANTCATCODE>
-      <StartPosition>74</StartPosition>
-      <Length>4</Length>
+      <StartPosition>0</StartPosition>
+      <Length>0</Length>
    </MERCHANTCATCODE>
    <CARDACCEPTERSETDATE>
-      <StartPosition>78</StartPosition>
-      <Length>6</Length>
+      <StartPosition>0</StartPosition>
+      <Length>0</Length>
    </CARDACCEPTERSETDATE>
    <CARDACCID>
-      <StartPosition>84</StartPosition>
-      <Length>15</Length>
+      <StartPosition>0</StartPosition>
+      <Length>0</Length>
    </CARDACCID>
    <TerminalId>
-      <StartPosition>99</StartPosition>
-      <Length>8</Length>
+      <StartPosition>0</StartPosition>
+      <Length>0</Length>
    </TerminalId>
    <CARDACCEPTERTERLOC>
-      <StartPosition>107</StartPosition>
-      <Length>40</Length>
+      <StartPosition>0</StartPosition>
+      <Length>0</Length>
    </CARDACCEPTERTERLOC>
    <ACCIQUIERID>
-      <StartPosition>147</StartPosition>
-      <Length>11</Length>
+      <StartPosition>0</StartPosition>
+      <Length>0</Length>
    </ACCIQUIERID>
    <ACCSETDATE>
-      <StartPosition>158</StartPosition>
-      <Length>6</Length>
+      <StartPosition>0</StartPosition>
+      <Length>0</Length>
    </ACCSETDATE>
    <TRANSCURCODE>
-      <StartPosition>164</StartPosition>
-      <Length>3</Length>
+      <StartPosition>0</StartPosition>
+      <Length>0</Length>
    </TRANSCURCODE>
    <TxnsAmount>
-      <StartPosition>167</StartPosition>
-      <Length>15</Length>
+      <StartPosition>0</StartPosition>
+      <Length>0</Length>
    </TxnsAmount>
    <ACCTUALTRANSAMOUNT>
-      <StartPosition>182</StartPosition>
-      <Length>15</Length>
+      <StartPosition>0</StartPosition>
+      <Length>0</Length>
    </ACCTUALTRANSAMOUNT>
    <TRANSACTIVITYFEE>
-      <StartPosition>197</StartPosition>
-      <Length>15</Length>
+      <StartPosition>0</StartPosition>
+      <Length>0</Length>
    </TRANSACTIVITYFEE>
    <ACCURSETCURCODE>
-      <StartPosition>212</StartPosition>
-      <Length>3</Length>
+      <StartPosition>0</StartPosition>
+      <Length>0</Length>
    </ACCURSETCURCODE>
    <ACQUIERSETAMOUNT>
-      <StartPosition>215</StartPosition>
-      <Length>15</Length>
+      <StartPosition>0</StartPosition>
+      <Length>0</Length>
    </ACQUIERSETAMOUNT>
    <ACQUIERSETFEE>
-      <StartPosition>230</StartPosition>
-      <Length>15</Length>
+      <StartPosition>0</StartPosition>
+      <Length>0</Length>
    </ACQUIERSETFEE>
    <ACQUIERSETPROFEE>
-      <StartPosition>245</StartPosition>
-      <Length>15</Length>
+      <StartPosition>0</StartPosition>
+      <Length>0</Length>
    </ACQUIERSETPROFEE>
    <TRANSACQUIERCONVERRATE>
-      <StartPosition>260</StartPosition>
-      <Length>15</Length>
+      <StartPosition>0</StartPosition>
+      <Length>0</Length>
    </TRANSACQUIERCONVERRATE>
 </FileFormat>
