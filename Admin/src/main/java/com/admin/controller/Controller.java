@@ -1,6 +1,10 @@
 package com.admin.controller;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,12 +18,14 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.io.FilenameUtils;
+import org.json.XML;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,6 +37,7 @@ import org.xml.sax.InputSource;
 
 import com.admin.model.FileUploadModel;
 import com.admin.model.User;
+import com.admin.model.XmlClass;
 import com.admin.service.Trace_Service;
 
 @RestController
@@ -65,14 +72,9 @@ public class Controller {
 		String roleID = String.valueOf(username.getRoleID());
 		String clientID = String.valueOf(username.getClientID());
 
-		System.out.println(user + "..." + roleID + "..." + clientID + "...");
-
 		String menu = traceService.getMenuData(user, roleID, clientID);
 
 		String subMenu = traceService.getSubMenuData(user, roleID, clientID);
-
-		System.out.println(menu);
-		System.out.println(subMenu);
 
 		Map<String, String> hm = new HashMap<String, String>();
 		hm.put("menu", menu);
@@ -90,8 +92,6 @@ public class Controller {
 
 		String roles = traceService.getRoleDetails(clientID);
 
-		System.out.println(roles);
-
 		hm.put("roleNames", roles);
 
 		return hm;
@@ -105,7 +105,6 @@ public class Controller {
 
 		Map<String, String> hm = new HashMap<String, String>();
 		String rowsInserted = traceService.getRoleMaster(roleName, homePage, mode, roleID, clientID);
-		System.out.println(rowsInserted);
 		hm.put("roleNames", rowsInserted);
 		return hm;
 	}
@@ -115,7 +114,6 @@ public class Controller {
 			@PathVariable("clientID") String clientID) {
 		Map<String, String> hm = new HashMap<String, String>();
 		String menuList = traceService.getRoleAccessRights(roleID, clientID);
-		System.out.println(menuList);
 		hm.put("roleNames", menuList);
 
 		return hm;
@@ -133,8 +131,6 @@ public class Controller {
 
 		String branchList = traceService.AssignRoleAccessRights(roleID, clientID, menuString, username);
 
-		System.out.println(branchList);
-
 		hm.put("roleNames", branchList);
 
 		return hm;
@@ -147,8 +143,6 @@ public class Controller {
 		Map<String, String> hm = new HashMap<String, String>();
 		String branchList = traceService.getBranchDetails(clientID, branchID);
 
-		System.out.println(branchList);
-
 		hm.put("branchName", branchList);
 
 		return hm;
@@ -159,10 +153,8 @@ public class Controller {
 	public Map<String, String> getUserDetails(@PathVariable("clientID") String clientID,
 			@PathVariable("branchName") String branchID, @PathVariable("roleType") String roleID) {
 		String username1 = username.getUsername();
-		System.out.println(username + " " + clientID);
 		Map<String, String> hm = new HashMap<String, String>();
 		String userList = traceService.getUserDetails(username1, clientID, branchID, roleID);
-		System.out.println(userList);
 		hm.put("getUser", userList);
 
 		return hm;
@@ -174,7 +166,6 @@ public class Controller {
 			@PathVariable("roleID") String roleID) {
 		Map<String, String> hm = new HashMap<String, String>();
 		String userList = traceService.getUserDetails(username, clientID, branchID, roleID);
-		System.out.println(userList);
 		hm.put("roleNames", userList);
 
 		return hm;
@@ -184,33 +175,23 @@ public class Controller {
 	@GetMapping("getUploadFiletype")
 	public List<JSONObject> getUploadFiletype() {
 		List<JSONObject> getUploadFiletype = traceService.getUploadFiletype();
-		System.out.println("UploadFiletype" + getUploadFiletype);
-
 		return getUploadFiletype;
 	}
 
 	@GetMapping("getChannelID")
 	public List<JSONObject> getChannelID() {
 		List<JSONObject> getChannelID = traceService.getChannelID();
-		System.out.println("getChannelID" + getChannelID);
 		return getChannelID;
 	}
 
 	@GetMapping("uploadLogFiles")
 	public String fileUpload(@RequestParam("fileType") String fileType, MultipartFile file) throws IOException {
-
-		System.out.println(file.getOriginalFilename());
-		// System.out.println(FilenameUtils.getExtension(file.getOriginalFilename()));
-		System.out.println(file.getSize());
-
 		List<FileUploadModel> al = new ArrayList<FileUploadModel>();
 
 		byte[] bytes = file.getBytes();
 		String completeData = new String(bytes);
-		System.out.println(completeData);
 		String[] rows = completeData.split("\\r?\\n");
 		String sLine;
-		// List<String> arr=new ArrayList<String>();
 		for (int i = 0; i < rows.length; i++) {
 			sLine = rows[i];
 			String participant_ID = sLine.substring(0, 3).trim();
@@ -267,35 +248,25 @@ public class Controller {
 		Map<String, String> hm = new HashMap<String, String>();
 
 		String userid = UserId;
-		System.out.println("Userid" + userid);
+
 		String password1 = password;
-		System.out.println("password" + password1);
+
 		String firstname = FirstName;
-		System.out.println("FirstName" + firstname);
+
 		String lastname = LastName;
-		System.out.println("LastName" + lastname);
-		// String roleid = "11";
-		// String clientid = "1";
-		// String branchid = "180";
+
 		String emailid = EmailId;
-		System.out.println("EmailId" + emailid);
+
 		String contactno = ContactNo;
-		System.out.println("ContactNo" + contactno);
+
 		String securityq = "";
 		String securitya = "";
 		String createdby = "sam";
 		String salt = "525252";
 		String channel = Channel;
-		System.out.println("Channel" + channel);
-
-		System.out.println("RoleType" + RoleType);
-		System.out.println("confirmpass" + ConfirmPassword);
-		System.out.println("branchname" + BranchName);
 
 		String addUserList = traceService.addUser(userid, password1, firstname, lastname, RoleType, clientId,
 				BranchName, emailid, contactno, securityq, securitya, createdby, salt, channel);
-
-		System.out.println("User added" + addUserList);
 
 		hm.put("addedUser", addUserList);
 
@@ -307,7 +278,6 @@ public class Controller {
 			@PathVariable("branchid") String branchid, @PathVariable("createdby") String createdby) {
 		Map<String, String> hm = new HashMap<String, String>();
 		String deleteUser = traceService.deleteUser(userid, roleid, branchid, createdby);
-		System.out.println("Deleted User" + deleteUser);
 		hm.put("deletedUser", deleteUser);
 		return hm;
 
@@ -318,7 +288,6 @@ public class Controller {
 			@PathVariable("clientid") String clientid, @PathVariable("createdby") String createdby) {
 		Map<String, String> hm = new HashMap<String, String>();
 		String addUserRole = traceService.addUserRole(userid, roleid, clientid, createdby);
-		System.out.println("AddUserRole" + addUserRole);
 		hm.put("addUserRole", addUserRole);
 		return hm;
 
@@ -331,7 +300,6 @@ public class Controller {
 			@PathVariable("channel") String channel) {
 		Map<String, String> hm = new HashMap<String, String>();
 		String addUserUpdate = traceService.addUserUpdate(userid, roleid, branchid, emailid, createdby, channel);
-		System.out.println("AddUserUpadteStatus" + addUserUpdate);
 		hm.put("addUserUpdate", addUserUpdate);
 		return hm;
 	}
@@ -339,35 +307,33 @@ public class Controller {
 	@GetMapping("/domainTypeList")
 	public List<JSONObject> getDomainTypeList() {
 		List<JSONObject> domainTypeList = traceService.getDomainTypeList();
-		System.out.println("domainTypeList" + domainTypeList);
 		return domainTypeList;
 	}
 
 	@GetMapping("/moduleTypeList")
 	public List<JSONObject> getModuleTypeList() {
 		List<JSONObject> moduleTypeList = traceService.getModuleTypeList();
-		System.out.println("moduleTypeList" + moduleTypeList);
 		return moduleTypeList;
 	}
 
 	@GetMapping("/clientName")
 	public List<JSONObject> getClientName() {
 		List<JSONObject> clientNameList = traceService.getClientNameList();
-		System.out.println("clientNameList" + clientNameList);
+
 		return clientNameList;
 	}
 
 	@GetMapping("/vendorTypeList")
 	public List<JSONObject> getVendorTypeList() {
 		List<JSONObject> vendorTypeList = traceService.getVendorTypeList();
-		System.out.println("vendorTypeList" + vendorTypeList);
+
 		return vendorTypeList;
 	}
 
 	@GetMapping("/vendorDetails")
 	public List<JSONObject> getVendorDetails() {
 		List<JSONObject> vendorDetails = traceService.getVendorDetails();
-		System.out.println("vendorDetails" + vendorDetails);
+
 		return vendorDetails;
 	}
 
@@ -381,21 +347,21 @@ public class Controller {
 		String venderMasterRes = traceService.vendorMasterModes(mode, vendorid, vendorname, vendortypeid, createdby,
 				vendor);
 		hm.put("vendorMasterModes", venderMasterRes);
-		System.out.println(venderMasterRes);
+
 		return hm;
 	}
 
 	@GetMapping("/countryTypeList")
 	public List<JSONObject> getContryTypeList() {
 		List<JSONObject> countryTypeList = traceService.getContryTypeList();
-		System.out.println("countryTypeList" + countryTypeList);
+
 		return countryTypeList;
 	}
 
 	@GetMapping("/currencyDetails")
 	public List<JSONObject> getCurrencyDetails() {
 		List<JSONObject> currencyDetails = traceService.getCurrencyDetails();
-		System.out.println("currencyDetails" + currencyDetails);
+
 		return currencyDetails;
 	}
 
@@ -411,7 +377,7 @@ public class Controller {
 		String currencyMasterRes = traceService.currencyMasterModes(mode, currencyid, currencycode, currencydescription,
 				countryid, countryname, numericcode, createdby, country, scale);
 		hm.put("currencyMasterRes", currencyMasterRes);
-		System.out.println(currencyMasterRes);
+
 		return hm;
 	}
 
@@ -429,9 +395,6 @@ public class Controller {
 			@PathVariable("userlimit") String userlimit, @PathVariable("terminalcount") String terminalcount,
 			@PathVariable("reporttime") String reporttime, @PathVariable("colorcode") String colorcode,
 			@RequestParam("file") MultipartFile logofile) {
-		System.out.println(logofile.getOriginalFilename());
-		System.out.println(clientid + " " + mode + " " + domainid + " " + moduleid + " " + clientcode + " " + " "
-				+ clientname + " " + address + " " + contactno + " " + emailid);
 		String logoName = logofile.getOriginalFilename();
 		String username1 = username.getUsername();
 		if (mode.equalsIgnoreCase("ADD") || mode.equalsIgnoreCase("UPDATE")) {
@@ -443,7 +406,6 @@ public class Controller {
 		} else {
 			return null;
 		}
-		// return null;
 	}
 
 	@PostMapping("clientchannelmodeinsert/{channelid}/{modeid}/{clientcode}")
@@ -457,7 +419,6 @@ public class Controller {
 	@GetMapping("getClientCode")
 	public List<JSONObject> getClientCode() {
 		List<JSONObject> clientCode = traceService.getClientCode();
-		System.out.println("clientCode" + clientCode);
 		return clientCode;
 
 	}
@@ -468,7 +429,6 @@ public class Controller {
 			@PathVariable("moduleid") String moduleid) {
 		List<JSONObject> getclientmastermodeget = traceService.getclientmastermodeget(clientid, mode, domainid,
 				moduleid);
-		System.out.println("getclientmastermodeget" + getclientmastermodeget);
 		return getclientmastermodeget;
 	}
 
@@ -510,36 +470,32 @@ public class Controller {
 		return getModeTypeRun;
 	}
 
-	@PostMapping("getinsertfileformat/{P_CLIENTID}/{P_VENDORTYPE}/{P_CHANNELID}/{P_MODEID}/{P_FILEXML}/{P_FILEEXT}/{P_VENDORID}")
-	public List<JSONObject> getinsertfileformat(@PathVariable("P_CLIENTID") String P_CLIENTID,
-			@PathVariable(value = "P_VENDORID") String P_VENDORID, @PathVariable(value = "P_FILEEXT") String P_FILEEXT,
-			@PathVariable(value = "P_FILEXML") String P_FILEXML,
-			/* @RequestParam(value="P_USER",required=false) String P_USER, */
-			@PathVariable(value = "P_VENDORTYPE") String P_VENDORTYPE,
-			@PathVariable(value = "P_CHANNELID") String P_CHANNELID, @PathVariable(value = "P_MODEID") String P_MODEID,
-			@RequestParam(value = "P_SEPARATORTYPE", defaultValue = "0") String P_SEPARATORTYPE,
-			@RequestParam("P_FILEPREFIX") String P_FILEPREFIX,
-			@RequestParam(value = "P_CUTOFFTIME", defaultValue = "0") String P_CUTOFFTIME) {
+	@PostMapping("getxmlfileformat")
+	public List<JSONObject> getSearchUserProfiles(@RequestBody XmlClass xmlcls) {
 		String userid = username.getUsername();
-		System.out.println("insertData" + P_CLIENTID + P_VENDORID + P_FILEEXT + P_FILEXML + P_CUTOFFTIME + P_VENDORTYPE
-				+ P_CHANNELID + P_MODEID + P_SEPARATORTYPE + P_FILEPREFIX);
-		if (P_CLIENTID == null) {
-			return null;
-		} else {
-			List<JSONObject> getinsertfileformat = traceService.getinsertfileformat(P_CLIENTID, P_VENDORID, P_FILEEXT,
-					P_FILEXML, P_CUTOFFTIME, userid, P_FILEPREFIX, P_VENDORTYPE, P_CHANNELID, P_MODEID,
-					P_SEPARATORTYPE);
-			return getinsertfileformat; // getinsertfileformat;
-		}
+		String P_FILEXML = xmlcls.getMyXmlData();
+		String P_CLIENTID = xmlcls.getClientID();
+		String P_VENDORTYPE = xmlcls.getVendorType();
+		String P_CHANNELID = xmlcls.getChannelID();
+		String P_VENDORID = xmlcls.getVendorID();
+		String P_FILEPREFIX = xmlcls.getFilePre();
+		String P_FILEEXT = xmlcls.getFileExt();
+		String P_MODEID = xmlcls.getModeID();
+		String P_SEPARATORTYPE = "";
+		String P_CUTOFFTIME = xmlcls.getCutOffTime();
+		System.out.println("P_CUTOFFTIME" + P_CUTOFFTIME);
+		List<JSONObject> getinsertfileformat = traceService.getinsertfileformat(P_CLIENTID, P_VENDORID, P_FILEEXT,
+				P_FILEXML, P_CUTOFFTIME, userid, P_FILEPREFIX, P_VENDORTYPE, P_CHANNELID, P_MODEID, P_SEPARATORTYPE);
+		return getinsertfileformat;
 	}
 
 	@PostMapping("/uploadBranchMasterFile")
 	public Map<String, String> mapBranchMasterReapExcelDatatoDB(@RequestParam("file") MultipartFile reapExcelDataFile) {
 		Map<String, String> hm = new HashMap<String, String>();
 		String extFile = FilenameUtils.getExtension(reapExcelDataFile.getOriginalFilename());
-		System.out.println(extFile);
+
 		String user = username.getUsername();
-		// String user="MUSTAFA";
+
 		List result = traceService.mapBranchMasterReapExcelDatatoDB(reapExcelDataFile, user);
 		hm.put("mapBranchMasterReapExcelDatatoDB", result.toString());
 		return hm;
@@ -550,7 +506,7 @@ public class Controller {
 			@RequestParam("file") MultipartFile reapExcelDataFile) {
 		String user = username.getUsername();
 		String extFile = FilenameUtils.getExtension(reapExcelDataFile.getOriginalFilename());
-		System.out.println(extFile);
+
 		Map<String, String> hm = new HashMap<String, String>();
 		List result = traceService.mapTerminalMasterReapExcelDatatoDB(reapExcelDataFile, user);
 		hm.put("mapTerminaMasterReapExcelDatatoDB", result.toString());
@@ -559,16 +515,15 @@ public class Controller {
 
 	@GetMapping("branchTemplate/{clientid}")
 	public byte[] getBranchTemplate(@PathVariable("clientid") String clientid) {
-		// Map<String, String> hm=new HashMap<String,String>();
 		byte[] byteBranch = traceService.getBranchFile(clientid);
-		System.out.println(byteBranch.toString());
+
 		return byteBranch;
 	}
 
 	@GetMapping("terminalTemplate/{clientid}")
 	public byte[] getTerminalTemplate(@PathVariable("clientid") String clientid) {
 		byte[] byteTerminal = traceService.getTerminalFile(clientid);
-		System.out.println(byteTerminal.toString());
+
 		return byteTerminal;
 	}
 
@@ -616,22 +571,6 @@ public class Controller {
 		return getfileformatclient;
 	}
 
-	/*
-	 * @PostMapping("importFile") public List<JSONObject>
-	 * importFile(@RequestParam("file") MultipartFile file) { String
-	 * createdby="suyog"; String clientid="mate"; List<JSONObject> importFileStatus
-	 * = traceService.importFile(file,clientid,createdby); return importFileStatus;
-	 * }
-	 * 
-	 * @PostMapping("importFile") public List<JSONObject>
-	 * importFile(@RequestParam("file") MultipartFile file) {
-	 * System.out.println(".............."); String createdby="suyog"; String
-	 * clientid="1";
-	 * 
-	 * List<JSONObject> importFileStatus =
-	 * traceService.importFile(file,clientid,createdby); return importFileStatus; }
-	 */
-
 	@GetMapping("getFileFormatHistory/{p_VendorType}/{p_ClientID}/{p_ChannelID}/{p_ModeID}/{p_VendorID}")
 	public List<JSONObject> getFileFormatHistory(@PathVariable("p_VendorType") String p_VendorType,
 			@PathVariable("p_ClientID") String p_ClientID, @PathVariable("p_ChannelID") String p_ChannelID,
@@ -639,55 +578,199 @@ public class Controller {
 		List<JSONObject> getFileFormatHistory = traceService.getFileFormatHistory(p_VendorType, p_ClientID, p_ChannelID,
 				p_ModeID, p_VendorID);
 
-		JSONObject xmlFormatDescription = getFileFormatHistory.get(0);
+		System.out.println("getFileFormatHistory:  " + getFileFormatHistory);
+		String statusInstr = "";
+		JSONObject status = getFileFormatHistory.get(0);
+		try {
+			statusInstr = status.get("Status").toString();
+		} catch (Exception e) {
 
-//		System.out.println("key "+xmlFormatDescription.get("FormatDescriptionXml"));
+		}
+		System.out.println("statusInstr:  " + statusInstr);
+		if (statusInstr.equals("[not exist]") && p_VendorType.equalsIgnoreCase("NETWORK")
+				&& p_ModeID.equalsIgnoreCase("2")) {
+			String line = "", str = "";
+			StringBuffer result = new StringBuffer();
+			String link = "C:\\Users\\suyog.mate.MAXIMUS\\git\\SpringReactProject\\Admin\\src\\main\\xmlFiles\\acq_ATM_NPCI.xml";
+			BufferedReader br = new BufferedReader(new FileReader(link));
+			while ((line = br.readLine()) != null) {
+				result.append(line.trim());
+			}
+//	        Map<String, List<JSONObject>> hm=new HashMap<>();
+			str = result.toString();
+			System.out.println("str:  " + str);
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document doc = db.parse(new InputSource(new StringReader(str)));
+			doc.getDocumentElement().normalize();
+			NodeList nodeList = doc.getDocumentElement().getChildNodes();
+			List<JSONObject> JSONObjects = new ArrayList<JSONObject>(nodeList.getLength());
 
-		List<JSONObject> xmlTojsonList = xmlTojson(xmlFormatDescription.get("FormatDescriptionXml"));
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				JSONObject obj = new JSONObject();
+				String nodeName = nodeList.item(i).getNodeName();
+				Node childNode = nodeList.item(i);
+				NodeList childNodeList = childNode.getChildNodes();
 
-		List<JSONObject> joinedJsonList = Stream.concat(getFileFormatHistory.stream(), xmlTojsonList.stream())
-				.collect(Collectors.toList());
-		return joinedJsonList;
+				String startPos = childNodeList.item(0).getNodeName();
+				Node startPosNode = childNodeList.item(0);
+
+				NodeList startPosNodeValue = startPosNode.getChildNodes();
+				String startPosNodeValueNode = startPosNodeValue.item(0).getNodeValue();
+
+				String length = childNodeList.item(1).getNodeName();
+				Node lengthNode = childNodeList.item(1);
+				NodeList lengthNodeValue = lengthNode.getChildNodes();
+				String lengthNodeValueNode = lengthNodeValue.item(0).getNodeValue();
+
+				obj.put("NodeName", nodeName);
+				obj.put("startPosNodeValueNode", startPosNodeValueNode);
+				obj.put("LengthNodeValueNode", lengthNodeValueNode);
+
+				System.out.println("NodeName:  " + nodeName);
+				System.out.println("startPosNodeValueNode:  " + startPosNodeValueNode);
+				System.out.println("LengthNodeValueNode:  " + lengthNodeValueNode);
+				JSONObjects.add(obj);
+			}
+//			String concatVendorTypeMode=p_VendorType+p_ModeID;
+//			hm.put(concatVendorTypeMode, JSONObjects);
+			return JSONObjects;
+		} else if (statusInstr.equals("[not exist]") && p_VendorType.equalsIgnoreCase("NETWORK")
+				&& p_ModeID.equalsIgnoreCase("3")) {
+			String line = "", str = "";
+			StringBuffer result = new StringBuffer();
+			String link = "C:\\Users\\suyog.mate.MAXIMUS\\git\\SpringReactProject\\Admin\\src\\main\\xmlFiles\\iss_atm_npci.xml";
+			BufferedReader br = new BufferedReader(new FileReader(link));
+			while ((line = br.readLine()) != null) {
+				result.append(line.trim());
+			}
+			str = result.toString();
+//	        Map<String, List<JSONObject>> hm=new HashMap<>();
+			System.out.println("str:  " + str);
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document doc = db.parse(new InputSource(new StringReader(str)));
+			doc.getDocumentElement().normalize();
+			NodeList nodeList = doc.getDocumentElement().getChildNodes();
+			List<JSONObject> JSONObjects = new ArrayList<JSONObject>(nodeList.getLength());
+
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				JSONObject obj = new JSONObject();
+				String nodeName = nodeList.item(i).getNodeName();
+				Node childNode = nodeList.item(i);
+				NodeList childNodeList = childNode.getChildNodes();
+
+				String startPos = childNodeList.item(0).getNodeName();
+				Node startPosNode = childNodeList.item(0);
+
+				NodeList startPosNodeValue = startPosNode.getChildNodes();
+				String startPosNodeValueNode = startPosNodeValue.item(0).getNodeValue();
+
+				String length = childNodeList.item(1).getNodeName();
+				Node lengthNode = childNodeList.item(1);
+				NodeList lengthNodeValue = lengthNode.getChildNodes();
+				String lengthNodeValueNode = lengthNodeValue.item(0).getNodeValue();
+
+				obj.put("NodeName", nodeName);
+				obj.put("startPosNodeValueNode", startPosNodeValueNode);
+				obj.put("LengthNodeValueNode", lengthNodeValueNode);
+
+				System.out.println("NodeName:  " + nodeName);
+				System.out.println("startPosNodeValueNode:  " + startPosNodeValueNode);
+				System.out.println("LengthNodeValueNode:  " + lengthNodeValueNode);
+				JSONObjects.add(obj);
+			}
+//			String concatVendorTypeMode=p_VendorType+p_ModeID;
+//			hm.put(concatVendorTypeMode, JSONObjects);
+			return JSONObjects;
+		} else if (statusInstr.equals("[not exist]") && p_VendorType.equalsIgnoreCase("CBS")
+				&& p_ModeID.equalsIgnoreCase("0")) {
+			String line = "", str = "";
+			StringBuffer result = new StringBuffer();
+			String link = "C:\\Users\\suyog.mate.MAXIMUS\\git\\SpringReactProject\\Admin\\src\\main\\xmlFiles\\cbs_modeAll.xml";
+			BufferedReader br = new BufferedReader(new FileReader(link));
+			while ((line = br.readLine()) != null) {
+				result.append(line.trim());
+			}
+			str = result.toString();
+//	        Map<String, List<JSONObject>> hm=new HashMap<>();
+			System.out.println("str:  " + str);
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document doc = db.parse(new InputSource(new StringReader(str)));
+			doc.getDocumentElement().normalize();
+			NodeList nodeList = doc.getDocumentElement().getChildNodes();
+			List<JSONObject> JSONObjects = new ArrayList<JSONObject>(nodeList.getLength());
+
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				JSONObject obj = new JSONObject();
+				String nodeName = nodeList.item(i).getNodeName();
+				Node childNode = nodeList.item(i);
+				NodeList childNodeList = childNode.getChildNodes();
+
+				String startPos = childNodeList.item(0).getNodeName();
+				Node startPosNode = childNodeList.item(0);
+
+				NodeList startPosNodeValue = startPosNode.getChildNodes();
+				String IndexPosition = startPosNodeValue.item(0).getNodeValue();
+
+//				String length = childNodeList.item(1).getNodeName();
+//				Node lengthNode = childNodeList.item(1);
+//				NodeList lengthNodeValue = lengthNode.getChildNodes();
+//				String lengthNodeValueNode = lengthNodeValue.item(0).getNodeValue();
+
+				obj.put("NodeName", nodeName);
+				obj.put("IndexPosition", IndexPosition);
+//				obj.put("LengthNodeValueNode", lengthNodeValueNode);
+
+				System.out.println("NodeName:  " + nodeName);
+				System.out.println("IndexPosition:  " + IndexPosition);
+//				System.out.println("LengthNodeValueNode:  " + lengthNodeValueNode);
+				JSONObjects.add(obj);
+			}
+//			String concatVendorTypeMode=p_VendorType+p_ModeID;
+//			hm.put(concatVendorTypeMode, JSONObjects);
+			return JSONObjects;
+		} 
+		else {
+			JSONObject xmlFormatDescription = getFileFormatHistory.get(0);
+//			Map<String, List<JSONObject>> hm=new HashMap<>();
+			List<JSONObject> xmlTojsonList = xmlTojson(xmlFormatDescription.get("FormatDescriptionXml"));
+
+//			List<JSONObject> joinedJsonList = Stream.concat(getFileFormatHistory.stream(), xmlTojsonList.stream())
+//					.collect(Collectors.toList());
+//			String concatVendorTypeMode=p_VendorType+p_ModeID;
+//			hm.put(concatVendorTypeMode, xmlTojsonList);
+			return xmlTojsonList;
+		}
 	}
 
 	@GetMapping("getfileformat/{P_VENDORID}/{P_CLIENTID}/{P_FILEPREFIX}/{P_FILEEXT}/{P_SEPARATORTYPE}/{P_MODEID}/{P_CHANNELID}")
 	public List<JSONObject> getfileformat(@PathVariable("P_VENDORID") String P_VENDORID,
 			@PathVariable("P_CLIENTID") String P_CLIENTID, @PathVariable("P_FILEPREFIX") String P_FILEPREFIX,
 			@PathVariable("P_FILEEXT") String P_FILEEXT, @PathVariable("P_SEPARATORTYPE") String P_SEPARATORTYPE,
-			@PathVariable("P_MODEID") String P_MODEID, @PathVariable("P_CHANNELID") String P_CHANNELID) throws Exception {
+			@PathVariable("P_MODEID") String P_MODEID, @PathVariable("P_CHANNELID") String P_CHANNELID)
+			throws Exception {
 		List<JSONObject> getfileformat = traceService.getfileformat(P_VENDORID, P_CLIENTID, P_FILEPREFIX, P_FILEEXT,
 				P_SEPARATORTYPE, P_MODEID, P_CHANNELID);
 		JSONObject xmlFormatDescription = getfileformat.get(0);
-		List<JSONObject> xmlTojsonList = xmlTojson(xmlFormatDescription.get("FormatDescriptionXml"));
+		List<JSONObject> xmlTojsonList = xmlTojson(xmlFormatDescription.get("FormatDescriptionXml").toString());
 		List<JSONObject> joinedJsonList = Stream.concat(getfileformat.stream(), xmlTojsonList.stream())
 				.collect(Collectors.toList());
 		return joinedJsonList;
 	}
 
-	/*
-	 * @GetMapping("getFormatID") public List<JSONObject> getFormatID() {
-	 * List<JSONObject> formatID = traceService.getFormatID();
-	 * System.out.println("FormatID" + formatID); return formatID;
-	 * 
-	 * }
-	 */
-
-	// new controller
-	@PostMapping("importFileNpciATMFiles")
-	public List<JSONObject> importFileNpciATMFiles(/*@PathVariable("clientid") String clientid,*/
-			@RequestParam("npci") MultipartFile npci)
-			throws Exception {
-		System.out.println("..............");
+	@PostMapping("importFileNpciATMFiles/{clientid}")
+	public List<JSONObject> importFileNpciATMFiles(@PathVariable("clientid") String clientid,
+			@RequestParam("npci") MultipartFile npci) throws Exception {
 		String createdby = "suyog";
-		 String clientid = "1";
-		System.out.println("npcifile" + npci.getOriginalFilename());
+//		String clientid="1";
 		List<JSONObject> importFileNpciATMFiles = traceService.importFileNpciATMFiles(npci, clientid, createdby);
 		return importFileNpciATMFiles;
 	}
 
 	@PostMapping("importFileIMPSFiles")
 	public List<JSONObject> importFileIMPSFiles(@RequestParam("imps") MultipartFile imps) {
-		System.out.println("..............");
 		String createdby = "suyog";
 		String clientid = "1";
 		List<JSONObject> importFileIMPSFiles = traceService.importFileIMPSFiles(imps, clientid, createdby);
@@ -697,9 +780,7 @@ public class Controller {
 	@PostMapping("importPosSettlementSummaryReportFiles/{clientid}")
 	public List<JSONObject> importPosSettlementSummaryReportFiles(@PathVariable("clientid") String clientid,
 			@RequestParam("pos") MultipartFile pos) {
-		System.out.println("..............");
 		String createdby = username.getUsername();
-		// String clientid = "1";
 		List<JSONObject> importPosSettlementSummaryReportFiles = traceService.importPosSettlementSummaryReportFiles(pos,
 				clientid, createdby);
 		return importPosSettlementSummaryReportFiles;
@@ -707,7 +788,6 @@ public class Controller {
 
 	@PostMapping("importEJFiledata")
 	public List<JSONObject> importEJFileData(@RequestParam("ej") MultipartFile ej) {
-		System.out.println("..............");
 		String createdby = "suyog";
 		String clientid = "1";
 		List<JSONObject> importEJFileData = traceService.importEJFileData(ej, clientid, createdby);
@@ -716,29 +796,22 @@ public class Controller {
 	}
 
 	@PostMapping("importGlcbsFileData")
-	public List<JSONObject> importGlcbsFileData(@RequestParam("glCbs") MultipartFile glCbs) {
-		System.out.println("..............");
-		String createdby = "suyog";
+	public List<JSONObject> importGlcbsFileData(/*@PathVariable("clientid")String clientid,@PathVariable("fileTypeName")String fileTypeName,*/@RequestParam("glCbs") MultipartFile glCbs) {
+		String createdby ="suyog";
 		String clientid = "1";
-		List<JSONObject> importGlcbsFileData = traceService.importGlcbsFileData(glCbs, clientid, createdby);
+		String fileTypeName="ATM_ISSUER_NPCI";
+		List<JSONObject> importGlcbsFileData = traceService.importGlcbsFileData(glCbs, clientid, createdby,fileTypeName);
 		return importGlcbsFileData;
 	}
 
 	@PostMapping("importSwitchFile")
 	public List<JSONObject> importSwitchFile(@RequestParam("sw") MultipartFile sw) {
-		System.out.println("..............");
+
 		String createdby = "suyog";
 		String clientid = "1";
 		List<JSONObject> importSwitchFile = traceService.importSwitchFile(sw, clientid, createdby);
 		return importSwitchFile;
 	}
-	// code add on 9-9-2020
-	/*
-	 * @GetMapping("getchannelmodeinfo/{clientid}") public List<JSONObject>
-	 * getchannelmodeinfo(@PathVariable("clientid")String clientid) {
-	 * List<JSONObject>getchannelmodeinfo=traceService.getchannelmodeinfo(clientid);
-	 * return getchannelmodeinfo; }
-	 */
 
 	@GetMapping("getfieldidentification/{clientid}/{vendorid}/{channelid}/{modeid}/{formatid}")
 	public List<JSONObject> getfieldidentification(@PathVariable("clientid") String clientid,
@@ -760,8 +833,6 @@ public class Controller {
 		List<JSONObject> getfilevendordetails = traceService.getfilevendordetails(clientid);
 		return getfilevendordetails;
 	}
-
-	// code add on 10-09-2020
 
 	@PostMapping("addfieldconfig/{P_CLIENTID}/{P_VENDORID}/{P_FORMATID}")
 	public Map<String, String> addfieldconfig(@PathVariable("P_CLIENTID") String P_CLIENTID,
@@ -797,16 +868,12 @@ public class Controller {
 			@RequestParam(value = "P_CREDITCODE", defaultValue = "0") String P_CREDITCODE) throws InterruptedException {
 
 		Map<String, String> hm = new HashMap<>();
-		// System.out.println(P_VENDORID+" "+P_TERMINALCODE+" "+P_ATMTYPE+" "+P_BINNO+"
-		// "+P_ACQUIRERID+" "+P);
-		// System.out.println();
 		String createdby = username.getUsername();
 		String addfieldconfig = traceService.addfieldconfig(P_CLIENTID, P_VENDORID, P_FORMATID, P_TERMINALCODE, P_BINNO,
 				P_ACQUIRERID, P_REVCODE1, P_REVCODE2, P_REVTYPE, P_REVENTRY, P_TXNDATETIME, P_TXNVALUEDATETIME,
 				P_TXNPOSTDATETIME, P_ATMTYPE, P_POSTYPE, P_ECOMTYPE, P_IMPSTYPE, P_UPITYPE, P_MICROATMTYPE,
 				P_MOBILERECHARGETYPE, P_DEPOSIT, P_BALENQ, P_MINISTATEMENT, P_PINCHANGE, P_CHEQUEBOOKREQ, P_RESPCODE1,
 				P_RESPCODE2, P_RESPTPE, P_EODCODE, P_OFFLINECODE, P_DEBITCODE, P_CREDITCODE, createdby);
-//        String changeUndefindToNull=traceService.changeUndefindToNull();
 		hm.put("status:", addfieldconfig);
 		return hm;
 	}
@@ -832,7 +899,6 @@ public class Controller {
 		return getchannelmodeinfo;
 	}
 
-	// 14-09-2020
 	@GetMapping("getmatchingmodeinfo/{clientid}/{channelid}")
 	public List<JSONObject> getmatchingmodeinfo(@PathVariable("clientid") String clientid,
 			@PathVariable("channelid") String channelid) {
@@ -858,7 +924,6 @@ public class Controller {
 		return getaddmatchingruleconfig;
 	}
 
-	// 15-09-2020
 	@GetMapping("getStatusMaster")
 	public List<JSONObject> getStatusMaster() {
 		List<JSONObject> getStatusMaster = traceService.getStatusMaster();
@@ -892,16 +957,14 @@ public class Controller {
 		List<JSONObject> getchanneltypeall = traceService.getchanneltypeall(clientid, userid);
 		return getchanneltypeall;
 	}
-	
-	
-	
+
 	@GetMapping("/getFileFormatDefualt/{p_FileExt}/{ p_SeparatorType}/{p_ChannelID}/{p_ModeID}/{p_VendorID}")
-	public List<JSONObject> getFileFormatDefualt(@PathVariable("p_FileExt")String p_FileExt,@PathVariable("p_SeparatorType")String p_SeparatorType,@PathVariable("p_ChannelID")String p_ChannelID,@PathVariable("p_ModeID")String p_ModeID,@PathVariable("p_VendorID")String p_VendorID) throws Exception
-	{
+	public List<JSONObject> getFileFormatDefualt(@PathVariable("p_FileExt") String p_FileExt,
+			@PathVariable("p_SeparatorType") String p_SeparatorType, @PathVariable("p_ChannelID") String p_ChannelID,
+			@PathVariable("p_ModeID") String p_ModeID, @PathVariable("p_VendorID") String p_VendorID) throws Exception {
 		List<JSONObject> getFileFormatDefualt = traceService.getFileFormatDefualt(p_FileExt, p_SeparatorType,
 				p_ChannelID, p_ModeID, p_VendorID);
 		JSONObject xmlFormatDescription = getFileFormatDefualt.get(0);
-
 
 		List<JSONObject> xmlTojsonList = xmlTojson(xmlFormatDescription.get("FormatDescriptionXml"));
 
@@ -912,14 +975,12 @@ public class Controller {
 
 	public List<JSONObject> xmlTojson(Object xmlstrfromdb) throws Exception {
 		String xmlStr = xmlstrfromdb.toString();
+		System.out.println("xmlStr:  " + xmlStr);
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db = dbf.newDocumentBuilder();
 		Document doc = db.parse(new InputSource(new StringReader(xmlStr)));
 		doc.getDocumentElement().normalize();
-//        NodeList nodeList = doc.getElementsByTagName(doc.getDocumentElement().getNodeName());
 		NodeList nodeList = doc.getDocumentElement().getChildNodes();
-		System.out.println(
-				"Root" + doc.getDocumentElement().getNodeName() + "  " + "nodeListlength" + nodeList.getLength());
 		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(nodeList.getLength());
 
 		for (int i = 0; i < nodeList.getLength(); i++) {
@@ -939,19 +1000,12 @@ public class Controller {
 			NodeList lengthNodeValue = lengthNode.getChildNodes();
 			String lengthNodeValueNode = lengthNodeValue.item(0).getNodeValue();
 
-			System.out.println("NodeName   :" + nodeName);
-
-			System.out.println("startPosNodeValueNode   :" + startPosNodeValueNode);
-			System.out.println("LengthNodeValueNode   :" + lengthNodeValueNode);
-			System.out.println();
-
 			obj.put("NodeName", nodeName);
 			obj.put("startPosNodeValueNode", startPosNodeValueNode);
 			obj.put("LengthNodeValueNode", lengthNodeValueNode);
 
 			JSONObjects.add(obj);
 		}
-		System.out.println("JSONObjects" + JSONObjects);
 		return JSONObjects;
 	}
 

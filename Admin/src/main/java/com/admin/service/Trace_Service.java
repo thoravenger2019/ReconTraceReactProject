@@ -131,7 +131,7 @@ public interface Trace_Service {
 
 	public List<JSONObject> importEJFileData(MultipartFile ej, String clientid, String createdby);
 
-	public List<JSONObject> importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby);
+	public List<JSONObject> importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby, String fileTypeName);
 
 	public List<JSONObject> importSwitchFile(MultipartFile sw, String clientid, String createdby);
 

@@ -174,7 +174,7 @@ public interface Trace_DAO {
 
 	public List<JSONObject> importEJFileData(MultipartFile ej, String clientid, String createdby);
 
-	public List<JSONObject> importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby);
+	public List<JSONObject> importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby, String fileTypeName);
 
 	public List<JSONObject> importSwitchFile(MultipartFile sw, String clientid, String createdby);
 
@@ -244,10 +244,11 @@ public interface Trace_DAO {
 
 	public List<JSONObject> getformatfileinxml(String clientid, int i);
 
-	public List<JSONObject> importFileNpciATMFilesACQ(JSONObject obj, String clientid, String fileDate, String cycle,
-			String forceMatch, String createdby, NodeList nodeList);
+	public List<JSONObject> importFileNpciATMFilesACQ(JSONObject obj, String acqAtmNPCIdata, String fileDate, String cycle, String forceMatch, String createdby, NodeList nodeList);
 
 	public List<JSONObject> importFileNpciATMFilesISS(JSONObject obj, String clientid, String fileDate, String cycle,
 			String forceMatch, String createdby, NodeList nodeList);
+
+
 
 }
