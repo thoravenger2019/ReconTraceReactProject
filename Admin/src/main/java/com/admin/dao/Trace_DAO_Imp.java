@@ -4,8 +4,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.file.Files;
 import java.sql.Blob;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -17,7 +20,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.ParameterMode;
 import javax.persistence.PersistenceContext;
 import javax.persistence.StoredProcedureQuery;
+import javax.sql.DataSource;
 import javax.sql.rowset.serial.SerialBlob;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.io.FilenameUtils;
@@ -44,7 +50,10 @@ import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import com.admin.model.BranchEntry;
 import com.admin.model.EjModel;
@@ -57,13 +66,19 @@ import com.admin.model.User;
 public class Trace_DAO_Imp implements Trace_DAO {
 
 	User eq = null;
-
+	int count=0;
 	@PersistenceContext
 	private EntityManager entityManager;
 
 	@Autowired
 	private SessionFactory sessionFactory;
 
+	@Autowired
+	private DataSource datasource;
+	
+	
+	Connection con=null;
+	
 	public Trace_DAO_Imp() {
 
 	}
@@ -1809,8 +1824,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query.setParameter(5, Integer.parseInt(p_VendorID));
 		query.execute();
 		List<Object[]> result = query.getResultList();
-		String tempStr=result.toString();
-		System.out.println("tempStr: "+tempStr);
+		String tempStr = result.toString();
+		System.out.println("tempStr: " + tempStr);
 		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
 		if (tempStr.equals("[not exist]")) {
 			for (Object record : result) {
@@ -1821,7 +1836,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			}
 		} else {
 			for (Object record : result) {
-				Object[] fields =  (Object[]) record;
+				Object[] fields = (Object[]) record;
 				JSONObject obj = new JSONObject();
 				obj.put("FormatID", fields[0]);
 				obj.put("ClientName", fields[1]);
@@ -3240,9 +3255,29 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	}
 
 	@Override
-	public List<JSONObject> importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby) {
+	public List<JSONObject> importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby,String fileTypeName) {
 
 		try {
+			List<JSONObject> cbsfileformatxml = getcbsformatfileinxml(clientid, 0, fileTypeName);
+			
+			
+			JSONObject xmlFormatDescription = cbsfileformatxml.get(0);
+			String tempStr = xmlFormatDescription.get("FormatDescriptionXml").toString();
+			
+			
+			
+			System.out.println("tempStr:"+tempStr);
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document doc = db.parse(new InputSource(new StringReader(tempStr)));
+			doc.getDocumentElement().normalize();
+			NodeList nodeList = doc.getDocumentElement().getChildNodes();	
+			
+			
+			
+			
+			
+			
 			HSSFWorkbook wb = new HSSFWorkbook(glCbs.getInputStream());
 
 			HSSFSheet sheet = wb.getSheetAt(0);
@@ -4438,6 +4473,29 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		}
 		return JSONObjects;
 	}
+	
+	public List<JSONObject> getcbsformatfileinxml(String clientid, int i, String fileTypeName) {
+		// TODO Auto-generated method stub
+		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("SPGETCBSFORMATDESCRIPTIONXML");
+		query.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(2, Integer.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(4, String.class, ParameterMode.REF_CURSOR);
+		query.setParameter(1, Integer.parseInt(clientid));
+		query.setParameter(2, i);
+		query.setParameter(3, fileTypeName);
+		query.execute();
+		List<Object[]> result = query.getResultList();
+		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
+		for (Object record : result) {
+			Object[] fields = (Object[]) record;
+			JSONObject obj = new JSONObject();
+			obj.put("clientid", fields[0]);
+			obj.put("FormatDescriptionXml", fields[1]);
+			JSONObjects.add(obj);
+		}
+		return JSONObjects;
+	}
 
 	@Override
 	public List<JSONObject> importFileNpciATMFilesACQ(JSONObject obj, String clientid, String fileDate, String cycle,
@@ -4569,6 +4627,9 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		if (obj.containsKey(nodeName)) {
 			transaction_Acquirer_Conversion_Rate = obj.get(nodeName).toString();
 		}
+		
+		
+		
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("SPIMPORTNPCIACQUIEREFILE");
 		query.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
@@ -4603,7 +4664,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query.registerStoredProcedureParameter(31, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(32, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(33, String.class, ParameterMode.IN);
-		query.registerStoredProcedureParameter(34, String.class, ParameterMode.REF_CURSOR);
+//		query.registerStoredProcedureParameter(34, String.class, ParameterMode.REF_CURSOR);
 
 		query.setParameter(1, Integer.parseInt(clientid));
 		query.setParameter(2, participant_ID);
@@ -4645,18 +4706,50 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query.setParameter(33, createdby);
 
 		query.execute();
-		List<Object[]> result = query.getResultList();
-		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
-		for (Object record : result) {
-			JSONObject obj1 = new JSONObject();
-			obj1.put("resultFromImportFile", result.toString());
-			JSONObjects.add(obj1);
-		}
-		return JSONObjects;
+		
+		count++;
+		System.out.println("count:  "+count);
+//		List<Object[]> result = query.getResultList();
+//		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
+//		for (Object record : result) {
+//			JSONObject obj1 = new JSONObject();
+//			obj1.put("resultFromImportFile", result.toString());
+//			JSONObjects.add(obj1);
+//		}
+		return null;
 	}
 
 	@Override
 	public List<String> getData() {
+		return null;
+	}
+	public List<String> getXmlFields(NodeList nodeList, String xmlString, int j) {
+		List<String> returnNodeList = null;
+
+		String nodeName = nodeList.item(j).getNodeName();
+		if (xmlString.equalsIgnoreCase(nodeName)) {
+			Node childNode = nodeList.item(j);
+			NodeList childNodeList = childNode.getChildNodes();
+
+			String startPos = childNodeList.item(0).getNodeName();
+			Node startPosNode = childNodeList.item(0);
+
+			NodeList startPosNodeValue = startPosNode.getChildNodes();
+			String startPosNodeValueNode = startPosNodeValue.item(0).getNodeValue();
+
+			String length = childNodeList.item(1).getNodeName();
+			Node lengthNode = childNodeList.item(1);
+			NodeList lengthNodeValue = lengthNode.getChildNodes();
+			String lengthNodeValueNode = lengthNodeValue.item(0).getNodeValue();
+
+			returnNodeList = new ArrayList<String>(3);
+
+			returnNodeList.add(nodeName);
+			returnNodeList.add(startPosNodeValueNode);
+			returnNodeList.add(lengthNodeValueNode);
+			return returnNodeList;
+		}
+
 		return null;
 	}
 }

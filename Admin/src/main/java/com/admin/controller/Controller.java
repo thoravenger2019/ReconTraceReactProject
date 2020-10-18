@@ -483,12 +483,12 @@ public class Controller {
 		String P_MODEID = xmlcls.getModeID();
 		String P_SEPARATORTYPE = "";
 		String P_CUTOFFTIME = xmlcls.getCutOffTime();
-		System.out.println("P_CUTOFFTIME"+P_CUTOFFTIME);
+		System.out.println("P_CUTOFFTIME" + P_CUTOFFTIME);
 		List<JSONObject> getinsertfileformat = traceService.getinsertfileformat(P_CLIENTID, P_VENDORID, P_FILEEXT,
 				P_FILEXML, P_CUTOFFTIME, userid, P_FILEPREFIX, P_VENDORTYPE, P_CHANNELID, P_MODEID, P_SEPARATORTYPE);
 		return getinsertfileformat;
 	}
-	
+
 	@PostMapping("/uploadBranchMasterFile")
 	public Map<String, String> mapBranchMasterReapExcelDatatoDB(@RequestParam("file") MultipartFile reapExcelDataFile) {
 		Map<String, String> hm = new HashMap<String, String>();
@@ -577,33 +577,29 @@ public class Controller {
 			@PathVariable("p_ModeID") String p_ModeID, @PathVariable("p_VendorID") String p_VendorID) throws Exception {
 		List<JSONObject> getFileFormatHistory = traceService.getFileFormatHistory(p_VendorType, p_ClientID, p_ChannelID,
 				p_ModeID, p_VendorID);
-		
-		System.out.println("getFileFormatHistory:  "+getFileFormatHistory);
-		String statusInstr="";
+
+		System.out.println("getFileFormatHistory:  " + getFileFormatHistory);
+		String statusInstr = "";
 		JSONObject status = getFileFormatHistory.get(0);
-		try
-		{
-			statusInstr=status.get("Status").toString();
+		try {
+			statusInstr = status.get("Status").toString();
+		} catch (Exception e) {
+
 		}
-		catch(Exception e)
-		{
-			
-		}
-		System.out.println("statusInstr:  "+statusInstr);
-		if(statusInstr.equals("[not exist]")  && p_VendorType.equalsIgnoreCase("NETWORK") && p_ModeID.equalsIgnoreCase("2"))
-		{
-			String line="",str="";
+		System.out.println("statusInstr:  " + statusInstr);
+		if (statusInstr.equals("[not exist]") && p_VendorType.equalsIgnoreCase("NETWORK")
+				&& p_ModeID.equalsIgnoreCase("2")) {
+			String line = "", str = "";
 			StringBuffer result = new StringBuffer();
 			String link = "C:\\Users\\suyog.mate.MAXIMUS\\git\\SpringReactProject\\Admin\\src\\main\\xmlFiles\\acq_ATM_NPCI.xml";
 			BufferedReader br = new BufferedReader(new FileReader(link));
-	        while ((line = br.readLine()) != null) 
-	        {   
-	        	result.append(line.trim());
-	        }
+			while ((line = br.readLine()) != null) {
+				result.append(line.trim());
+			}
 //	        Map<String, List<JSONObject>> hm=new HashMap<>();
-	        str=result.toString();
-	        System.out.println("str:  "+str);
-	        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			str = result.toString();
+			System.out.println("str:  " + str);
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			Document doc = db.parse(new InputSource(new StringReader(str)));
 			doc.getDocumentElement().normalize();
@@ -615,7 +611,7 @@ public class Controller {
 				String nodeName = nodeList.item(i).getNodeName();
 				Node childNode = nodeList.item(i);
 				NodeList childNodeList = childNode.getChildNodes();
-				
+
 				String startPos = childNodeList.item(0).getNodeName();
 				Node startPosNode = childNodeList.item(0);
 
@@ -630,31 +626,28 @@ public class Controller {
 				obj.put("NodeName", nodeName);
 				obj.put("startPosNodeValueNode", startPosNodeValueNode);
 				obj.put("LengthNodeValueNode", lengthNodeValueNode);
-				
-				
-				System.out.println("NodeName:  "+nodeName);
-				System.out.println("startPosNodeValueNode:  "+startPosNodeValueNode);
-				System.out.println("LengthNodeValueNode:  "+lengthNodeValueNode);
+
+				System.out.println("NodeName:  " + nodeName);
+				System.out.println("startPosNodeValueNode:  " + startPosNodeValueNode);
+				System.out.println("LengthNodeValueNode:  " + lengthNodeValueNode);
 				JSONObjects.add(obj);
 			}
 //			String concatVendorTypeMode=p_VendorType+p_ModeID;
 //			hm.put(concatVendorTypeMode, JSONObjects);
 			return JSONObjects;
-		}
-		else if(statusInstr.equals("[not exist]")  && p_VendorType.equalsIgnoreCase("NETWORK") && p_ModeID.equalsIgnoreCase("3"))
-		{
-			String line="",str="";
+		} else if (statusInstr.equals("[not exist]") && p_VendorType.equalsIgnoreCase("NETWORK")
+				&& p_ModeID.equalsIgnoreCase("3")) {
+			String line = "", str = "";
 			StringBuffer result = new StringBuffer();
 			String link = "C:\\Users\\suyog.mate.MAXIMUS\\git\\SpringReactProject\\Admin\\src\\main\\xmlFiles\\iss_atm_npci.xml";
 			BufferedReader br = new BufferedReader(new FileReader(link));
-	        while ((line = br.readLine()) != null) 
-	        {   
-	        	result.append(line.trim());
-	        }
-	        str=result.toString();
+			while ((line = br.readLine()) != null) {
+				result.append(line.trim());
+			}
+			str = result.toString();
 //	        Map<String, List<JSONObject>> hm=new HashMap<>();
-	        System.out.println("str:  "+str);
-	        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			System.out.println("str:  " + str);
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			Document doc = db.parse(new InputSource(new StringReader(str)));
 			doc.getDocumentElement().normalize();
@@ -666,7 +659,7 @@ public class Controller {
 				String nodeName = nodeList.item(i).getNodeName();
 				Node childNode = nodeList.item(i);
 				NodeList childNodeList = childNode.getChildNodes();
-				
+
 				String startPos = childNodeList.item(0).getNodeName();
 				Node startPosNode = childNodeList.item(0);
 
@@ -681,23 +674,69 @@ public class Controller {
 				obj.put("NodeName", nodeName);
 				obj.put("startPosNodeValueNode", startPosNodeValueNode);
 				obj.put("LengthNodeValueNode", lengthNodeValueNode);
-				
-				
-				System.out.println("NodeName:  "+nodeName);
-				System.out.println("startPosNodeValueNode:  "+startPosNodeValueNode);
-				System.out.println("LengthNodeValueNode:  "+lengthNodeValueNode);
+
+				System.out.println("NodeName:  " + nodeName);
+				System.out.println("startPosNodeValueNode:  " + startPosNodeValueNode);
+				System.out.println("LengthNodeValueNode:  " + lengthNodeValueNode);
 				JSONObjects.add(obj);
 			}
 //			String concatVendorTypeMode=p_VendorType+p_ModeID;
 //			hm.put(concatVendorTypeMode, JSONObjects);
 			return JSONObjects;
-		}
-		else
-		{
+		} else if (statusInstr.equals("[not exist]") && p_VendorType.equalsIgnoreCase("CBS")
+				&& p_ModeID.equalsIgnoreCase("0")) {
+			String line = "", str = "";
+			StringBuffer result = new StringBuffer();
+			String link = "C:\\Users\\suyog.mate.MAXIMUS\\git\\SpringReactProject\\Admin\\src\\main\\xmlFiles\\cbs_modeAll.xml";
+			BufferedReader br = new BufferedReader(new FileReader(link));
+			while ((line = br.readLine()) != null) {
+				result.append(line.trim());
+			}
+			str = result.toString();
+//	        Map<String, List<JSONObject>> hm=new HashMap<>();
+			System.out.println("str:  " + str);
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document doc = db.parse(new InputSource(new StringReader(str)));
+			doc.getDocumentElement().normalize();
+			NodeList nodeList = doc.getDocumentElement().getChildNodes();
+			List<JSONObject> JSONObjects = new ArrayList<JSONObject>(nodeList.getLength());
+
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				JSONObject obj = new JSONObject();
+				String nodeName = nodeList.item(i).getNodeName();
+				Node childNode = nodeList.item(i);
+				NodeList childNodeList = childNode.getChildNodes();
+
+				String startPos = childNodeList.item(0).getNodeName();
+				Node startPosNode = childNodeList.item(0);
+
+				NodeList startPosNodeValue = startPosNode.getChildNodes();
+				String IndexPosition = startPosNodeValue.item(0).getNodeValue();
+
+//				String length = childNodeList.item(1).getNodeName();
+//				Node lengthNode = childNodeList.item(1);
+//				NodeList lengthNodeValue = lengthNode.getChildNodes();
+//				String lengthNodeValueNode = lengthNodeValue.item(0).getNodeValue();
+
+				obj.put("NodeName", nodeName);
+				obj.put("IndexPosition", IndexPosition);
+//				obj.put("LengthNodeValueNode", lengthNodeValueNode);
+
+				System.out.println("NodeName:  " + nodeName);
+				System.out.println("IndexPosition:  " + IndexPosition);
+//				System.out.println("LengthNodeValueNode:  " + lengthNodeValueNode);
+				JSONObjects.add(obj);
+			}
+//			String concatVendorTypeMode=p_VendorType+p_ModeID;
+//			hm.put(concatVendorTypeMode, JSONObjects);
+			return JSONObjects;
+		} 
+		else {
 			JSONObject xmlFormatDescription = getFileFormatHistory.get(0);
 //			Map<String, List<JSONObject>> hm=new HashMap<>();
 			List<JSONObject> xmlTojsonList = xmlTojson(xmlFormatDescription.get("FormatDescriptionXml"));
-	
+
 //			List<JSONObject> joinedJsonList = Stream.concat(getFileFormatHistory.stream(), xmlTojsonList.stream())
 //					.collect(Collectors.toList());
 //			String concatVendorTypeMode=p_VendorType+p_ModeID;
@@ -724,7 +763,8 @@ public class Controller {
 	@PostMapping("importFileNpciATMFiles/{clientid}")
 	public List<JSONObject> importFileNpciATMFiles(@PathVariable("clientid") String clientid,
 			@RequestParam("npci") MultipartFile npci) throws Exception {
-		String createdby = username.getUsername();
+		String createdby = "suyog";
+//		String clientid="1";
 		List<JSONObject> importFileNpciATMFiles = traceService.importFileNpciATMFiles(npci, clientid, createdby);
 		return importFileNpciATMFiles;
 	}
@@ -756,10 +796,11 @@ public class Controller {
 	}
 
 	@PostMapping("importGlcbsFileData")
-	public List<JSONObject> importGlcbsFileData(@RequestParam("glCbs") MultipartFile glCbs) {
-		String createdby = "suyog";
+	public List<JSONObject> importGlcbsFileData(/*@PathVariable("clientid")String clientid,@PathVariable("fileTypeName")String fileTypeName,*/@RequestParam("glCbs") MultipartFile glCbs) {
+		String createdby ="suyog";
 		String clientid = "1";
-		List<JSONObject> importGlcbsFileData = traceService.importGlcbsFileData(glCbs, clientid, createdby);
+		String fileTypeName="ATM_ISSUER_NPCI";
+		List<JSONObject> importGlcbsFileData = traceService.importGlcbsFileData(glCbs, clientid, createdby,fileTypeName);
 		return importGlcbsFileData;
 	}
 
@@ -934,7 +975,7 @@ public class Controller {
 
 	public List<JSONObject> xmlTojson(Object xmlstrfromdb) throws Exception {
 		String xmlStr = xmlstrfromdb.toString();
-		System.out.println("xmlStr:  "+xmlStr);
+		System.out.println("xmlStr:  " + xmlStr);
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db = dbf.newDocumentBuilder();
 		Document doc = db.parse(new InputSource(new StringReader(xmlStr)));

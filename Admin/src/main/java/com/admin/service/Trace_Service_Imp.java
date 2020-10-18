@@ -8,11 +8,17 @@ import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.sql.DataSource;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -41,6 +47,9 @@ import com.admin.model.User;
 @Service
 @Transactional
 public class Trace_Service_Imp implements Trace_Service {
+
+	@Autowired
+	private DataSource dataSource;
 
 	@Autowired
 	private Trace_DAO traceDao;
@@ -401,12 +410,26 @@ public class Trace_Service_Imp implements Trace_Service {
 	@Override
 	public List<JSONObject> importFileNpciATMFiles(MultipartFile file, String clientid, String createdby)
 			throws Exception {
-
 		List<String> content = null;
 		String fileName = file.getOriginalFilename();
 		String ext = FilenameUtils.getExtension(file.getOriginalFilename());
+
 		if (fileName.contains("ACQ")) {
 			try {
+				String participant_ID = null, transaction_Type = null, from_Account_Type = null, to_Account_Type = null,
+						RRN = null, response_Code = null, card_number = null, member_Number = null,
+						approval_Number = null, system_Trace_Audit_Number = null, transaction_Date = null,
+						transaction_Time = null, merchant_Category_Code = null, card_Acceptor_Settlement_Date = null,
+						card_Acceptor_ID = null, card_Acceptor_Terminal_ID = null,
+						card_Acceptor_Terminal_Location = null, acquirer_ID = null, acquirer_Settlement_Date = null,
+						transaction_Currency_code = null, transaction_Amount = null, actual_Transaction_Amount = null,
+						transaction_Acitivity_fee = null, acquirer_settlement_Currency_Code = null,
+						acquirer_settlement_Amount = null, acquirer_Settlement_Fee = null,
+						acquirer_settlement_processing_fee = null, transaction_Acquirer_Conversion_Rate = null;
+				Connection con = dataSource.getConnection();
+				System.out.println("Con  " + con);
+				CallableStatement stmt = con.prepareCall(
+						"{call SPIMPORTNPCIACQUIEREFILE(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
 				List<JSONObject> npcifileformatxml = traceDao.getformatfileinxml(clientid, 2);
 				JSONObject xmlFormatDescription = npcifileformatxml.get(0);
 				String tempStr = xmlFormatDescription.get("FormatDescriptionXml").toString();
@@ -425,8 +448,11 @@ public class Trace_Service_Imp implements Trace_Service {
 				String ForceMatch = file.getOriginalFilename();
 				String cycle = ForceMatch.substring(15, 17);
 				String fileDate = ForceMatch.substring(8, 14).trim();
-				List<JSONObject> importFileNpciATMFilesACQ = null;
+				List<JSONObject> importFileNpciATMFilesACQ = new ArrayList<JSONObject>();
 				JSONObject obj = new JSONObject();
+				JSONObject obj1 = new JSONObject();
+				int count = 0, batchSize = 30000;
+				long start = System.currentTimeMillis();
 				for (int i = 0; i < content.size(); i++) {
 					contentData = content.get(i);
 					for (int j = 0; j < nodeList.getLength(); j++) {
@@ -437,9 +463,184 @@ public class Trace_Service_Imp implements Trace_Service {
 						String contentFieldData = contentData.substring(startPos - 1, (startPos - 1) + length).trim();
 						obj.put(nodeName, contentFieldData);
 					}
-					importFileNpciATMFilesACQ = traceDao.importFileNpciATMFilesACQ(obj, clientid, fileDate, cycle,
-							ForceMatch, createdby, nodeList);
+					String nodeName = null;
+
+					stmt.setString(1, clientid);
+					nodeName = nodeList.item(0).getNodeName();
+					if (obj.containsKey(nodeName)) {
+						participant_ID = obj.get(nodeName).toString();
+						stmt.setString(2, participant_ID);
+					}
+
+					nodeName = nodeList.item(1).getNodeName();
+					if (obj.containsKey(nodeName)) {
+						transaction_Type = obj.get(nodeName).toString();
+
+						stmt.setString(3, transaction_Type);
+					}
+
+					nodeName = nodeList.item(2).getNodeName();
+					if (obj.containsKey(nodeName)) {
+						from_Account_Type = obj.get(nodeName).toString();
+						stmt.setString(4, from_Account_Type);
+					}
+
+					nodeName = nodeList.item(3).getNodeName();
+					if (obj.containsKey(nodeName)) {
+						to_Account_Type = obj.get(nodeName).toString();
+
+						stmt.setString(5, to_Account_Type);
+					}
+
+					nodeName = nodeList.item(4).getNodeName();
+					if (obj.containsKey(nodeName)) {
+						RRN = obj.get(nodeName).toString();
+//						obj1.put("RRN", RRN);
+						stmt.setString(6, RRN);
+					}
+					nodeName = nodeList.item(5).getNodeName();
+					if (obj.containsKey(nodeName)) {
+						response_Code = obj.get(nodeName).toString();
+//						obj1.put("response_Code", response_Code);
+						stmt.setString(7, response_Code);
+					}
+					nodeName = nodeList.item(6).getNodeName();
+					if (obj.containsKey(nodeName)) {
+						card_number = obj.get(nodeName).toString();
+//						obj1.put("card_number", card_number);
+						stmt.setString(8, card_number);
+					}
+					nodeName = nodeList.item(7).getNodeName();
+					if (obj.containsKey(nodeName)) {
+						member_Number = obj.get(nodeName).toString();
+//						obj1.put("member_Number", member_Number);
+						stmt.setString(9, member_Number);
+					}
+					nodeName = nodeList.item(8).getNodeName();
+					if (obj.containsKey(nodeName)) {
+						approval_Number = obj.get(nodeName).toString();
+//						obj1.put("approval_Number", approval_Number);
+						stmt.setString(10, approval_Number);
+					}
+					nodeName = nodeList.item(9).getNodeName();
+					if (obj.containsKey(nodeName)) {
+						system_Trace_Audit_Number = obj.get(nodeName).toString();
+//						obj1.put("system_Trace_Audit_Number", system_Trace_Audit_Number);
+						stmt.setString(11, system_Trace_Audit_Number);
+					}
+					nodeName = nodeList.item(10).getNodeName();
+					if (obj.containsKey(nodeName)) {
+						transaction_Date = obj.get(nodeName).toString();
+//						obj1.put("transaction_Date", transaction_Date);
+						stmt.setString(12, transaction_Date);
+					}
+					nodeName = nodeList.item(11).getNodeName();
+					if (obj.containsKey(nodeName)) {
+						transaction_Time = obj.get(nodeName).toString();
+//						obj1.put("transaction_Time", transaction_Time);
+						stmt.setString(13, transaction_Time);
+					}
+					nodeName = nodeList.item(12).getNodeName();
+					if (obj.containsKey(nodeName)) {
+						merchant_Category_Code = obj.get(nodeName).toString();
+//						obj1.put("merchant_Category_Code", merchant_Category_Code);
+						stmt.setString(14, merchant_Category_Code);
+					}
+					nodeName = nodeList.item(13).getNodeName();
+					if (obj.containsKey(nodeName)) {
+						card_Acceptor_Settlement_Date = obj.get(nodeName).toString();
+//						obj1.put("card_Acceptor_Settlement_Date", card_Acceptor_Settlement_Date);
+						stmt.setString(15, card_Acceptor_Settlement_Date);
+					}
+					nodeName = nodeList.item(14).getNodeName();
+					if (obj.containsKey(nodeName)) {
+						card_Acceptor_ID = obj.get(nodeName).toString();
+//						obj1.put("card_Acceptor_ID", card_Acceptor_ID);
+						stmt.setString(16, card_Acceptor_ID);
+					}
+					nodeName = nodeList.item(15).getNodeName();
+					if (obj.containsKey(nodeName)) {
+						card_Acceptor_Terminal_ID = obj.get(nodeName).toString();
+						stmt.setString(17, card_Acceptor_Terminal_ID);
+					}
+					nodeName = nodeList.item(16).getNodeName();
+					if (obj.containsKey(nodeName)) {
+						card_Acceptor_Terminal_Location = obj.get(nodeName).toString();
+						stmt.setString(18, card_Acceptor_Terminal_Location);
+					}
+					nodeName = nodeList.item(17).getNodeName();
+					if (obj.containsKey(nodeName)) {
+						acquirer_ID = obj.get(nodeName).toString();
+
+						stmt.setString(19, acquirer_ID);
+					}
+					nodeName = nodeList.item(18).getNodeName();
+					if (obj.containsKey(nodeName)) {
+						acquirer_Settlement_Date = obj.get(nodeName).toString();
+						stmt.setString(20, acquirer_Settlement_Date);
+					}
+					nodeName = nodeList.item(19).getNodeName();
+					if (obj.containsKey(nodeName)) {
+						transaction_Currency_code = obj.get(nodeName).toString();
+						stmt.setString(21, transaction_Currency_code);
+					}
+					nodeName = nodeList.item(20).getNodeName();
+					if (obj.containsKey(nodeName)) {
+						transaction_Amount = obj.get(nodeName).toString();
+						stmt.setString(22, transaction_Amount);
+					}
+					nodeName = nodeList.item(21).getNodeName();
+					if (obj.containsKey(nodeName)) {
+						actual_Transaction_Amount = obj.get(nodeName).toString();
+						stmt.setString(23, actual_Transaction_Amount);
+					}
+					nodeName = nodeList.item(22).getNodeName();
+					if (obj.containsKey(nodeName)) {
+						transaction_Acitivity_fee = obj.get(nodeName).toString();
+						stmt.setString(24, transaction_Acitivity_fee);
+					}
+					nodeName = nodeList.item(23).getNodeName();
+					if (obj.containsKey(nodeName)) {
+						acquirer_settlement_Currency_Code = obj.get(nodeName).toString();
+						stmt.setString(25, acquirer_settlement_Currency_Code);
+					}
+					nodeName = nodeList.item(24).getNodeName();
+					if (obj.containsKey(nodeName)) {
+						acquirer_settlement_Amount = obj.get(nodeName).toString();
+						stmt.setString(26, acquirer_settlement_Amount);
+					}
+					nodeName = nodeList.item(25).getNodeName();
+					if (obj.containsKey(nodeName)) {
+						acquirer_Settlement_Fee = obj.get(nodeName).toString();
+						stmt.setString(27, acquirer_Settlement_Fee);
+					}
+					nodeName = nodeList.item(26).getNodeName();
+					if (obj.containsKey(nodeName)) {
+						acquirer_settlement_processing_fee = obj.get(nodeName).toString();
+						stmt.setString(28, acquirer_settlement_processing_fee);
+					}
+					nodeName = nodeList.item(27).getNodeName();
+					if (obj.containsKey(nodeName)) {
+						transaction_Acquirer_Conversion_Rate = obj.get(nodeName).toString();
+						stmt.setString(29, transaction_Acquirer_Conversion_Rate);
+					}
+					stmt.setString(30, ForceMatch);
+					stmt.setString(31, cycle);
+					stmt.setString(32, fileDate);
+
+					stmt.setString(33, createdby);
+					stmt.addBatch();
+					count++;
+					System.out.println("count: " + count);
+					if (count % batchSize == 0 || count == content.size()) {
+						stmt.executeBatch();
+						long end = System.currentTimeMillis();
+						System.out.println("TIME:  " + (end - start));
+
+					}
 				}
+				stmt.close();
+				con.close();
 				return importFileNpciATMFilesACQ;
 			} catch (Exception e) {
 				return null;
@@ -480,7 +681,6 @@ public class Trace_Service_Imp implements Trace_Service {
 					importFileNpciATMFilesISS = traceDao.importFileNpciATMFilesISS(obj, clientid, fileDate, cycle,
 							ForceMatch, createdby, nodeList);
 				}
-
 				return importFileNpciATMFilesISS;
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -535,7 +735,6 @@ public class Trace_Service_Imp implements Trace_Service {
 
 		return null;
 	}
-
 	private void ntslAtmFile(Sheet sheet, int dec2, int setAmt, MultipartFile file, String clientid, String createdby) {
 		HSSFRow tempRow = null, forTitle = null;
 		String description = null;
@@ -838,9 +1037,10 @@ public class Trace_Service_Imp implements Trace_Service {
 	}
 
 	@Override
-	public List<JSONObject> importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby) {
+	public List<JSONObject> importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby,
+			String fileTypeName) {
 
-		return traceDao.importGlcbsFileData(glCbs, clientid, createdby);
+		return traceDao.importGlcbsFileData(glCbs, clientid, createdby, fileTypeName);
 	}
 
 	@Override
