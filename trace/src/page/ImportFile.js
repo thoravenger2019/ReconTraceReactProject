@@ -121,12 +121,11 @@ const ImportFile = props => {
         console.log(response);
       }
       
+      
     } catch (e) {
       console.log(e)
     }
   }
-
-
   const onChangeHandler = event => {     
     setStateFile(event.target.files) 
 }
