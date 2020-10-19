@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FileFormat>
+   <ATMAccountNo>0</ATMAccountNo>
+   <TxnsDate>0</TxnsDate>
+   <TxnsTime>0</TxnsTime>
+   <Amount2>0</Amount2>
+   <Amount3>0</Amount3>
+   <DrCrType>0</DrCrType>
+   <ResponseCode2>0</ResponseCode2>
+   <ReversalCode2>0</ReversalCode2>
+   <TxnsPostDateTime>0</TxnsPostDateTime>
+   <TxnsValueDateTime>0</TxnsValueDateTime>
+   <FeeAmount>0</FeeAmount>
+   <CurrencyCode>0</CurrencyCode>
+   <CustBalance>0</CustBalance>
+   <InterchangeBalance>0</InterchangeBalance>
+   <ATMBalance>0</ATMBalance>
+   <BranchCode>0</BranchCode>
+   <ReversalCode1>0</ReversalCode1>
+   <Amount1>0</Amount1>
+   <InterchangeAccountNo>0</InterchangeAccountNo>
+   <ReserveField5>0</ReserveField5>
+   <ChannelType>1</ChannelType>
+   <ReserveField4>2</ReserveField4>
+   <TxnsSubType>3</TxnsSubType>
+   <ProcessingCode>4</ProcessingCode>
+   <TxnsAmount>5</TxnsAmount>
+   <CardNumber>6</CardNumber>
+   <TxnsNumber>7</TxnsNumber>
+   <TxnsDateTime>8</TxnsDateTime>
+   <AcquirerID>9</AcquirerID>
+   <ReferenceNumber>11</ReferenceNumber>
+   <AuthCode>12</AuthCode>
+   <ResponseCode1>13</ResponseCode1>
+   <TerminalID>14</TerminalID>
+   <TxnsPerticulars>15</TxnsPerticulars>
+   <CustAccountNo>16</CustAccountNo>
+   <ReserveField2>17</ReserveField2>
+   <ReserveField3>18</ReserveField3>
+   <ReserveField1>19</ReserveField1>
+</FileFormat>
