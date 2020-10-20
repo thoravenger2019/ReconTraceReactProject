@@ -996,6 +996,7 @@ public class Controller {
 
 		Map<String, String> hm = new HashMap<>();
 		String createdby = username.getUsername();
+		System.out.println("P_TXNPOSTDATETIME:  "+P_TXNPOSTDATETIME);
 		String addfieldconfig = traceService.addfieldconfig(P_CLIENTID, P_VENDORID, P_FORMATID, P_TERMINALCODE, P_BINNO,
 				P_ACQUIRERID, P_REVCODE1, P_REVCODE2, P_REVTYPE, P_REVENTRY, P_TXNDATETIME, P_TXNVALUEDATETIME,
 				P_TXNPOSTDATETIME, P_ATMTYPE, P_POSTYPE, P_ECOMTYPE, P_IMPSTYPE, P_UPITYPE, P_MICROATMTYPE,

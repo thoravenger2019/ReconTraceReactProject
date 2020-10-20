@@ -10,8 +10,11 @@ import java.sql.Blob;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -27,6 +30,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.codec.binary.StringUtils;
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.EncryptedDocumentException;
@@ -43,9 +47,11 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.util.StringUtil;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.SessionFactory;
+import org.hibernate.hql.internal.ast.tree.IsNullLogicOperatorNode;
 import org.hibernate.type.BlobType;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -3261,16 +3267,10 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			String fileTypeName) {
 
 		try {
-
-			Connection con = datasource.getConnection();
 			Map<String, Integer> hm = new HashMap<String, Integer>();
 			org.json.JSONObject jsonObj = new org.json.JSONObject();
 			List<JSONObject> cbsfileformatxml = getcbsswitchformatfileinxml(clientid, fileTypeName);
 			List<JSONObject> cbsIdentificationfileformatxml = getcbsIdentificationfileformatxml(clientid, fileTypeName);
-			
-			
-//			System.out.println("cbsfileformatxml   "+cbsfileformatxml);
-//			System.out.println("cbsIdentificationfileformatxml   "+cbsIdentificationfileformatxml);
 			JSONObject xmlFormatDescription = cbsfileformatxml.get(0);
 			String tempStr = xmlFormatDescription.get("FormatDescriptionXml").toString();
 			System.out.println("tempStr:" + tempStr);
@@ -3286,12 +3286,12 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 				NodeList startPosNodeValue = startPosNode.getChildNodes();
 				String nodeValue = startPosNodeValue.item(0).getNodeValue();
-				System.out.println("nodeName  " + nodeName + " " + "nodeValue " + nodeValue);
+//				System.out.println("nodeName  " + nodeName + " " + "nodeValue " + nodeValue);
 //				hm.put(NodeName, nodeValue);
 				jsonObj.append(nodeName, nodeValue.toString());
 			}
-			System.out.println("Json:" + jsonObj.toString());
-			System.out.println("Terminal : " + jsonObj.getJSONArray("TerminalID").getString(0));
+//			System.out.println("Json:" + jsonObj.toString());
+//			System.out.println("Terminal : " + jsonObj.getJSONArray("TerminalID").getString(0));
 
 			HSSFWorkbook wb = new HSSFWorkbook(glCbs.getInputStream());
 			HSSFSheet sheet = wb.getSheetAt(0);
@@ -3338,41 +3338,17 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			String ChannelType = null;
 			String DrCrType = null;
 			String TxnsPerticulars = null;
-
-			CallableStatement stmt = con.prepareCall("call spbulkinsertcbsdatadbbl");
 			Iterator<Row> itr = sheet.iterator();
 			HSSFRow temprow = null;
 			while (itr.hasNext()) {
-				Boolean card = false;
-				Boolean Terminal = false;
-				Boolean Acquirer = false;
-				Boolean Rev1 = false;
-	            Boolean Rev2 = false;
-	            Boolean ATM = false;
-	            Boolean CDM = false;
-	            Boolean POS = false;
-	            Boolean ECOM = false;
-	            Boolean IMPS = false;
-	            Boolean UPI = false;
-	            Boolean MicroATM = false;
-	            Boolean MobileRecharge = false;
-	            Boolean BAL = false;
-	            Boolean MS = false;
-	            Boolean PC = false;
-	            Boolean CB = false;
-	            Boolean RCA1 = false;
-	            Boolean RCA2 = false;
-	            Boolean MC = false;
-	            Boolean VC = false;
-	            Boolean OC = false;
-	            Boolean D = false;
-	            Boolean C = false;
+
 				Row row = itr.next();
 				temprow = sheet.getRow(row.getRowNum());
 				if (row.getRowNum() < 1) {
 					continue;
 				} else {
-					if (jsonObj.getJSONArray("ATMAccountNo").getString(0) != "0") {
+					if (jsonObj.getJSONArray("ATMAccountNo").getString(0).equals("0")) {
+					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("ATMAccountNo").getString(0)) - 1) == null) {
 							ATMAccountNo = null;
@@ -3382,7 +3358,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					if (jsonObj.getJSONArray("Amount2").getString(0) != "0") {
+					if (jsonObj.getJSONArray("Amount2").getString(0).equals("0")) {
+					} else {
 						if (temprow
 								.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount2").getString(0)) - 1) == null) {
 							Amount2 = null;
@@ -3391,7 +3368,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					if (jsonObj.getJSONArray("Amount3").getString(0) != "0") {
+					if (jsonObj.getJSONArray("Amount3").getString(0).equals("0")) {
+					} else {
 						if (temprow
 								.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount3").getString(0)) - 1) == null) {
 							Amount3 = null;
@@ -3400,7 +3378,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					if (jsonObj.getJSONArray("ResponseCode2").getString(0) != "0") {
+					if (jsonObj.getJSONArray("ResponseCode2").getString(0).equals("0")) {
+					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("ResponseCode2").getString(0)) - 1) == null) {
 							ResponseCode2 = null;
@@ -3410,7 +3389,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					if (jsonObj.getJSONArray("ReversalCode2").getString(0) != "0") {
+					if (jsonObj.getJSONArray("ReversalCode2").getString(0).equals("0")) {
+					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("ReversalCode2").getString(0)) - 1) == null) {
 							ReversalCode2 = null;
@@ -3420,7 +3400,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					if (jsonObj.getJSONArray("FeeAmount").getString(0) != "0") {
+					if (jsonObj.getJSONArray("FeeAmount").getString(0).equals("0")) {
+					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("FeeAmount").getString(0)) - 1) == null) {
 							FeeAmount = null;
@@ -3430,7 +3411,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					if (jsonObj.getJSONArray("CurrencyCode").getString(0) != "0") {
+					if (jsonObj.getJSONArray("CurrencyCode").getString(0).equals("0")) {
+					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("CurrencyCode").getString(0)) - 1) == null) {
 							CurrencyCode = null;
@@ -3440,7 +3422,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					if (jsonObj.getJSONArray("CustBalance").getString(0) != "0") {
+					if (jsonObj.getJSONArray("CustBalance").getString(0).equals("0")) {
+					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("CustBalance").getString(0)) - 1) == null) {
 							CustBalance = null;
@@ -3450,7 +3433,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					if (jsonObj.getJSONArray("InterchangeBalance").getString(0) != "0") {
+					if (jsonObj.getJSONArray("InterchangeBalance").getString(0).equals("0")) {
+					} else {
 						if (temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("InterchangeBalance").getString(0))
 								- 1) == null) {
 							InterchangeBalance = null;
@@ -3460,7 +3444,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					if (jsonObj.getJSONArray("ATMBalance").getString(0) != "0") {
+					if (jsonObj.getJSONArray("ATMBalance").getString(0).equals("0")) {
+					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("ATMBalance").getString(0)) - 1) == null) {
 							ATMBalance = null;
@@ -3470,7 +3455,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					if (jsonObj.getJSONArray("BranchCode").getString(0) != "0") {
+					if (jsonObj.getJSONArray("BranchCode").getString(0).equals("0")) {
+					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("BranchCode").getString(0)) - 1) == null) {
 							BranchCode = null;
@@ -3480,7 +3466,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					if (jsonObj.getJSONArray("InterchangeAccountNo").getString(0) != "0") {
+					if (jsonObj.getJSONArray("InterchangeAccountNo").getString(0).equals("0")) {
+					} else {
 						if (temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("InterchangeAccountNo").getString(0))
 								- 1) == null) {
 							InterchangeAccountNo = null;
@@ -3490,7 +3477,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					if (jsonObj.getJSONArray("AcquirerID").getString(0) != "0") {
+					if (jsonObj.getJSONArray("AcquirerID").getString(0).equals("0")) {
+					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("AcquirerID").getString(0)) - 1) == null) {
 							AcquirerID = null;
@@ -3500,7 +3488,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					if (jsonObj.getJSONArray("AuthCode").getString(0) != "0") {
+					if (jsonObj.getJSONArray("AuthCode").getString(0).equals("0")) {
+					} else {
 						if (temprow
 								.getCell(Integer.parseInt(jsonObj.getJSONArray("AuthCode").getString(0)) - 1) == null) {
 							AuthCode = null;
@@ -3509,7 +3498,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					if (jsonObj.getJSONArray("Amount1").getString(0) != "0") {
+					if (jsonObj.getJSONArray("Amount1").getString(0).equals("0")) {
+					} else {
 						if (temprow
 								.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount1").getString(0)) - 1) == null) {
 							Amount1 = null;
@@ -3518,7 +3508,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					if (jsonObj.getJSONArray("ReserveField5").getString(0) != "0") {
+					if (jsonObj.getJSONArray("ReserveField5").getString(0).equals("0")) {
+					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("ReserveField5").getString(0)) - 1) == null) {
 							ReserveField5 = null;
@@ -3528,7 +3519,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					if (jsonObj.getJSONArray("ReserveField1").getString(0) != "0") {
+					if (jsonObj.getJSONArray("ReserveField1").getString(0).equals("0")) {
+					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("ReserveField1").getString(0)) - 1) == null) {
 							ReserveField1 = null;
@@ -3538,7 +3530,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					if (jsonObj.getJSONArray("ProcessingCode").getString(0) != "0") {
+					if (jsonObj.getJSONArray("ProcessingCode").getString(0).equals("0")) {
+					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("ProcessingCode").getString(0)) - 1) == null) {
 							ProcessingCode = null;
@@ -3548,7 +3541,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					if (jsonObj.getJSONArray("TxnsValueDateTime").getString(0) != "0") {
+					if (jsonObj.getJSONArray("TxnsValueDateTime").getString(0).equals("0")) {
+					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("TxnsValueDateTime").getString(0)) - 1) == null) {
 							TxnsValueDateTime = null;
@@ -3558,7 +3552,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					if (jsonObj.getJSONArray("TxnsDateTime").getString(0) != "0") {
+					if (jsonObj.getJSONArray("TxnsDateTime").getString(0).equals("0")) {
+					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("TxnsDateTime").getString(0)) - 1) == null) {
 							TxnsDateTime = null;
@@ -3566,10 +3561,12 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							TxnsDateTime = row
 									.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsDateTime").getString(0)) - 1)
 									.toString();
+							TxnsDateTime = TxnsDateTime.replace("AM", "").replace("PM", "");
 						}
-						TxnsDateTime=TxnsDateTime.replace("AM", "").replace("PM", "");
+
 					}
-					if (jsonObj.getJSONArray("ReserveField3").getString(0) != "0") {
+					if (jsonObj.getJSONArray("ReserveField3").getString(0).equals("0")) {
+					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("ReserveField3").getString(0)) - 1) == null) {
 							ReserveField3 = null;
@@ -3579,7 +3576,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					if (jsonObj.getJSONArray("ReserveField4").getString(0) != "0") {
+					if (jsonObj.getJSONArray("ReserveField4").getString(0).equals("0")) {
+					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("ReserveField4").getString(0)) - 1) == null) {
 							ReserveField4 = null;
@@ -3589,7 +3587,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					if (jsonObj.getJSONArray("TxnsNumber").getString(0) != "0") {
+					if (jsonObj.getJSONArray("TxnsNumber").getString(0).equals("0")) {
+					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("TxnsNumber").getString(0)) - 1) == null) {
 							TxnsNumber = null;
@@ -3599,7 +3598,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					if (jsonObj.getJSONArray("CustAccountNo").getString(0) != "0") {
+					if (jsonObj.getJSONArray("CustAccountNo").getString(0).equals("0")) {
+					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("CustAccountNo").getString(0)) - 1) == null) {
 							CustAccountNo = null;
@@ -3609,7 +3609,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					if (jsonObj.getJSONArray("TerminalID").getString(0) != "0") {
+					if (jsonObj.getJSONArray("TerminalID").getString(0).equals("0")) {
+					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("TerminalID").getString(0)) - 1) == null) {
 							TerminalID = null;
@@ -3617,13 +3618,14 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							TerminalID = row
 									.getCell(Integer.parseInt(jsonObj.getJSONArray("TerminalID").getString(0)) - 1)
 									.toString();
-						}
-						if (TerminalID.length() < 8) {
-							String concatStr = "00000000" + TerminalID;
-							TerminalID = concatStr.substring(concatStr.length() - 8);
+							if (TerminalID.length() < 8) {
+								String concatStr = "00000000" + TerminalID;
+								TerminalID = concatStr.substring(concatStr.length() - 8);
+							}
 						}
 					}
-					if (jsonObj.getJSONArray("TxnsPostDateTime").getString(0) != "0") {
+					if (jsonObj.getJSONArray("TxnsPostDateTime").getString(0).equals("0")) {
+					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("TxnsPostDateTime").getString(0)) - 1) == null) {
 							TxnsPostDateTime = null;
@@ -3632,19 +3634,32 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.getCell(
 											Integer.parseInt(jsonObj.getJSONArray("TxnsPostDateTime").getString(0)) - 1)
 									.toString();
+							TxnsPostDateTime = TxnsPostDateTime.replace("AM", "").replace("PM", "");
 						}
-						TxnsPostDateTime=TxnsPostDateTime.replace("AM", "").replace("PM", "");
+
 					}
-					if (jsonObj.getJSONArray("TxnsDate").getString(0) != "0") {
+					if (jsonObj.getJSONArray("TxnsDate").getString(0).equals("0")) {
+					} else {
 						if (temprow
 								.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsDate").getString(0)) - 1) == null) {
 							TxnsDate = null;
 						} else {
 							TxnsDate = row.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsDate").getString(0)) - 1)
 									.toString();
+							System.out.println("TxnsDate1"+TxnsDate);
+							
+							if(TxnsDate.length()<=11)
+							{
+								DateFormat formatter = new SimpleDateFormat("dd-MMM-yy");
+								Date date = formatter.parse(TxnsDate);
+								SimpleDateFormat sdfmt1 = new SimpleDateFormat("ddMMyyyy");
+								TxnsDate=sdfmt1.format(date);
+							}
+							System.out.println("TxnsDate2"+TxnsDate);
 						}
 					}
-					if (jsonObj.getJSONArray("TxnsTime").getString(0) != "0") {
+					if (jsonObj.getJSONArray("TxnsTime").getString(0).equals("0")) {
+					} else {
 						if (temprow
 								.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsTime").getString(0)) - 1) == null) {
 							TxnsTime = null;
@@ -3653,7 +3668,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					if (jsonObj.getJSONArray("ReferenceNumber").getString(0) != "0") {
+					if (jsonObj.getJSONArray("ReferenceNumber").getString(0).equals("0")) {
+					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("ReferenceNumber").getString(0)) - 1) == null) {
 							ReferenceNumber = null;
@@ -3664,12 +3680,14 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						}
 
 						if (ReferenceNumber.length() < 6) {
+						} else {
 							String concatStr = "000000" + ReferenceNumber;
 							ReferenceNumber = concatStr.substring(concatStr.length() - 6);
 						}
 
 					}
-					if (jsonObj.getJSONArray("CardNumber").getString(0) != "0") {
+					if (jsonObj.getJSONArray("CardNumber").getString(0).equals("0")) {
+					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("CardNumber").getString(0)) - 1) == null) {
 							CardNumber = null;
@@ -3679,7 +3697,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					if (jsonObj.getJSONArray("TxnsAmount").getString(0) != "0") {
+					if (jsonObj.getJSONArray("TxnsAmount").getString(0).equals("0")) {
+					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("TxnsAmount").getString(0)) - 1) == null) {
 							TxnsAmount = null;
@@ -3689,7 +3708,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					if (jsonObj.getJSONArray("TxnsSubType").getString(0) != "0") {
+					if (jsonObj.getJSONArray("TxnsSubType").getString(0).equals("0")) {
+					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("TxnsSubType").getString(0)) - 1) == null) {
 							TxnsSubType = null;
@@ -3699,7 +3719,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					if (jsonObj.getJSONArray("ReserveField2").getString(0) != "0") {
+					if (jsonObj.getJSONArray("ReserveField2").getString(0).equals("0")) {
+					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("ReserveField2").getString(0)) - 1) == null) {
 							ReserveField2 = null;
@@ -3709,7 +3730,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					if (jsonObj.getJSONArray("ResponseCode1").getString(0) != "0") {
+					if (jsonObj.getJSONArray("ResponseCode1").getString(0).equals("0")) {
+					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("ResponseCode1").getString(0)) - 1) == null) {
 							ResponseCode1 = null;
@@ -3719,7 +3741,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					if (jsonObj.getJSONArray("ReversalCode1").getString(0) != "0") {
+					if (jsonObj.getJSONArray("ReversalCode1").getString(0).equals("0")) {
+					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("ReversalCode1").getString(0)) - 1) == null) {
 							ReversalCode1 = null;
@@ -3729,7 +3752,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					if (jsonObj.getJSONArray("ChannelType").getString(0) != "0") {
+					if (jsonObj.getJSONArray("ChannelType").getString(0).equals("0")) {
+					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("ChannelType").getString(0)) - 1) == null) {
 							ChannelType = null;
@@ -3739,7 +3763,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					if (jsonObj.getJSONArray("DrCrType").getString(0) != "0") {
+					if (jsonObj.getJSONArray("DrCrType").getString(0).equals("0")) {
+					} else {
 						if (temprow
 								.getCell(Integer.parseInt(jsonObj.getJSONArray("DrCrType").getString(0)) - 1) == null) {
 							DrCrType = null;
@@ -3748,7 +3773,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					if (jsonObj.getJSONArray("TxnsPerticulars").getString(0) != "0") {
+					if (jsonObj.getJSONArray("TxnsPerticulars").getString(0).equals("0")) {
+					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("TxnsPerticulars").getString(0)) - 1) == null) {
 							TxnsPerticulars = null;
@@ -3758,11 +3784,466 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									.toString();
 						}
 					}
-					System.out.println("Terminal_ID   :" + TerminalID);
-					System.out.println("TxnsPerticulars   :" + TxnsPerticulars);
-					System.out.println("TxnsDateTime   :" + TxnsDateTime);
-					System.out.println("ReferenceNumber   :" + ReferenceNumber);
+					
+					System.out.println("TxnsSubType   :" + TxnsSubType);
+//					System.out.println("TxnsPerticulars   :" + TxnsPerticulars);
+//					System.out.println("TxnsDateTime   :" + TxnsDateTime);
+//					System.out.println("ReferenceNumber   :" + ReferenceNumber);
 				}
+				Boolean card = false;
+				Boolean Terminal = false;
+				Boolean Acquirer = false;
+				Boolean Rev1 = false;
+				Boolean Rev2 = false;
+				Boolean ATM = false;
+				Boolean CDM = false;
+				Boolean POS = false;
+				Boolean ECOM = false;
+				Boolean IMPS = false;
+				Boolean UPI = false;
+				Boolean MicroATM = false;
+				Boolean MobileRecharge = false;
+				Boolean BAL = false;
+				Boolean MS = false;
+				Boolean PC = false;
+				Boolean CB = false;
+				Boolean RCA1 = false;
+				Boolean RCA2 = false;
+				Boolean MC = false;
+				Boolean VC = false;
+				Boolean OC = false;
+				Boolean D = false;
+				Boolean C = false;
+
+				String TxnsDateTimeMain = null, TxnsPostDateTimeMain = null;
+
+				JSONObject cbsxmlFormatDescription = cbsIdentificationfileformatxml.get(0);
+
+				String txnDateTimeFormat = null;
+				if (cbsxmlFormatDescription.get("TxnDateTime")==null) {
+
+				} else {
+					txnDateTimeFormat = cbsxmlFormatDescription.get("TxnDateTime").toString();
+				}
+				String txnPostDateTimeFormat = null;
+
+				if (cbsxmlFormatDescription.get("TxnPostDateTime")==null) {
+
+				} else {
+					txnPostDateTimeFormat = cbsxmlFormatDescription.get("TxnPostDateTime").toString();
+				}
+				String terminalCode = null;
+
+				if (cbsxmlFormatDescription.get("TerminalCode")==null) {
+
+				} else {
+					terminalCode = cbsxmlFormatDescription.get("TerminalCode").toString();
+				}
+				String acqID = null;
+
+				if (cbsxmlFormatDescription.get("AcquirerID")==null) {
+
+				} else {
+					acqID = cbsxmlFormatDescription.get("AcquirerID").toString();
+				}
+				String binNum = null;
+
+				if (cbsxmlFormatDescription.get("BIN_No")==null) {
+
+				} else {
+					binNum = cbsxmlFormatDescription.get("BIN_No").toString();
+				}
+				String reversaltype = null;
+
+				if (cbsxmlFormatDescription.get("ReversalType")==null) {
+
+				} else {
+					reversaltype = cbsxmlFormatDescription.get("ReversalType").toString();
+				}
+				String reversalcode1 = null;
+
+				if (cbsxmlFormatDescription.get("ReversalCode1")==null) {
+
+				} else {
+					reversalcode1 = cbsxmlFormatDescription.get("ReversalCode1").toString();
+				}
+				String reversalcode2 = null;
+
+				if (cbsxmlFormatDescription.get("ReversalCode2")==null) {
+
+				} else {
+					reversalcode2 = cbsxmlFormatDescription.get("ReversalCode2").toString();
+				}
+				String CDMType = null;
+
+				if (cbsxmlFormatDescription.get("CDMType")==null) {
+
+				} else {
+					CDMType = cbsxmlFormatDescription.get("CDMType").toString();
+				}
+				String atmType = null;
+
+				if (cbsxmlFormatDescription.get("ATMType")==null) {
+
+				} else {
+					atmType = cbsxmlFormatDescription.get("ATMType").toString();
+				}
+				String microAtmType = null;
+
+				if (cbsxmlFormatDescription.get("MicroATMType")==null) {
+
+				} else {
+					microAtmType = cbsxmlFormatDescription.get("MicroATMType").toString();
+				}
+				String posType = null;
+
+				if (cbsxmlFormatDescription.get("POSType")==null) {
+
+				} else {
+					posType = cbsxmlFormatDescription.get("POSType").toString();
+				}
+				String ecomType = null;
+
+				if (cbsxmlFormatDescription.get("ECOMType")==null) {
+
+				} else {
+					ecomType = cbsxmlFormatDescription.get("ECOMType").toString();
+				}
+				String impType = null;
+
+				if (cbsxmlFormatDescription.get("IMPType")==null) {
+
+				} else {
+					impType = cbsxmlFormatDescription.get("IMPType").toString();
+				}
+				String upiType = null;
+
+				if (cbsxmlFormatDescription.get("UPIType")==null) {
+
+				} else {
+					upiType = cbsxmlFormatDescription.get("UPIType").toString();
+				}
+				
+				String mobileRecharge = null;
+
+				if (cbsxmlFormatDescription.get("MobileRechargeType")==null) {
+
+				} else {
+					mobileRecharge = cbsxmlFormatDescription.get("MobileRechargeType").toString();
+				}
+				String balanceInq = null;
+
+				if (cbsxmlFormatDescription.get("BalanceEnquiry")==null) {
+
+				} else {
+					balanceInq = cbsxmlFormatDescription.get("BalanceEnquiry").toString();
+				}
+				String miniStatement = null;
+
+				if (cbsxmlFormatDescription.get("MiniStatement")==null) {
+
+				} else {
+					miniStatement = cbsxmlFormatDescription.get("MiniStatement").toString();
+				}
+				String pinChange = null;
+
+				if (cbsxmlFormatDescription.get("PinChange")==null) {
+
+				} else {
+					pinChange = cbsxmlFormatDescription.get("PinChange").toString();
+				}
+				String checkBookReq = null;
+
+				if (cbsxmlFormatDescription.get("ChequeBookReq")==null) {
+
+				} else {
+					checkBookReq = cbsxmlFormatDescription.get("ChequeBookReq").toString();
+				}
+				String responseType = null;
+
+				if (cbsxmlFormatDescription.get("ResponseType")==null) {
+
+				} else {
+					responseType = cbsxmlFormatDescription.get("ResponseType").toString();
+				}
+				String responsecode1 = null;
+
+				if (cbsxmlFormatDescription.get("ResponseCode1")==null) {
+
+				} else {
+					responsecode1 = cbsxmlFormatDescription.get("ResponseCode1").toString();
+				}
+				String responsecode2 = null;
+
+				if (cbsxmlFormatDescription.get("ResponseCode2")==null) {
+
+				} else {
+					responsecode2 = cbsxmlFormatDescription.get("ResponseCode2").toString();
+				}
+//				System.out.println("txnDateTimeFormat:  " + txnDateTimeFormat);
+//
+//				System.out.println("txnPostDateTimeFormat:  " + txnPostDateTimeFormat);
+//
+//				System.out.println("terminalCode:  " + terminalCode);
+//
+//				System.out.println("acqID:  " + acqID);
+//
+//				System.out.println("binNum:  " + binNum);
+//				;
+				System.out.println("reversaltype:  " + reversaltype);
+
+				if (TxnsDate != null && TxnsTime != null) {
+					if (txnDateTimeFormat.isEmpty() || txnDateTimeFormat == null) {
+
+					} else {
+						String concatTxnDateTime = TxnsDate + TxnsTime;
+						concatTxnDateTime = concatTxnDateTime.replaceAll("\\p{Punct}", "");
+						SimpleDateFormat sdfmt1 = new SimpleDateFormat("ddMMyyyyhhmmss");
+						SimpleDateFormat sdfmt2 = new SimpleDateFormat(txnDateTimeFormat);
+						Date dDate = sdfmt1.parse(concatTxnDateTime);
+						TxnsDateTimeMain = sdfmt2.format(dDate);
+						System.out.println("TxnsDateTimeMain  " + TxnsDateTimeMain);
+					}
+				}
+				if (txnDateTimeFormat != null && TxnsDateTime != null) {
+					String concatTxnDateTime = TxnsDateTime.replaceAll("\\s", "");
+					concatTxnDateTime = concatTxnDateTime.replaceAll("\\p{Punct}", "");
+					SimpleDateFormat sdfmt1 = new SimpleDateFormat("ddMMyyyyhhmmss");
+					SimpleDateFormat sdfmt2 = new SimpleDateFormat(txnDateTimeFormat);
+					Date dDate = sdfmt1.parse(concatTxnDateTime);
+					TxnsDateTimeMain = sdfmt2.format(dDate);
+				}
+
+				if (txnPostDateTimeFormat != null && TxnsPostDateTime != null) {
+					String concatTxnDateTime = TxnsPostDateTime.replaceAll("\\s", "");
+					concatTxnDateTime = concatTxnDateTime.replaceAll("\\p{Punct}", "");
+					SimpleDateFormat sdfmt1 = new SimpleDateFormat("ddMMyyyyhhmmss");
+					SimpleDateFormat sdfmt2 = new SimpleDateFormat(txnPostDateTimeFormat);
+					Date dDate = sdfmt1.parse(concatTxnDateTime);
+					TxnsPostDateTimeMain = sdfmt2.format(dDate);
+				}
+
+				if (terminalCode != null && TerminalID != null) {
+					if (TerminalID.contains(terminalCode)) {
+						Terminal = true;
+						System.out.println("Terminal:  "+Terminal);
+					}
+				}
+
+				if (acqID != null && AcquirerID != null) {
+					if (acqID.equals(AcquirerID)) {
+						Acquirer = true;
+						System.out.println("Acquirer:  "+Acquirer);
+					}
+				}
+
+				if (binNum != null && CardNumber != null) {
+					if (binNum.equals(CardNumber.substring(0, 6))) {
+						card = true;
+						System.out.println("card:  "+card);
+					}
+				}
+				if (reversaltype.equals("1") && reversalcode1 != null && ReversalCode1 != null) {
+					if(reversalcode1.equals(ReversalCode1))
+					{
+						Rev1=true;
+					}
+				}
+				if (reversaltype.equals("2") &&reversalcode1 != null && reversalcode2 != null && ReversalCode1 != null) {
+					if(reversalcode1.equals(ReversalCode1))
+					{
+						Rev1=true;
+					}
+					if(reversalcode2.equals(ReversalCode2))
+					{
+						Rev2=true;
+					}
+				}
+				
+				if(ChannelType==null && TxnsSubType !=null)
+				{
+					if(CDMType != null)
+					{
+						if(CDMType.equals(TxnsSubType))
+						{
+							CDM=true;
+						}
+					}
+					if(atmType != null)
+					{
+						if(atmType.equals(TxnsSubType) && TerminalID.substring(0, 2) != microAtmType )
+						{
+							ATM=true;
+						}
+					}
+					if(posType != null)
+					{
+						if(posType.equals(TxnsSubType))
+						{
+							POS=true;
+						}
+					}
+					if(ecomType != null)
+					{
+						if(ecomType.equals(TxnsSubType))
+						{
+							ECOM=true;
+						}
+					}
+					if(impType != null)
+					{
+						if(impType.equals(TxnsSubType))
+						{
+							IMPS=true;
+						}
+					}
+					if(upiType != null)
+					{
+						if(upiType.equals(TxnsSubType))
+						{
+							UPI=true;
+						}
+					}
+					if(microAtmType !=null )
+					{
+						if(microAtmType ==TxnsSubType || TerminalID.substring(0, 2).equals(microAtmType))
+						{
+							MicroATM=true;
+						}
+					}
+					if(mobileRecharge !=null )
+					{
+						if(mobileRecharge ==TxnsSubType)
+						{
+							MobileRecharge=true;
+						}
+					}
+				}
+				else
+				{
+					if(CDMType != null)
+					{
+						if(CDMType.equals(ChannelType))
+						{
+							CDM=true;
+						}
+					}
+					if(atmType != null)
+					{
+						if(atmType.equals(ChannelType) && TerminalID.substring(0, 2) != microAtmType )
+						{
+							ATM=true;
+						}
+					}
+					if(posType != null)
+					{
+						if(posType.equals(ChannelType))
+						{
+							POS=true;
+						}
+					}
+					if(ecomType != null)
+					{
+						if(ecomType.equals(ChannelType))
+						{
+							ECOM=true;
+						}
+					}
+					if(impType != null)
+					{
+						if(impType.equals(ChannelType))
+						{
+							IMPS=true;
+						}
+					}
+					if(upiType != null)
+					{
+						if(upiType.equals(ChannelType))
+						{
+							UPI=true;
+						}
+					}
+					if(microAtmType !=null )
+					{
+						if(microAtmType ==ChannelType || TerminalID.substring(0, 2).equals(microAtmType))
+						{
+							MicroATM=true;
+						}
+					}
+					if(mobileRecharge !=null )
+					{
+						if(mobileRecharge ==ChannelType)
+						{
+							MobileRecharge=true;
+						}
+					}
+					
+					if(Integer.parseInt(clientid)==12)
+					{
+						if(Terminal == true && card == true)
+                        {
+                            ATM = true;
+                        }
+                        else if(Terminal == true && card == false)
+                        {
+                            ATM = true;
+                        }
+                        else if(Terminal == false && card == true)
+                        {
+                            ATM = true;
+                        }
+					}
+				}
+				if(balanceInq != null)
+				{
+					if(balanceInq.equals(TxnsSubType))
+					{
+						BAL=true;
+					}
+				}
+				if(miniStatement != null)
+				{
+					if(miniStatement.equals(TxnsSubType))
+					{
+						MS=true;
+					}
+				}
+				if(pinChange != null)
+				{
+					if(pinChange.equals(TxnsSubType))
+					{
+						PC=true;
+					}
+				}
+				if(checkBookReq != null)
+				{
+					if(checkBookReq.equals(TxnsSubType))
+					{
+						CB=true;
+					}
+				}
+				if (responseType.equals("1") && responsecode1 != null && ResponseCode1 != null) {
+					if(responsecode1.equals(ResponseCode1))
+					{
+						RCA1=true;
+					}
+				}
+				if (responseType.equals("2") &&responsecode1 != null && responsecode2 != null && ResponseCode2 != null) {
+					if(responsecode1.equals(ResponseCode1))
+					{
+						RCA1=true;
+					}
+					if(responsecode2.equals(ResponseCode2))
+					{
+						RCA2=true;
+					}
+				}
+				if(ResponseCode1 == null)
+				{
+					RCA1=true;
+				}
+				
+
 //				StoredProcedureQuery query = entityManager.createStoredProcedureQuery("spbulkinsertcbsdatadbbl");
 //				query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
 //				query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
@@ -4972,6 +5453,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query.setParameter(11, p_TXNDATETIME);
 		query.setParameter(12, p_TXNVALUEDATETIME);
 		query.setParameter(13, p_TXNPOSTDATETIME);
+		System.out.println("p_TXNPOSTDATETIME:  " + p_TXNPOSTDATETIME);
 		query.setParameter(14, p_ATMTYPE);
 		query.setParameter(15, p_POSTYPE);
 		query.setParameter(16, p_ECOMTYPE);
