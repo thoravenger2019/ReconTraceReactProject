@@ -1,12 +1,17 @@
 package com.admin.dao;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.admin.model.NpciAcqModel;
 import com.admin.model.User;
@@ -176,7 +181,7 @@ public interface Trace_DAO {
 
 	public List<JSONObject> importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby, String fileTypeName);
 
-	public List<JSONObject> importSwitchFile(MultipartFile sw, String clientid, String createdby);
+	public List<JSONObject> importSwitchFile(MultipartFile sw, String clientid, String createdby,String fileTypeName) throws IOException, SQLException, ParserConfigurationException, SAXException;
 
 	List<JSONObject> importFile(String participant_ID, String transaction_Type, String from_Account_Type,
 			String to_Account_Type, String transaction_Serial_Number, String response_Code, String pan_Number,

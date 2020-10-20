@@ -10,6 +10,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -37,6 +39,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import com.admin.dao.Trace_DAO;
 import com.admin.model.User;
@@ -1296,9 +1299,9 @@ public class Trace_Service_Imp implements Trace_Service {
 	}
 
 	@Override
-	public List<JSONObject> importSwitchFile(MultipartFile sw, String clientid, String createdby) {
+	public List<JSONObject> importSwitchFile(MultipartFile sw, String clientid, String createdby,String fileTypeName) throws IOException, SQLException, ParserConfigurationException, SAXException {
 
-		return traceDao.importSwitchFile(sw, clientid, createdby);
+		return traceDao.importSwitchFile(sw, clientid, createdby,fileTypeName);
 	}
 
 	@Override

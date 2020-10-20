@@ -25,6 +25,7 @@ import javax.sql.DataSource;
 import javax.sql.rowset.serial.SerialBlob;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.io.FilenameUtils;
@@ -55,6 +56,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import com.admin.model.BranchEntry;
 import com.admin.model.EjModel;
@@ -67,7 +69,7 @@ import com.admin.model.User;
 public class Trace_DAO_Imp implements Trace_DAO {
 
 	User eq = null;
-	int count=0;
+	int count = 0;
 	@PersistenceContext
 	private EntityManager entityManager;
 
@@ -76,10 +78,9 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 	@Autowired
 	private DataSource datasource;
-	
-	
-	Connection con=null;
-	
+
+	Connection con = null;
+
 	public Trace_DAO_Imp() {
 
 	}
@@ -3256,520 +3257,511 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	}
 
 	@Override
-	public List<JSONObject> importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby,String fileTypeName) {
+	public List<JSONObject> importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby,
+			String fileTypeName) {
 
 		try {
+
+			Connection con = datasource.getConnection();
+			Map<String, Integer> hm = new HashMap<String, Integer>();
+			org.json.JSONObject jsonObj = new org.json.JSONObject();
+			List<JSONObject> cbsfileformatxml = getcbsswitchformatfileinxml(clientid, fileTypeName);
+			List<JSONObject> cbsIdentificationfileformatxml = getcbsIdentificationfileformatxml(clientid, fileTypeName);
 			
-			Connection con=datasource.getConnection();
-			Map<String, Integer>hm=new HashMap<String, Integer>();
-			org.json.JSONObject jsonObj=new org.json.JSONObject();
-			List<JSONObject> cbsfileformatxml = getcbsformatfileinxml(clientid, fileTypeName);
+			
+//			System.out.println("cbsfileformatxml   "+cbsfileformatxml);
+//			System.out.println("cbsIdentificationfileformatxml   "+cbsIdentificationfileformatxml);
 			JSONObject xmlFormatDescription = cbsfileformatxml.get(0);
 			String tempStr = xmlFormatDescription.get("FormatDescriptionXml").toString();
-			System.out.println("tempStr:"+tempStr);
+			System.out.println("tempStr:" + tempStr);
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			Document doc = db.parse(new InputSource(new StringReader(tempStr)));
 			doc.getDocumentElement().normalize();
 			NodeList nodeList = doc.getDocumentElement().getChildNodes();
-			System.out.println("nodelistLength"+nodeList.getLength());
-			for(int i=0;i<nodeList.getLength();i++)
-			{
-				String nodeName=nodeList.item(i).getNodeName();
+			System.out.println("nodelistLength" + nodeList.getLength());
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				String nodeName = nodeList.item(i).getNodeName();
 				Node startPosNode = nodeList.item(i);
 
 				NodeList startPosNodeValue = startPosNode.getChildNodes();
 				String nodeValue = startPosNodeValue.item(0).getNodeValue();
-				System.out.println("nodeName  "+nodeName+" "+"nodeValue "+nodeValue);
+				System.out.println("nodeName  " + nodeName + " " + "nodeValue " + nodeValue);
 //				hm.put(NodeName, nodeValue);
 				jsonObj.append(nodeName, nodeValue.toString());
 			}
-			System.out.println("Json:"+jsonObj.toString());
-			System.out.println("Terminal : "+jsonObj.getJSONArray("TerminalID").getString(0));			
+			System.out.println("Json:" + jsonObj.toString());
+			System.out.println("Terminal : " + jsonObj.getJSONArray("TerminalID").getString(0));
 
-			
 			HSSFWorkbook wb = new HSSFWorkbook(glCbs.getInputStream());
 			HSSFSheet sheet = wb.getSheetAt(0);
 			FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
 			Row row1 = sheet.getRow(0);
 			int tempcolindex = -1;
-			String tempstr = null;
+//			String tempstr = null;
 
-			
-			
 			String ATMAccountNo = "";
 			String Amount1 = "";
 			String Amount2 = "";
 			String Amount3 = "";
-			String ResponseCode2="";
-			String ReversalCode2="";
-			String FeeAmount="";
-			String CurrencyCode="";
-			String CustBalance="";
-			String InterchangeBalance=null;
-			String ATMBalance=null;
-			String BranchCode=null;
-			String InterchangeAccountNo=null;
-			String AcquirerID=null;
-			String AuthCode=null;
-			String ReserveField5=null;
-			String ReserveField1=null;
-			String ProcessingCode=null;
-			String TxnsValueDateTime=null;
-			String TxnsDateTime=null;
-			String ReserveField3=null;
-			String ReserveField4=null;
-			String TxnsNumber=null;
-			String CustAccountNo=null;
-			String TerminalID=null;
-			String TxnsPostDateTime=null;
-			String TxnsDate=null;
-			String TxnsTime=null;
-			String ReferenceNumber=null;
-			String CardNumber=null;
-			String TxnsAmount=null;
-			String TxnsSubType=null;
-			String ReserveField2=null;
-			String ResponseCode1=null;
-			String ReversalCode1=null;
-			String ChannelType=null;
-			String DrCrType=null;
-			String TxnsPerticulars=null;
-			
-			CallableStatement stmt=con.prepareCall("call spbulkinsertcbsdatadbbl");
+			String ResponseCode2 = "";
+			String ReversalCode2 = "";
+			String FeeAmount = "";
+			String CurrencyCode = "";
+			String CustBalance = "";
+			String InterchangeBalance = null;
+			String ATMBalance = null;
+			String BranchCode = null;
+			String InterchangeAccountNo = null;
+			String AcquirerID = null;
+			String AuthCode = null;
+			String ReserveField5 = null;
+			String ReserveField1 = null;
+			String ProcessingCode = null;
+			String TxnsValueDateTime = null;
+			String TxnsDateTime = null;
+			String ReserveField3 = null;
+			String ReserveField4 = null;
+			String TxnsNumber = null;
+			String CustAccountNo = null;
+			String TerminalID = null;
+			String TxnsPostDateTime = null;
+			String TxnsDate = null;
+			String TxnsTime = null;
+			String ReferenceNumber = null;
+			String CardNumber = null;
+			String TxnsAmount = null;
+			String TxnsSubType = null;
+			String ReserveField2 = null;
+			String ResponseCode1 = null;
+			String ReversalCode1 = null;
+			String ChannelType = null;
+			String DrCrType = null;
+			String TxnsPerticulars = null;
+
+			CallableStatement stmt = con.prepareCall("call spbulkinsertcbsdatadbbl");
 			Iterator<Row> itr = sheet.iterator();
-			HSSFRow temprow=null;
-			while(itr.hasNext())
-			{
-				Row row=itr.next();
-				temprow=sheet.getRow(row.getRowNum());
-				if(row.getRowNum()<1)
-				{
+			HSSFRow temprow = null;
+			while (itr.hasNext()) {
+				Boolean card = false;
+				Boolean Terminal = false;
+				Boolean Acquirer = false;
+				Boolean Rev1 = false;
+	            Boolean Rev2 = false;
+	            Boolean ATM = false;
+	            Boolean CDM = false;
+	            Boolean POS = false;
+	            Boolean ECOM = false;
+	            Boolean IMPS = false;
+	            Boolean UPI = false;
+	            Boolean MicroATM = false;
+	            Boolean MobileRecharge = false;
+	            Boolean BAL = false;
+	            Boolean MS = false;
+	            Boolean PC = false;
+	            Boolean CB = false;
+	            Boolean RCA1 = false;
+	            Boolean RCA2 = false;
+	            Boolean MC = false;
+	            Boolean VC = false;
+	            Boolean OC = false;
+	            Boolean D = false;
+	            Boolean C = false;
+				Row row = itr.next();
+				temprow = sheet.getRow(row.getRowNum());
+				if (row.getRowNum() < 1) {
 					continue;
-				}
-				else
-				{
-					if(jsonObj.getJSONArray("ATMAccountNo").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("ATMAccountNo").getString(0))-1)==null)
-						{
-							ATMAccountNo=null;
-						}
-						else
-						{
-							ATMAccountNo=row.getCell(Integer.parseInt(jsonObj.getJSONArray("ATMAccountNo").getString(0))-1).toString();
+				} else {
+					if (jsonObj.getJSONArray("ATMAccountNo").getString(0) != "0") {
+						if (temprow.getCell(
+								Integer.parseInt(jsonObj.getJSONArray("ATMAccountNo").getString(0)) - 1) == null) {
+							ATMAccountNo = null;
+						} else {
+							ATMAccountNo = row
+									.getCell(Integer.parseInt(jsonObj.getJSONArray("ATMAccountNo").getString(0)) - 1)
+									.toString();
 						}
 					}
-					if(jsonObj.getJSONArray("Amount2").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount2").getString(0))-1)==null)
-						{
-							Amount2=null;
-						}
-						else
-						{
-							Amount2=row.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount2").getString(0))-1).toString();
+					if (jsonObj.getJSONArray("Amount2").getString(0) != "0") {
+						if (temprow
+								.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount2").getString(0)) - 1) == null) {
+							Amount2 = null;
+						} else {
+							Amount2 = row.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount2").getString(0)) - 1)
+									.toString();
 						}
 					}
-					if(jsonObj.getJSONArray("Amount3").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount3").getString(0))-1)==null)
-						{
-							Amount3=null;
-						}
-						else
-						{
-							Amount3=row.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount3").getString(0))-1).toString();
+					if (jsonObj.getJSONArray("Amount3").getString(0) != "0") {
+						if (temprow
+								.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount3").getString(0)) - 1) == null) {
+							Amount3 = null;
+						} else {
+							Amount3 = row.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount3").getString(0)) - 1)
+									.toString();
 						}
 					}
-					if(jsonObj.getJSONArray("ResponseCode2").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("ResponseCode2").getString(0))-1)==null)
-						{
-							ResponseCode2=null;
-						}
-						else
-						{
-							ResponseCode2=row.getCell(Integer.parseInt(jsonObj.getJSONArray("ResponseCode2").getString(0))-1).toString();
-						}
-					}
-					if(jsonObj.getJSONArray("ReversalCode2").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("ReversalCode2").getString(0))-1)==null)
-						{
-							ReversalCode2=null;
-						}
-						else
-						{
-							ReversalCode2=row.getCell(Integer.parseInt(jsonObj.getJSONArray("ReversalCode2").getString(0))-1).toString();
+					if (jsonObj.getJSONArray("ResponseCode2").getString(0) != "0") {
+						if (temprow.getCell(
+								Integer.parseInt(jsonObj.getJSONArray("ResponseCode2").getString(0)) - 1) == null) {
+							ResponseCode2 = null;
+						} else {
+							ResponseCode2 = row
+									.getCell(Integer.parseInt(jsonObj.getJSONArray("ResponseCode2").getString(0)) - 1)
+									.toString();
 						}
 					}
-					if(jsonObj.getJSONArray("FeeAmount").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("FeeAmount").getString(0))-1)==null)
-						{
-							FeeAmount=null;
-						}
-						else
-						{
-							FeeAmount=row.getCell(Integer.parseInt(jsonObj.getJSONArray("FeeAmount").getString(0))-1).toString();
-						}
-					}
-					if(jsonObj.getJSONArray("CurrencyCode").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("CurrencyCode").getString(0))-1)==null)
-						{
-							CurrencyCode=null;
-						}
-						else
-						{
-							CurrencyCode=row.getCell(Integer.parseInt(jsonObj.getJSONArray("CurrencyCode").getString(0))-1).toString();
+					if (jsonObj.getJSONArray("ReversalCode2").getString(0) != "0") {
+						if (temprow.getCell(
+								Integer.parseInt(jsonObj.getJSONArray("ReversalCode2").getString(0)) - 1) == null) {
+							ReversalCode2 = null;
+						} else {
+							ReversalCode2 = row
+									.getCell(Integer.parseInt(jsonObj.getJSONArray("ReversalCode2").getString(0)) - 1)
+									.toString();
 						}
 					}
-					if(jsonObj.getJSONArray("CustBalance").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("CustBalance").getString(0))-1)==null)
-						{
-							CustBalance=null;
-						}
-						else
-						{
-							CustBalance=row.getCell(Integer.parseInt(jsonObj.getJSONArray("CustBalance").getString(0))-1).toString();
-						}
-					}
-					if(jsonObj.getJSONArray("InterchangeBalance").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("InterchangeBalance").getString(0))-1)==null)
-						{
-							InterchangeBalance=null;
-						}
-						else
-						{
-							InterchangeBalance=row.getCell(Integer.parseInt(jsonObj.getJSONArray("InterchangeBalance").getString(0))-1).toString();
+					if (jsonObj.getJSONArray("FeeAmount").getString(0) != "0") {
+						if (temprow.getCell(
+								Integer.parseInt(jsonObj.getJSONArray("FeeAmount").getString(0)) - 1) == null) {
+							FeeAmount = null;
+						} else {
+							FeeAmount = row
+									.getCell(Integer.parseInt(jsonObj.getJSONArray("FeeAmount").getString(0)) - 1)
+									.toString();
 						}
 					}
-					if(jsonObj.getJSONArray("ATMBalance").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("ATMBalance").getString(0))-1)==null)
-						{
-							ATMBalance=null;
-						}
-						else
-						{
-							ATMBalance=row.getCell(Integer.parseInt(jsonObj.getJSONArray("ATMBalance").getString(0))-1).toString();
-						}
-					}
-					if(jsonObj.getJSONArray("BranchCode").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("BranchCode").getString(0))-1)==null)
-						{
-							BranchCode=null;
-						}
-						else
-						{
-							BranchCode=row.getCell(Integer.parseInt(jsonObj.getJSONArray("BranchCode").getString(0))-1).toString();
+					if (jsonObj.getJSONArray("CurrencyCode").getString(0) != "0") {
+						if (temprow.getCell(
+								Integer.parseInt(jsonObj.getJSONArray("CurrencyCode").getString(0)) - 1) == null) {
+							CurrencyCode = null;
+						} else {
+							CurrencyCode = row
+									.getCell(Integer.parseInt(jsonObj.getJSONArray("CurrencyCode").getString(0)) - 1)
+									.toString();
 						}
 					}
-					if(jsonObj.getJSONArray("InterchangeAccountNo").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("InterchangeAccountNo").getString(0))-1)==null)
-						{
-							InterchangeAccountNo=null;
-						}
-						else
-						{
-							InterchangeAccountNo=row.getCell(Integer.parseInt(jsonObj.getJSONArray("InterchangeAccountNo").getString(0))-1).toString();
-						}
-					}
-					if(jsonObj.getJSONArray("AcquirerID").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("AcquirerID").getString(0))-1)==null)
-						{
-							AcquirerID=null;
-						}
-						else
-						{
-							AcquirerID=row.getCell(Integer.parseInt(jsonObj.getJSONArray("AcquirerID").getString(0))-1).toString();
+					if (jsonObj.getJSONArray("CustBalance").getString(0) != "0") {
+						if (temprow.getCell(
+								Integer.parseInt(jsonObj.getJSONArray("CustBalance").getString(0)) - 1) == null) {
+							CustBalance = null;
+						} else {
+							CustBalance = row
+									.getCell(Integer.parseInt(jsonObj.getJSONArray("CustBalance").getString(0)) - 1)
+									.toString();
 						}
 					}
-					if(jsonObj.getJSONArray("AuthCode").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("AuthCode").getString(0))-1)==null)
-						{
-							AuthCode=null;
-						}
-						else
-						{
-							AuthCode=row.getCell(Integer.parseInt(jsonObj.getJSONArray("AuthCode").getString(0))-1).toString();
-						}
-					}
-					if(jsonObj.getJSONArray("Amount1").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount1").getString(0))-1)==null)
-						{
-							Amount1=null;
-						}
-						else
-						{
-							Amount1=row.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount1").getString(0))-1).toString();
+					if (jsonObj.getJSONArray("InterchangeBalance").getString(0) != "0") {
+						if (temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("InterchangeBalance").getString(0))
+								- 1) == null) {
+							InterchangeBalance = null;
+						} else {
+							InterchangeBalance = row.getCell(
+									Integer.parseInt(jsonObj.getJSONArray("InterchangeBalance").getString(0)) - 1)
+									.toString();
 						}
 					}
-					if(jsonObj.getJSONArray("ReserveField5").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("ReserveField5").getString(0))-1)==null)
-						{
-							ReserveField5=null;
-						}
-						else
-						{
-							ReserveField5=row.getCell(Integer.parseInt(jsonObj.getJSONArray("ReserveField5").getString(0))-1).toString();
-						}
-					}
-					if(jsonObj.getJSONArray("ReserveField1").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("ReserveField1").getString(0))-1)==null)
-						{
-							ReserveField1=null;
-						}
-						else
-						{
-							ReserveField1=row.getCell(Integer.parseInt(jsonObj.getJSONArray("ReserveField1").getString(0))-1).toString();
+					if (jsonObj.getJSONArray("ATMBalance").getString(0) != "0") {
+						if (temprow.getCell(
+								Integer.parseInt(jsonObj.getJSONArray("ATMBalance").getString(0)) - 1) == null) {
+							ATMBalance = null;
+						} else {
+							ATMBalance = row
+									.getCell(Integer.parseInt(jsonObj.getJSONArray("ATMBalance").getString(0)) - 1)
+									.toString();
 						}
 					}
-					if(jsonObj.getJSONArray("ProcessingCode").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("ProcessingCode").getString(0))-1)==null)
-						{
-							ProcessingCode=null;
-						}
-						else
-						{
-							ProcessingCode=row.getCell(Integer.parseInt(jsonObj.getJSONArray("ProcessingCode").getString(0))-1).toString();
-						}
-					}
-					if(jsonObj.getJSONArray("TxnsValueDateTime").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsValueDateTime").getString(0))-1)==null)
-						{
-							TxnsValueDateTime=null;
-						}
-						else
-						{
-							TxnsValueDateTime=row.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsValueDateTime").getString(0))-1).toString();
+					if (jsonObj.getJSONArray("BranchCode").getString(0) != "0") {
+						if (temprow.getCell(
+								Integer.parseInt(jsonObj.getJSONArray("BranchCode").getString(0)) - 1) == null) {
+							BranchCode = null;
+						} else {
+							BranchCode = row
+									.getCell(Integer.parseInt(jsonObj.getJSONArray("BranchCode").getString(0)) - 1)
+									.toString();
 						}
 					}
-					if(jsonObj.getJSONArray("TxnsDateTime").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsDateTime").getString(0))-1)==null)
-						{
-							TxnsDateTime=null;
-						}
-						else
-						{
-							TxnsDateTime=row.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsDateTime").getString(0))-1).toString();
-						}
-					}
-					if(jsonObj.getJSONArray("ReserveField3").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("ReserveField3").getString(0))-1)==null)
-						{
-							ReserveField3=null;
-						}
-						else
-						{
-							ReserveField3=row.getCell(Integer.parseInt(jsonObj.getJSONArray("ReserveField3").getString(0))-1).toString();
+					if (jsonObj.getJSONArray("InterchangeAccountNo").getString(0) != "0") {
+						if (temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("InterchangeAccountNo").getString(0))
+								- 1) == null) {
+							InterchangeAccountNo = null;
+						} else {
+							InterchangeAccountNo = row.getCell(
+									Integer.parseInt(jsonObj.getJSONArray("InterchangeAccountNo").getString(0)) - 1)
+									.toString();
 						}
 					}
-					if(jsonObj.getJSONArray("ReserveField4").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("ReserveField4").getString(0))-1)==null)
-						{
-							ReserveField4=null;
-						}
-						else
-						{
-							ReserveField4=row.getCell(Integer.parseInt(jsonObj.getJSONArray("ReserveField4").getString(0))-1).toString();
-						}
-					}
-					if(jsonObj.getJSONArray("TxnsNumber").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsNumber").getString(0))-1)==null)
-						{
-							TxnsNumber=null;
-						}
-						else
-						{
-							TxnsNumber=row.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsNumber").getString(0))-1).toString();
+					if (jsonObj.getJSONArray("AcquirerID").getString(0) != "0") {
+						if (temprow.getCell(
+								Integer.parseInt(jsonObj.getJSONArray("AcquirerID").getString(0)) - 1) == null) {
+							AcquirerID = null;
+						} else {
+							AcquirerID = row
+									.getCell(Integer.parseInt(jsonObj.getJSONArray("AcquirerID").getString(0)) - 1)
+									.toString();
 						}
 					}
-					if(jsonObj.getJSONArray("CustAccountNo").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("CustAccountNo").getString(0))-1)==null)
-						{
-							CustAccountNo=null;
-						}
-						else
-						{
-							CustAccountNo=row.getCell(Integer.parseInt(jsonObj.getJSONArray("CustAccountNo").getString(0))-1).toString();
+					if (jsonObj.getJSONArray("AuthCode").getString(0) != "0") {
+						if (temprow
+								.getCell(Integer.parseInt(jsonObj.getJSONArray("AuthCode").getString(0)) - 1) == null) {
+							AuthCode = null;
+						} else {
+							AuthCode = row.getCell(Integer.parseInt(jsonObj.getJSONArray("AuthCode").getString(0)) - 1)
+									.toString();
 						}
 					}
-					if(jsonObj.getJSONArray("TerminalID").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("TerminalID").getString(0))-1)==null)
-						{
-							TerminalID=null;
-						}
-						else
-						{
-							TerminalID=row.getCell(Integer.parseInt(jsonObj.getJSONArray("TerminalID").getString(0))-1).toString();
+					if (jsonObj.getJSONArray("Amount1").getString(0) != "0") {
+						if (temprow
+								.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount1").getString(0)) - 1) == null) {
+							Amount1 = null;
+						} else {
+							Amount1 = row.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount1").getString(0)) - 1)
+									.toString();
 						}
 					}
-					if(jsonObj.getJSONArray("TxnsPostDateTime").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsPostDateTime").getString(0))-1)==null)
-						{
-							TxnsPostDateTime=null;
-						}
-						else
-						{
-							TxnsPostDateTime=row.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsPostDateTime").getString(0))-1).toString();
-						}
-					}
-					if(jsonObj.getJSONArray("TxnsDate").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsDate").getString(0))-1)==null)
-						{
-							TxnsDate=null;
-						}
-						else
-						{
-							TxnsDate=row.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsDate").getString(0))-1).toString();
+					if (jsonObj.getJSONArray("ReserveField5").getString(0) != "0") {
+						if (temprow.getCell(
+								Integer.parseInt(jsonObj.getJSONArray("ReserveField5").getString(0)) - 1) == null) {
+							ReserveField5 = null;
+						} else {
+							ReserveField5 = row
+									.getCell(Integer.parseInt(jsonObj.getJSONArray("ReserveField5").getString(0)) - 1)
+									.toString();
 						}
 					}
-					if(jsonObj.getJSONArray("TxnsTime").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsTime").getString(0))-1)==null)
-						{
-							TxnsTime=null;
-						}
-						else
-						{
-							TxnsTime=row.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsTime").getString(0))-1).toString();
-						}
-					}
-					if(jsonObj.getJSONArray("ReferenceNumber").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("ReferenceNumber").getString(0))-1)==null)
-						{
-							ReferenceNumber=null;
-						}
-						else
-						{
-							ReferenceNumber=row.getCell(Integer.parseInt(jsonObj.getJSONArray("ReferenceNumber").getString(0))-1).toString();
+					if (jsonObj.getJSONArray("ReserveField1").getString(0) != "0") {
+						if (temprow.getCell(
+								Integer.parseInt(jsonObj.getJSONArray("ReserveField1").getString(0)) - 1) == null) {
+							ReserveField1 = null;
+						} else {
+							ReserveField1 = row
+									.getCell(Integer.parseInt(jsonObj.getJSONArray("ReserveField1").getString(0)) - 1)
+									.toString();
 						}
 					}
-					if(jsonObj.getJSONArray("CardNumber").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("CardNumber").getString(0))-1)==null)
-						{
-							CardNumber=null;
-						}
-						else
-						{
-							CardNumber=row.getCell(Integer.parseInt(jsonObj.getJSONArray("CardNumber").getString(0))-1).toString();
-						}
-					}
-					if(jsonObj.getJSONArray("TxnsAmount").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsAmount").getString(0))-1)==null)
-						{
-							TxnsAmount=null;
-						}
-						else
-						{
-							TxnsAmount=row.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsAmount").getString(0))-1).toString();
+					if (jsonObj.getJSONArray("ProcessingCode").getString(0) != "0") {
+						if (temprow.getCell(
+								Integer.parseInt(jsonObj.getJSONArray("ProcessingCode").getString(0)) - 1) == null) {
+							ProcessingCode = null;
+						} else {
+							ProcessingCode = row
+									.getCell(Integer.parseInt(jsonObj.getJSONArray("ProcessingCode").getString(0)) - 1)
+									.toString();
 						}
 					}
-					if(jsonObj.getJSONArray("TxnsSubType").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsSubType").getString(0))-1)==null)
-						{
-							TxnsSubType=null;
-						}
-						else
-						{
-							TxnsSubType=row.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsSubType").getString(0))-1).toString();
-						}
-					}
-					if(jsonObj.getJSONArray("ReserveField2").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("ReserveField2").getString(0))-1)==null)
-						{
-							ReserveField2=null;
-						}
-						else
-						{
-							ReserveField2=row.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsSubType").getString(0))-1).toString();
+					if (jsonObj.getJSONArray("TxnsValueDateTime").getString(0) != "0") {
+						if (temprow.getCell(
+								Integer.parseInt(jsonObj.getJSONArray("TxnsValueDateTime").getString(0)) - 1) == null) {
+							TxnsValueDateTime = null;
+						} else {
+							TxnsValueDateTime = row.getCell(
+									Integer.parseInt(jsonObj.getJSONArray("TxnsValueDateTime").getString(0)) - 1)
+									.toString();
 						}
 					}
-					if(jsonObj.getJSONArray("ResponseCode1").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("ResponseCode1").getString(0))-1)==null)
-						{
-							ResponseCode1=null;
+					if (jsonObj.getJSONArray("TxnsDateTime").getString(0) != "0") {
+						if (temprow.getCell(
+								Integer.parseInt(jsonObj.getJSONArray("TxnsDateTime").getString(0)) - 1) == null) {
+							TxnsDateTime = null;
+						} else {
+							TxnsDateTime = row
+									.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsDateTime").getString(0)) - 1)
+									.toString();
 						}
-						else
-						{
-							ResponseCode1=row.getCell(Integer.parseInt(jsonObj.getJSONArray("ResponseCode1").getString(0))-1).toString();
+						TxnsDateTime=TxnsDateTime.replace("AM", "").replace("PM", "");
+					}
+					if (jsonObj.getJSONArray("ReserveField3").getString(0) != "0") {
+						if (temprow.getCell(
+								Integer.parseInt(jsonObj.getJSONArray("ReserveField3").getString(0)) - 1) == null) {
+							ReserveField3 = null;
+						} else {
+							ReserveField3 = row
+									.getCell(Integer.parseInt(jsonObj.getJSONArray("ReserveField3").getString(0)) - 1)
+									.toString();
 						}
 					}
-					if(jsonObj.getJSONArray("ReversalCode1").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("ReversalCode1").getString(0))-1)==null)
-						{
-							ReversalCode1=null;
-						}
-						else
-						{
-							ReversalCode1=row.getCell(Integer.parseInt(jsonObj.getJSONArray("ReversalCode1").getString(0))-1).toString();
-						}
-					}
-					if(jsonObj.getJSONArray("ChannelType").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("ChannelType").getString(0))-1)==null)
-						{
-							ChannelType=null;
-						}
-						else
-						{
-							ChannelType=row.getCell(Integer.parseInt(jsonObj.getJSONArray("ChannelType").getString(0))-1).toString();
+					if (jsonObj.getJSONArray("ReserveField4").getString(0) != "0") {
+						if (temprow.getCell(
+								Integer.parseInt(jsonObj.getJSONArray("ReserveField4").getString(0)) - 1) == null) {
+							ReserveField4 = null;
+						} else {
+							ReserveField4 = row
+									.getCell(Integer.parseInt(jsonObj.getJSONArray("ReserveField4").getString(0)) - 1)
+									.toString();
 						}
 					}
-					if(jsonObj.getJSONArray("DrCrType").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("DrCrType").getString(0))-1)==null)
-						{
-							DrCrType=null;
-						}
-						else
-						{
-							DrCrType=row.getCell(Integer.parseInt(jsonObj.getJSONArray("DrCrType").getString(0))-1).toString();
-						}
-					}
-					if(jsonObj.getJSONArray("TxnsPerticulars").getString(0)!="0")
-					{
-						if(temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsPerticulars").getString(0))-1)==null)
-						{
-							TxnsPerticulars=null;
-						}
-						else
-						{
-							TxnsPerticulars=row.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsPerticulars").getString(0))-1).toString();
+					if (jsonObj.getJSONArray("TxnsNumber").getString(0) != "0") {
+						if (temprow.getCell(
+								Integer.parseInt(jsonObj.getJSONArray("TxnsNumber").getString(0)) - 1) == null) {
+							TxnsNumber = null;
+						} else {
+							TxnsNumber = row
+									.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsNumber").getString(0)) - 1)
+									.toString();
 						}
 					}
-					System.out.println("Terminal_ID   :"+TerminalID);
-					System.out.println("TxnsSubType   :"+TxnsSubType);
-					System.out.println("ReferenceNumber   :"+ReferenceNumber);
+					if (jsonObj.getJSONArray("CustAccountNo").getString(0) != "0") {
+						if (temprow.getCell(
+								Integer.parseInt(jsonObj.getJSONArray("CustAccountNo").getString(0)) - 1) == null) {
+							CustAccountNo = null;
+						} else {
+							CustAccountNo = row
+									.getCell(Integer.parseInt(jsonObj.getJSONArray("CustAccountNo").getString(0)) - 1)
+									.toString();
+						}
+					}
+					if (jsonObj.getJSONArray("TerminalID").getString(0) != "0") {
+						if (temprow.getCell(
+								Integer.parseInt(jsonObj.getJSONArray("TerminalID").getString(0)) - 1) == null) {
+							TerminalID = null;
+						} else {
+							TerminalID = row
+									.getCell(Integer.parseInt(jsonObj.getJSONArray("TerminalID").getString(0)) - 1)
+									.toString();
+						}
+						if (TerminalID.length() < 8) {
+							String concatStr = "00000000" + TerminalID;
+							TerminalID = concatStr.substring(concatStr.length() - 8);
+						}
+					}
+					if (jsonObj.getJSONArray("TxnsPostDateTime").getString(0) != "0") {
+						if (temprow.getCell(
+								Integer.parseInt(jsonObj.getJSONArray("TxnsPostDateTime").getString(0)) - 1) == null) {
+							TxnsPostDateTime = null;
+						} else {
+							TxnsPostDateTime = row
+									.getCell(
+											Integer.parseInt(jsonObj.getJSONArray("TxnsPostDateTime").getString(0)) - 1)
+									.toString();
+						}
+						TxnsPostDateTime=TxnsPostDateTime.replace("AM", "").replace("PM", "");
+					}
+					if (jsonObj.getJSONArray("TxnsDate").getString(0) != "0") {
+						if (temprow
+								.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsDate").getString(0)) - 1) == null) {
+							TxnsDate = null;
+						} else {
+							TxnsDate = row.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsDate").getString(0)) - 1)
+									.toString();
+						}
+					}
+					if (jsonObj.getJSONArray("TxnsTime").getString(0) != "0") {
+						if (temprow
+								.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsTime").getString(0)) - 1) == null) {
+							TxnsTime = null;
+						} else {
+							TxnsTime = row.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsTime").getString(0)) - 1)
+									.toString();
+						}
+					}
+					if (jsonObj.getJSONArray("ReferenceNumber").getString(0) != "0") {
+						if (temprow.getCell(
+								Integer.parseInt(jsonObj.getJSONArray("ReferenceNumber").getString(0)) - 1) == null) {
+							ReferenceNumber = null;
+						} else {
+							ReferenceNumber = row
+									.getCell(Integer.parseInt(jsonObj.getJSONArray("ReferenceNumber").getString(0)) - 1)
+									.toString();
+						}
+
+						if (ReferenceNumber.length() < 6) {
+							String concatStr = "000000" + ReferenceNumber;
+							ReferenceNumber = concatStr.substring(concatStr.length() - 6);
+						}
+
+					}
+					if (jsonObj.getJSONArray("CardNumber").getString(0) != "0") {
+						if (temprow.getCell(
+								Integer.parseInt(jsonObj.getJSONArray("CardNumber").getString(0)) - 1) == null) {
+							CardNumber = null;
+						} else {
+							CardNumber = row
+									.getCell(Integer.parseInt(jsonObj.getJSONArray("CardNumber").getString(0)) - 1)
+									.toString();
+						}
+					}
+					if (jsonObj.getJSONArray("TxnsAmount").getString(0) != "0") {
+						if (temprow.getCell(
+								Integer.parseInt(jsonObj.getJSONArray("TxnsAmount").getString(0)) - 1) == null) {
+							TxnsAmount = null;
+						} else {
+							TxnsAmount = row
+									.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsAmount").getString(0)) - 1)
+									.toString();
+						}
+					}
+					if (jsonObj.getJSONArray("TxnsSubType").getString(0) != "0") {
+						if (temprow.getCell(
+								Integer.parseInt(jsonObj.getJSONArray("TxnsSubType").getString(0)) - 1) == null) {
+							TxnsSubType = null;
+						} else {
+							TxnsSubType = row
+									.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsSubType").getString(0)) - 1)
+									.toString();
+						}
+					}
+					if (jsonObj.getJSONArray("ReserveField2").getString(0) != "0") {
+						if (temprow.getCell(
+								Integer.parseInt(jsonObj.getJSONArray("ReserveField2").getString(0)) - 1) == null) {
+							ReserveField2 = null;
+						} else {
+							ReserveField2 = row
+									.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsSubType").getString(0)) - 1)
+									.toString();
+						}
+					}
+					if (jsonObj.getJSONArray("ResponseCode1").getString(0) != "0") {
+						if (temprow.getCell(
+								Integer.parseInt(jsonObj.getJSONArray("ResponseCode1").getString(0)) - 1) == null) {
+							ResponseCode1 = null;
+						} else {
+							ResponseCode1 = row
+									.getCell(Integer.parseInt(jsonObj.getJSONArray("ResponseCode1").getString(0)) - 1)
+									.toString();
+						}
+					}
+					if (jsonObj.getJSONArray("ReversalCode1").getString(0) != "0") {
+						if (temprow.getCell(
+								Integer.parseInt(jsonObj.getJSONArray("ReversalCode1").getString(0)) - 1) == null) {
+							ReversalCode1 = null;
+						} else {
+							ReversalCode1 = row
+									.getCell(Integer.parseInt(jsonObj.getJSONArray("ReversalCode1").getString(0)) - 1)
+									.toString();
+						}
+					}
+					if (jsonObj.getJSONArray("ChannelType").getString(0) != "0") {
+						if (temprow.getCell(
+								Integer.parseInt(jsonObj.getJSONArray("ChannelType").getString(0)) - 1) == null) {
+							ChannelType = null;
+						} else {
+							ChannelType = row
+									.getCell(Integer.parseInt(jsonObj.getJSONArray("ChannelType").getString(0)) - 1)
+									.toString();
+						}
+					}
+					if (jsonObj.getJSONArray("DrCrType").getString(0) != "0") {
+						if (temprow
+								.getCell(Integer.parseInt(jsonObj.getJSONArray("DrCrType").getString(0)) - 1) == null) {
+							DrCrType = null;
+						} else {
+							DrCrType = row.getCell(Integer.parseInt(jsonObj.getJSONArray("DrCrType").getString(0)) - 1)
+									.toString();
+						}
+					}
+					if (jsonObj.getJSONArray("TxnsPerticulars").getString(0) != "0") {
+						if (temprow.getCell(
+								Integer.parseInt(jsonObj.getJSONArray("TxnsPerticulars").getString(0)) - 1) == null) {
+							TxnsPerticulars = null;
+						} else {
+							TxnsPerticulars = row
+									.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsPerticulars").getString(0)) - 1)
+									.toString();
+						}
+					}
+					System.out.println("Terminal_ID   :" + TerminalID);
+					System.out.println("TxnsPerticulars   :" + TxnsPerticulars);
+					System.out.println("TxnsDateTime   :" + TxnsDateTime);
+					System.out.println("ReferenceNumber   :" + ReferenceNumber);
 				}
 //				StoredProcedureQuery query = entityManager.createStoredProcedureQuery("spbulkinsertcbsdatadbbl");
 //				query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
@@ -3868,220 +3860,892 @@ public class Trace_DAO_Imp implements Trace_DAO {
 //
 //				query.execute();
 
-			
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 
 		}
 		return null;
 	}
-	
+
+//	@Override
+//	public List<JSONObject> importSwitchFile(MultipartFile sw, String clientid, String createdby) {
+//
+//		String ext = FilenameUtils.getExtension(sw.getOriginalFilename());
+//		List ejTemp = new ArrayList();
+//		List<EjModel> temp = new ArrayList<>();
+//
+//		String FileDate = sw.getOriginalFilename().substring(sw.getOriginalFilename().length() - 14,
+//				sw.getOriginalFilename().length() - 4);
+//		if (ext.equalsIgnoreCase("xls") || ext.equalsIgnoreCase("xlsx") || ext.equalsIgnoreCase("csv")) {
+//
+//			try {
+//				String Trans_Source = null, Trans_Mode = null, Trans_Type = null, Processing_Code = null,
+//						Trans_Amt = null, CardNumber = null, Stan = null, Trans_Date_Time = null,
+//						Acquirer_Inst_Code = null, Rec_Inst_Code = null, RRN = null, Auth_Code = null, Resp_Code = null,
+//						Terminal_ID = null, Terminal_Location = null, From_Account_Number = null,
+//						To_Account_Number = null, Trans_Cycle = null, Trans_Status = null, file_Description1 = null,
+//						file_Description2 = null;
+//				List xlstermList = new ArrayList();
+//
+//				String ChannelID = null;
+//				String ModeID = null;
+//				String TerminalId = null, ReferenceNumber = null, CustAccountNo = null;
+//				String ATMAccountNo = null, TxnsDateTime = null, TxnsAmount = null, Amount1 = null, Amount2 = null;
+//				String Amount3 = null, TxnsStatus = null, TxnsType = null, TxnsSubType = null, TxnsEntryType = null;
+//				String TxnsNumber = null, TxnsPerticulars = null, DrCrType = null, ResponseCode = null,
+//						ReversalFlag = null;
+//				String TxnsPostDateTime = null, TxnsValueDateTime = null, AuthCode = null, ProcessingCode = null,
+//						FeeAmount = null;
+//				String CurrencyCode = null, CustBalance = null, ATMBalance = null, BranchCode = null;
+//				String ReserveField1 = null, ReserveField2 = null, ReserveField3 = null, ReserveField4 = null,
+//						ReserveField5 = null;
+//				String RevEntryLeg = null, NoOfDuplicate = null, FileName = null, FilePath = null;
+//				String CreatedOn = null, ModifiedOn = null, CreatedBy = null, ModifiedBy = null, stan = null;
+//				String InterchangeAccountNo = null, InterchangeBalance = null;
+//				HSSFWorkbook wb = new HSSFWorkbook(sw.getInputStream());
+//				HSSFSheet sheet = wb.getSheetAt(0);
+//				BranchEntry be = new BranchEntry();
+//				Iterator<Row> itr = sheet.iterator();
+//				HSSFCell cell = null;
+//				HSSFRow tempRow = null;
+//				while (itr.hasNext()) {
+//					Row row = itr.next();
+//
+//					tempRow = sheet.getRow(row.getRowNum());
+//					int tempCountRow = row.getPhysicalNumberOfCells();
+//					if (row.getRowNum() < 3) {
+//						continue;
+//					} else {
+//						if (tempRow.getCell(0) == null) {
+//							Trans_Source = null;
+//						} else {
+//							Trans_Source = row.getCell(0).toString();
+//						}
+//						if (tempRow.getCell(1) == null) {
+//							Trans_Mode = null;
+//						} else {
+//							Trans_Mode = row.getCell(1).toString();
+//						}
+//						if (tempRow.getCell(2) == null) {
+//							Trans_Type = null;
+//						} else {
+//							Trans_Type = row.getCell(2).toString();
+//						}
+//						if (tempRow.getCell(3) == null) {
+//							Processing_Code = null;
+//						} else {
+//							Processing_Code = row.getCell(3).toString();
+//						}
+//						if (tempRow.getCell(4) == null) {
+//							Trans_Amt = null;
+//						} else {
+//							Trans_Amt = row.getCell(4).toString();
+//						}
+//						if (tempRow.getCell(5) == null) {
+//							CardNumber = null;
+//						} else {
+//							CardNumber = row.getCell(5).toString();
+//						}
+//						if (tempRow.getCell(6) == null) {
+//							Stan = null;
+//						} else {
+//							Stan = row.getCell(6).toString();
+//						}
+//						if (tempRow.getCell(7) == null) {
+//							Trans_Date_Time = null;
+//						} else {
+//							Trans_Date_Time = row.getCell(7).toString();
+//						}
+//						if (tempRow.getCell(8) == null) {
+//							Acquirer_Inst_Code = null;
+//						} else {
+//							Acquirer_Inst_Code = row.getCell(8).toString();
+//						}
+//						if (tempRow.getCell(9) == null) {
+//							Rec_Inst_Code = null;
+//						} else {
+//							Rec_Inst_Code = row.getCell(9).toString();
+//						}
+//						if (tempRow.getCell(10) == null) {
+//							RRN = null;
+//						} else {
+//							RRN = row.getCell(10).toString();
+//						}
+//						if (tempRow.getCell(11) == null) {
+//							Auth_Code = null;
+//						} else {
+//							Auth_Code = row.getCell(11).toString();
+//						}
+//						if (tempRow.getCell(12) == null) {
+//							Resp_Code = null;
+//						} else {
+//							Resp_Code = row.getCell(12).toString();
+//						}
+//						if (tempRow.getCell(13) == null) {
+//							Terminal_ID = null;
+//						} else {
+//							Terminal_ID = row.getCell(13).toString();
+//						}
+//						if (tempRow.getCell(14) == null) {
+//							Terminal_Location = null;
+//						} else {
+//							Terminal_Location = row.getCell(14).toString();
+//						}
+//						if (tempRow.getCell(15) == null) {
+//							From_Account_Number = null;
+//						} else {
+//							From_Account_Number = row.getCell(15).toString();
+//						}
+//						if (tempRow.getCell(16) == null) {
+//							To_Account_Number = null;
+//						} else {
+//							To_Account_Number = row.getCell(16).toString();
+//						}
+//						if (tempRow.getCell(17) == null) {
+//							Trans_Cycle = null;
+//						} else {
+//							Trans_Cycle = row.getCell(17).toString();
+//						}
+//						if (tempRow.getCell(18) == null) {
+//							Trans_Status = null;
+//						} else {
+//							Trans_Status = row.getCell(18).toString();
+//						}
+//
+//						StoredProcedureQuery query = entityManager.createStoredProcedureQuery("spinsertswitchdata");
+//						query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
+//						query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
+//						query.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
+//						query.registerStoredProcedureParameter(4, String.class, ParameterMode.IN);
+//						query.registerStoredProcedureParameter(5, String.class, ParameterMode.IN);
+//						query.registerStoredProcedureParameter(6, String.class, ParameterMode.IN);
+//						query.registerStoredProcedureParameter(7, String.class, ParameterMode.IN);
+//						query.registerStoredProcedureParameter(8, String.class, ParameterMode.IN);
+//						query.registerStoredProcedureParameter(9, String.class, ParameterMode.IN);
+//						query.registerStoredProcedureParameter(10, String.class, ParameterMode.IN);
+//						query.registerStoredProcedureParameter(11, String.class, ParameterMode.IN);
+//						query.registerStoredProcedureParameter(12, String.class, ParameterMode.IN);
+//						query.registerStoredProcedureParameter(13, String.class, ParameterMode.IN);
+//						query.registerStoredProcedureParameter(14, String.class, ParameterMode.IN);
+//						query.registerStoredProcedureParameter(15, String.class, ParameterMode.IN);
+//						query.registerStoredProcedureParameter(16, String.class, ParameterMode.IN);
+//						query.registerStoredProcedureParameter(17, String.class, ParameterMode.IN);
+//						query.registerStoredProcedureParameter(18, String.class, ParameterMode.IN);
+//						query.registerStoredProcedureParameter(19, String.class, ParameterMode.IN);
+//						query.registerStoredProcedureParameter(20, String.class, ParameterMode.IN);
+//						query.registerStoredProcedureParameter(21, String.class, ParameterMode.IN);
+//						query.registerStoredProcedureParameter(22, String.class, ParameterMode.IN);
+//						query.registerStoredProcedureParameter(23, String.class, ParameterMode.IN);
+//
+//						query.setParameter(1, clientid);
+//						query.setParameter(2, Trans_Source);
+//						query.setParameter(3, Trans_Mode);
+//						query.setParameter(4, Trans_Type);
+//						query.setParameter(5, Processing_Code);
+//						query.setParameter(6, Trans_Amt);
+//						query.setParameter(7, CardNumber);
+//						query.setParameter(8, Stan);
+//						query.setParameter(9, Trans_Date_Time);
+//						query.setParameter(10, Acquirer_Inst_Code);
+//						query.setParameter(11, Rec_Inst_Code);
+//						query.setParameter(12, RRN);
+//						query.setParameter(13, Auth_Code);
+//						query.setParameter(14, Resp_Code);
+//						query.setParameter(15, Terminal_ID);
+//						query.setParameter(16, Terminal_Location);
+//						query.setParameter(17, From_Account_Number);
+//						query.setParameter(18, To_Account_Number);
+//						query.setParameter(19, Trans_Cycle);
+//						query.setParameter(20, Trans_Status);
+//						query.setParameter(21, sw.getOriginalFilename());
+//						query.setParameter(22, FileDate);
+//						query.setParameter(23, createdby);
+//
+//						query.execute();
+//
+//					}
+//
+//				}
+//			} catch (Exception e) {
+//
+//			}
+//		}
+//		return ejTemp;
+//	}
+
+	private List<JSONObject> getcbsIdentificationfileformatxml(String clientid, String fileTypeName) {
+		// TODO Auto-generated method stub
+		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("SPTESTFIELDDATA");
+		query.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
+//		query.registerStoredProcedureParameter(2, Integer.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(3, String.class, ParameterMode.REF_CURSOR);
+		query.setParameter(1, Integer.parseInt(clientid));
+//		query.setParameter(2, i);
+		query.setParameter(2, fileTypeName);
+		query.execute();
+		List<Object[]> result = query.getResultList();
+		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
+		for (Object record : result) {
+			Object[] fields = (Object[]) record;
+			JSONObject obj = new JSONObject();
+			obj.put("ClientID", fields[0]);
+			obj.put("VendorID", fields[1]);
+			obj.put("FormatID", fields[2]);
+			obj.put("TerminalCode", fields[3]);
+			obj.put("BIN_No", fields[4]);
+			obj.put("AcquirerID", fields[5]);
+			obj.put("ReversalCode1", fields[6]);
+			obj.put("ReversalCode2", fields[7]);
+			obj.put("ReversalCode3", fields[8]);
+			obj.put("ReversalType", fields[9]);
+			obj.put("TxnDateTime", fields[10]);
+			obj.put("TxnValueDateTime", fields[11]);
+			obj.put("TxnPostDateTime", fields[12]);
+			obj.put("ATMType", fields[13]);
+			obj.put("CDMType", fields[14]);
+			obj.put("POSType", fields[15]);
+			obj.put("ECOMType", fields[16]);
+			obj.put("IMPType", fields[17]);
+			obj.put("UPIType", fields[18]);
+			obj.put("MicroATMType", fields[19]);
+			obj.put("MobileRechargeType", fields[20]);
+			obj.put("BalanceEnquiry", fields[21]);
+			obj.put("MiniStatement", fields[22]);
+			obj.put("PinChange", fields[23]);
+			obj.put("ChequeBookReq", fields[24]);
+			obj.put("ResponseCode1", fields[25]);
+			obj.put("ResponseCode2", fields[26]);
+			obj.put("ResponseType", fields[27]);
+			obj.put("EODCode", fields[28]);
+			obj.put("OfflineCode", fields[29]);
+			obj.put("DebitCode", fields[30]);
+			obj.put("CreditCode", fields[31]);
+			obj.put("RevEntryLeg", fields[32]);
+			JSONObjects.add(obj);
+		}
+		return JSONObjects;
+	}
 
 	@Override
-	public List<JSONObject> importSwitchFile(MultipartFile sw, String clientid, String createdby) {
+	public List<JSONObject> importSwitchFile(MultipartFile sw, String clientid, String createdby, String fileTypeName)
+			throws IOException, SQLException, ParserConfigurationException, SAXException {
 
-		String ext = FilenameUtils.getExtension(sw.getOriginalFilename());
-		List ejTemp = new ArrayList();
-		List<EjModel> temp = new ArrayList<>();
+		Connection con = datasource.getConnection();
+		Map<String, Integer> hm = new HashMap<String, Integer>();
+		org.json.JSONObject jsonObj = new org.json.JSONObject();
 
-		String FileDate = sw.getOriginalFilename().substring(sw.getOriginalFilename().length() - 14,
-				sw.getOriginalFilename().length() - 4);
-		if (ext.equalsIgnoreCase("xls") || ext.equalsIgnoreCase("xlsx") || ext.equalsIgnoreCase("csv")) {
+		List<JSONObject> switchfileformatxml = getcbsswitchformatfileinxml(clientid, fileTypeName);
+		JSONObject xmlFormatDescription = switchfileformatxml.get(0);
+		String tempStr = xmlFormatDescription.get("FormatDescriptionXml").toString();
+		System.out.println("tempStr:" + tempStr);
 
-			try {
-				String Trans_Source = null, Trans_Mode = null, Trans_Type = null, Processing_Code = null,
-						Trans_Amt = null, CardNumber = null, Stan = null, Trans_Date_Time = null,
-						Acquirer_Inst_Code = null, Rec_Inst_Code = null, RRN = null, Auth_Code = null, Resp_Code = null,
-						Terminal_ID = null, Terminal_Location = null, From_Account_Number = null,
-						To_Account_Number = null, Trans_Cycle = null, Trans_Status = null, file_Description1 = null,
-						file_Description2 = null;
-				List xlstermList = new ArrayList();
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		DocumentBuilder db = dbf.newDocumentBuilder();
+		Document doc = db.parse(new InputSource(new StringReader(tempStr)));
+		doc.getDocumentElement().normalize();
+		NodeList nodeList = doc.getDocumentElement().getChildNodes();
+		System.out.println("nodelistLength" + nodeList.getLength());
+		for (int i = 0; i < nodeList.getLength(); i++) {
+			String nodeName = nodeList.item(i).getNodeName();
+			Node startPosNode = nodeList.item(i);
 
-				String ChannelID = null;
-				String ModeID = null;
-				String TerminalId = null, ReferenceNumber = null, CustAccountNo = null;
-				String ATMAccountNo = null, TxnsDateTime = null, TxnsAmount = null, Amount1 = null, Amount2 = null;
-				String Amount3 = null, TxnsStatus = null, TxnsType = null, TxnsSubType = null, TxnsEntryType = null;
-				String TxnsNumber = null, TxnsPerticulars = null, DrCrType = null, ResponseCode = null,
-						ReversalFlag = null;
-				String TxnsPostDateTime = null, TxnsValueDateTime = null, AuthCode = null, ProcessingCode = null,
-						FeeAmount = null;
-				String CurrencyCode = null, CustBalance = null, ATMBalance = null, BranchCode = null;
-				String ReserveField1 = null, ReserveField2 = null, ReserveField3 = null, ReserveField4 = null,
-						ReserveField5 = null;
-				String RevEntryLeg = null, NoOfDuplicate = null, FileName = null, FilePath = null;
-				String CreatedOn = null, ModifiedOn = null, CreatedBy = null, ModifiedBy = null, stan = null;
-				String InterchangeAccountNo = null, InterchangeBalance = null;
-				HSSFWorkbook wb = new HSSFWorkbook(sw.getInputStream());
-				HSSFSheet sheet = wb.getSheetAt(0);
-				BranchEntry be = new BranchEntry();
-				Iterator<Row> itr = sheet.iterator();
-				HSSFCell cell = null;
-				HSSFRow tempRow = null;
-				while (itr.hasNext()) {
-					Row row = itr.next();
+			NodeList startPosNodeValue = startPosNode.getChildNodes();
+			String nodeValue = startPosNodeValue.item(0).getNodeValue();
+			System.out.println("nodeName  " + nodeName + " " + "nodeValue " + nodeValue);
+//				hm.put(NodeName, nodeValue);
+			jsonObj.append(nodeName, nodeValue.toString());
+		}
+		System.out.println("Json:" + jsonObj.toString());
+		System.out.println("Terminal : " + jsonObj.getJSONArray("TerminalID").getString(0));
 
-					tempRow = sheet.getRow(row.getRowNum());
-					int tempCountRow = row.getPhysicalNumberOfCells();
-					if (row.getRowNum() < 3) {
-						continue;
+		HSSFWorkbook wb = new HSSFWorkbook(sw.getInputStream());
+		HSSFSheet sheet = wb.getSheetAt(0);
+		FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
+//			Map<Integer, String> hm = new HashedMap<Integer, String>();
+//			Row row1 = sheet.getRow(0);
+
+//			int tempcolindex = -1;
+//			String tempstr = null;
+//
+//			String Transdate = "";
+//			String Time = "";
+//			String Terminal_ID = "";
+//			String AccountNo = "";
+//			String CardNumber = "";
+//			String TraceNo = "";
+//			String Amount = "";
+//			String WithdrawalFlag = "";
+//			String Response = "";
+//			String ReversalFlag = "";
+//			String Db_Cr = "";
+//			String TransType = "";
+//			String MerchantType = "";
+//			String FileName = "";
+//			String FileDate = "";
+//
+//			String ChannelID = "";
+//			String ModeID = "";
+//			String CardType = "";
+//			String InterChangeAccNO = "";
+//			String ATMAccountNo = "";
+//			String Customer_Compensation_Cr = "";
+//			String Amount1 = "";
+//			String Amount2 = "";
+//			String Amount3 = "";
+//			String TxnsStatus = "";
+//			String TxnsEntryType = "";
+//			String TxnsNumber = "";
+//			String TxnsPostDateTime = "";
+//			String AuthCode = "";
+//			String FeeAmount = "";
+//			String CurrencyCode = "";
+//			String CustBalance = "";
+//			String InterchangeBalance = "";
+//			String ATMBalance = "";
+//			String BranchCode = "";
+//			String ReserveField1 = "";
+//			String ReserveField2 = "";
+//			String ReserveField3 = "";
+//			String ReserveField4 = "";
+//			String ReserveField5 = "";
+//			String RevEntryLeg = "";
+//			String NoOfDuplicate = "";
+//			String stan = "";
+//			String FilePath = "";
+//			String ProcessingCode = "";
+//			for (Cell cell : row1) {
+//				switch (formulaEvaluator.evaluateInCell(cell).getCellType()) {
+//				case Cell.CELL_TYPE_NUMERIC:
+//					tempstr = String.valueOf(cell.getNumericCellValue());
+//					tempcolindex = cell.getColumnIndex();
+//					hm.put(tempcolindex, tempstr);
+//					break;
+//				case Cell.CELL_TYPE_STRING:
+//					tempstr = cell.getStringCellValue();
+//					tempcolindex = cell.getColumnIndex();
+//					hm.put(tempcolindex, tempstr);
+//					break;
+//				}
+//			}
+		String ATMAccountNo = "";
+		String Amount1 = "";
+		String Amount2 = "";
+		String Amount3 = "";
+		String ResponseCode2 = "";
+		String ReversalCode2 = "";
+		String FeeAmount = "";
+		String CurrencyCode = "";
+		String CustBalance = "";
+		String InterchangeBalance = null;
+		String ATMBalance = null;
+		String BranchCode = null;
+		String InterchangeAccountNo = null;
+		String AcquirerID = null;
+		String AuthCode = null;
+		String ReserveField5 = null;
+		String ReserveField1 = null;
+		String ProcessingCode = null;
+		String TxnsValueDateTime = null;
+		String TxnsDateTime = null;
+		String ReserveField3 = null;
+		String ReserveField4 = null;
+		String TxnsNumber = null;
+		String CustAccountNo = null;
+		String TerminalID = null;
+		String TxnsPostDateTime = null;
+		String TxnsDate = null;
+		String TxnsTime = null;
+		String ReferenceNumber = null;
+		String CardNumber = null;
+		String TxnsAmount = null;
+		String TxnsSubType = null;
+		String ReserveField2 = null;
+		String ResponseCode1 = null;
+		String ReversalCode1 = null;
+		String ChannelType = null;
+		String DrCrType = null;
+		String TxnsPerticulars = null;
+		Iterator<Row> itr = sheet.iterator();
+		HSSFRow temprow = null;
+		while (itr.hasNext()) {
+			Row row = itr.next();
+			temprow = sheet.getRow(row.getRowNum());
+			if (row.getRowNum() < 3) {
+				continue;
+			} else {
+				if (jsonObj.getJSONArray("ATMAccountNo").getString(0) != "0") {
+					if (temprow
+							.getCell(Integer.parseInt(jsonObj.getJSONArray("ATMAccountNo").getString(0)) - 1) == null) {
+						ATMAccountNo = null;
 					} else {
-						if (tempRow.getCell(0) == null) {
-							Trans_Source = null;
-						} else {
-							Trans_Source = row.getCell(0).toString();
-						}
-						if (tempRow.getCell(1) == null) {
-							Trans_Mode = null;
-						} else {
-							Trans_Mode = row.getCell(1).toString();
-						}
-						if (tempRow.getCell(2) == null) {
-							Trans_Type = null;
-						} else {
-							Trans_Type = row.getCell(2).toString();
-						}
-						if (tempRow.getCell(3) == null) {
-							Processing_Code = null;
-						} else {
-							Processing_Code = row.getCell(3).toString();
-						}
-						if (tempRow.getCell(4) == null) {
-							Trans_Amt = null;
-						} else {
-							Trans_Amt = row.getCell(4).toString();
-						}
-						if (tempRow.getCell(5) == null) {
-							CardNumber = null;
-						} else {
-							CardNumber = row.getCell(5).toString();
-						}
-						if (tempRow.getCell(6) == null) {
-							Stan = null;
-						} else {
-							Stan = row.getCell(6).toString();
-						}
-						if (tempRow.getCell(7) == null) {
-							Trans_Date_Time = null;
-						} else {
-							Trans_Date_Time = row.getCell(7).toString();
-						}
-						if (tempRow.getCell(8) == null) {
-							Acquirer_Inst_Code = null;
-						} else {
-							Acquirer_Inst_Code = row.getCell(8).toString();
-						}
-						if (tempRow.getCell(9) == null) {
-							Rec_Inst_Code = null;
-						} else {
-							Rec_Inst_Code = row.getCell(9).toString();
-						}
-						if (tempRow.getCell(10) == null) {
-							RRN = null;
-						} else {
-							RRN = row.getCell(10).toString();
-						}
-						if (tempRow.getCell(11) == null) {
-							Auth_Code = null;
-						} else {
-							Auth_Code = row.getCell(11).toString();
-						}
-						if (tempRow.getCell(12) == null) {
-							Resp_Code = null;
-						} else {
-							Resp_Code = row.getCell(12).toString();
-						}
-						if (tempRow.getCell(13) == null) {
-							Terminal_ID = null;
-						} else {
-							Terminal_ID = row.getCell(13).toString();
-						}
-						if (tempRow.getCell(14) == null) {
-							Terminal_Location = null;
-						} else {
-							Terminal_Location = row.getCell(14).toString();
-						}
-						if (tempRow.getCell(15) == null) {
-							From_Account_Number = null;
-						} else {
-							From_Account_Number = row.getCell(15).toString();
-						}
-						if (tempRow.getCell(16) == null) {
-							To_Account_Number = null;
-						} else {
-							To_Account_Number = row.getCell(16).toString();
-						}
-						if (tempRow.getCell(17) == null) {
-							Trans_Cycle = null;
-						} else {
-							Trans_Cycle = row.getCell(17).toString();
-						}
-						if (tempRow.getCell(18) == null) {
-							Trans_Status = null;
-						} else {
-							Trans_Status = row.getCell(18).toString();
-						}
-
-						StoredProcedureQuery query = entityManager.createStoredProcedureQuery("spinsertswitchdata");
-						query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
-						query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
-						query.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
-						query.registerStoredProcedureParameter(4, String.class, ParameterMode.IN);
-						query.registerStoredProcedureParameter(5, String.class, ParameterMode.IN);
-						query.registerStoredProcedureParameter(6, String.class, ParameterMode.IN);
-						query.registerStoredProcedureParameter(7, String.class, ParameterMode.IN);
-						query.registerStoredProcedureParameter(8, String.class, ParameterMode.IN);
-						query.registerStoredProcedureParameter(9, String.class, ParameterMode.IN);
-						query.registerStoredProcedureParameter(10, String.class, ParameterMode.IN);
-						query.registerStoredProcedureParameter(11, String.class, ParameterMode.IN);
-						query.registerStoredProcedureParameter(12, String.class, ParameterMode.IN);
-						query.registerStoredProcedureParameter(13, String.class, ParameterMode.IN);
-						query.registerStoredProcedureParameter(14, String.class, ParameterMode.IN);
-						query.registerStoredProcedureParameter(15, String.class, ParameterMode.IN);
-						query.registerStoredProcedureParameter(16, String.class, ParameterMode.IN);
-						query.registerStoredProcedureParameter(17, String.class, ParameterMode.IN);
-						query.registerStoredProcedureParameter(18, String.class, ParameterMode.IN);
-						query.registerStoredProcedureParameter(19, String.class, ParameterMode.IN);
-						query.registerStoredProcedureParameter(20, String.class, ParameterMode.IN);
-						query.registerStoredProcedureParameter(21, String.class, ParameterMode.IN);
-						query.registerStoredProcedureParameter(22, String.class, ParameterMode.IN);
-						query.registerStoredProcedureParameter(23, String.class, ParameterMode.IN);
-
-						query.setParameter(1, clientid);
-						query.setParameter(2, Trans_Source);
-						query.setParameter(3, Trans_Mode);
-						query.setParameter(4, Trans_Type);
-						query.setParameter(5, Processing_Code);
-						query.setParameter(6, Trans_Amt);
-						query.setParameter(7, CardNumber);
-						query.setParameter(8, Stan);
-						query.setParameter(9, Trans_Date_Time);
-						query.setParameter(10, Acquirer_Inst_Code);
-						query.setParameter(11, Rec_Inst_Code);
-						query.setParameter(12, RRN);
-						query.setParameter(13, Auth_Code);
-						query.setParameter(14, Resp_Code);
-						query.setParameter(15, Terminal_ID);
-						query.setParameter(16, Terminal_Location);
-						query.setParameter(17, From_Account_Number);
-						query.setParameter(18, To_Account_Number);
-						query.setParameter(19, Trans_Cycle);
-						query.setParameter(20, Trans_Status);
-						query.setParameter(21, sw.getOriginalFilename());
-						query.setParameter(22, FileDate);
-						query.setParameter(23, createdby);
-
-						query.execute();
-
+						ATMAccountNo = row
+								.getCell(Integer.parseInt(jsonObj.getJSONArray("ATMAccountNo").getString(0)) - 1)
+								.toString();
 					}
-
 				}
-			} catch (Exception e) {
+				if (jsonObj.getJSONArray("TxnsDate").getString(0) != "0") {
+					if (temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsDate").getString(0)) - 1) == null) {
+						TxnsDate = null;
+					} else {
+						TxnsDate = row.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsDate").getString(0)) - 1)
+								.toString();
+					}
+				}
+
+				if (jsonObj.getJSONArray("TxnsTime").getString(0) != "0") {
+					if (temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsTime").getString(0)) - 1) == null) {
+						TxnsTime = null;
+					} else {
+						TxnsTime = row.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsTime").getString(0)) - 1)
+								.toString();
+					}
+				}
+
+				if (jsonObj.getJSONArray("Amount2").getString(0) != "0") {
+					if (temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount2").getString(0)) - 1) == null) {
+						Amount2 = null;
+					} else {
+						Amount2 = row.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount2").getString(0)) - 1)
+								.toString();
+					}
+				}
+
+				if (jsonObj.getJSONArray("Amount3").getString(0) != "0") {
+					if (temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount3").getString(0)) - 1) == null) {
+						Amount3 = null;
+					} else {
+						Amount3 = row.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount3").getString(0)) - 1)
+								.toString();
+					}
+				}
+
+				if (jsonObj.getJSONArray("DrCrType").getString(0) != "0") {
+					if (temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("DrCrType").getString(0)) - 1) == null) {
+						DrCrType = null;
+					} else {
+						DrCrType = row.getCell(Integer.parseInt(jsonObj.getJSONArray("DrCrType").getString(0)) - 1)
+								.toString();
+					}
+				}
+
+				if (jsonObj.getJSONArray("ResponseCode2").getString(0) != "0") {
+					if (temprow.getCell(
+							Integer.parseInt(jsonObj.getJSONArray("ResponseCode2").getString(0)) - 1) == null) {
+						ResponseCode2 = null;
+					} else {
+						ResponseCode2 = row
+								.getCell(Integer.parseInt(jsonObj.getJSONArray("ResponseCode2").getString(0)) - 1)
+								.toString();
+					}
+				}
+				if (jsonObj.getJSONArray("ReversalCode2").getString(0) != "0") {
+					if (temprow.getCell(
+							Integer.parseInt(jsonObj.getJSONArray("ReversalCode2").getString(0)) - 1) == null) {
+						ReversalCode2 = null;
+					} else {
+						ReversalCode2 = row
+								.getCell(Integer.parseInt(jsonObj.getJSONArray("ReversalCode2").getString(0)) - 1)
+								.toString();
+					}
+				}
+				if (jsonObj.getJSONArray("TxnsPostDateTime").getString(0) != "0") {
+					if (temprow.getCell(
+							Integer.parseInt(jsonObj.getJSONArray("TxnsPostDateTime").getString(0)) - 1) == null) {
+						TxnsPostDateTime = null;
+					} else {
+						TxnsPostDateTime = row
+								.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsPostDateTime").getString(0)) - 1)
+								.toString();
+					}
+				}
+				if (jsonObj.getJSONArray("TxnsValueDateTime").getString(0) != "0") {
+					if (temprow.getCell(
+							Integer.parseInt(jsonObj.getJSONArray("TxnsValueDateTime").getString(0)) - 1) == null) {
+						TxnsValueDateTime = null;
+					} else {
+						TxnsValueDateTime = row
+								.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsValueDateTime").getString(0)) - 1)
+								.toString();
+					}
+				}
+
+				if (jsonObj.getJSONArray("FeeAmount").getString(0) != "0") {
+					if (temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("FeeAmount").getString(0)) - 1) == null) {
+						FeeAmount = null;
+					} else {
+						FeeAmount = row.getCell(Integer.parseInt(jsonObj.getJSONArray("FeeAmount").getString(0)) - 1)
+								.toString();
+					}
+				}
+
+				if (jsonObj.getJSONArray("CurrencyCode").getString(0) != "0") {
+					if (temprow
+							.getCell(Integer.parseInt(jsonObj.getJSONArray("CurrencyCode").getString(0)) - 1) == null) {
+						CurrencyCode = null;
+					} else {
+						CurrencyCode = row
+								.getCell(Integer.parseInt(jsonObj.getJSONArray("CurrencyCode").getString(0)) - 1)
+								.toString();
+					}
+				}
+
+				if (jsonObj.getJSONArray("CustBalance").getString(0) != "0") {
+					if (temprow
+							.getCell(Integer.parseInt(jsonObj.getJSONArray("CustBalance").getString(0)) - 1) == null) {
+						CustBalance = null;
+					} else {
+						CustBalance = row
+								.getCell(Integer.parseInt(jsonObj.getJSONArray("CustBalance").getString(0)) - 1)
+								.toString();
+					}
+				}
+
+				if (jsonObj.getJSONArray("InterchangeBalance").getString(0) != "0") {
+					if (temprow.getCell(
+							Integer.parseInt(jsonObj.getJSONArray("InterchangeBalance").getString(0)) - 1) == null) {
+						InterchangeBalance = null;
+					} else {
+						InterchangeBalance = row
+								.getCell(Integer.parseInt(jsonObj.getJSONArray("InterchangeBalance").getString(0)) - 1)
+								.toString();
+					}
+				}
+
+				if (jsonObj.getJSONArray("ATMBalance").getString(0) != "0") {
+					if (temprow
+							.getCell(Integer.parseInt(jsonObj.getJSONArray("ATMBalance").getString(0)) - 1) == null) {
+						ATMBalance = null;
+					} else {
+						ATMBalance = row.getCell(Integer.parseInt(jsonObj.getJSONArray("ATMBalance").getString(0)) - 1)
+								.toString();
+					}
+				}
+
+				if (jsonObj.getJSONArray("BranchCode").getString(0) != "0") {
+					if (temprow
+							.getCell(Integer.parseInt(jsonObj.getJSONArray("BranchCode").getString(0)) - 1) == null) {
+						BranchCode = null;
+					} else {
+						BranchCode = row.getCell(Integer.parseInt(jsonObj.getJSONArray("BranchCode").getString(0)) - 1)
+								.toString();
+					}
+				}
+
+				if (jsonObj.getJSONArray("ReversalCode1").getString(0) != "0") {
+					if (temprow.getCell(
+							Integer.parseInt(jsonObj.getJSONArray("ReversalCode1").getString(0)) - 1) == null) {
+						ReversalCode1 = null;
+					} else {
+						ReversalCode1 = row
+								.getCell(Integer.parseInt(jsonObj.getJSONArray("ReversalCode1").getString(0)) - 1)
+								.toString();
+					}
+				}
+
+				if (jsonObj.getJSONArray("Amount1").getString(0) != "0") {
+					if (temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount1").getString(0)) - 1) == null) {
+						Amount1 = null;
+					} else {
+						Amount1 = row.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount1").getString(0)) - 1)
+								.toString();
+					}
+				}
+
+				if (jsonObj.getJSONArray("InterchangeAccountNo").getString(0) != "0") {
+					if (temprow.getCell(
+							Integer.parseInt(jsonObj.getJSONArray("InterchangeAccountNo").getString(0)) - 1) == null) {
+						InterchangeAccountNo = null;
+					} else {
+						InterchangeAccountNo = row
+								.getCell(
+										Integer.parseInt(jsonObj.getJSONArray("InterchangeAccountNo").getString(0)) - 1)
+								.toString();
+					}
+				}
+
+				if (jsonObj.getJSONArray("ReserveField5").getString(0) != "0") {
+					if (temprow.getCell(
+							Integer.parseInt(jsonObj.getJSONArray("ReserveField5").getString(0)) - 1) == null) {
+						ReserveField5 = null;
+					} else {
+						ReserveField5 = row
+								.getCell(Integer.parseInt(jsonObj.getJSONArray("ReserveField5").getString(0)) - 1)
+								.toString();
+					}
+				}
+
+				if (jsonObj.getJSONArray("ChannelType").getString(0) != "0") {
+					if (temprow
+							.getCell(Integer.parseInt(jsonObj.getJSONArray("ChannelType").getString(0)) - 1) == null) {
+						ChannelType = null;
+					} else {
+						ChannelType = row
+								.getCell(Integer.parseInt(jsonObj.getJSONArray("ChannelType").getString(0)) - 1)
+								.toString();
+					}
+				}
+
+				if (jsonObj.getJSONArray("ReserveField4").getString(0) != "0") {
+					if (temprow.getCell(
+							Integer.parseInt(jsonObj.getJSONArray("ReserveField4").getString(0)) - 1) == null) {
+						ReserveField4 = null;
+					} else {
+						ReserveField4 = row
+								.getCell(Integer.parseInt(jsonObj.getJSONArray("ReserveField4").getString(0)) - 1)
+								.toString();
+					}
+				}
+
+				if (jsonObj.getJSONArray("TxnsSubType").getString(0) != "0") {
+					if (temprow
+							.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsSubType").getString(0)) - 1) == null) {
+						TxnsSubType = null;
+					} else {
+						TxnsSubType = row
+								.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsSubType").getString(0)) - 1)
+								.toString();
+					}
+				}
+
+				if (jsonObj.getJSONArray("ProcessingCode").getString(0) != "0") {
+					if (temprow.getCell(
+							Integer.parseInt(jsonObj.getJSONArray("ProcessingCode").getString(0)) - 1) == null) {
+						ProcessingCode = null;
+					} else {
+						ProcessingCode = row
+								.getCell(Integer.parseInt(jsonObj.getJSONArray("ProcessingCode").getString(0)) - 1)
+								.toString();
+					}
+				}
+
+				if (jsonObj.getJSONArray("TxnsAmount").getString(0) != "0") {
+					if (temprow
+							.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsAmount").getString(0)) - 1) == null) {
+						TxnsAmount = null;
+					} else {
+						TxnsAmount = row.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsAmount").getString(0)) - 1)
+								.toString();
+					}
+				}
+
+				if (jsonObj.getJSONArray("CardNumber").getString(0) != "0") {
+					if (temprow
+							.getCell(Integer.parseInt(jsonObj.getJSONArray("CardNumber").getString(0)) - 1) == null) {
+						CardNumber = null;
+					} else {
+						CardNumber = row.getCell(Integer.parseInt(jsonObj.getJSONArray("CardNumber").getString(0)) - 1)
+								.toString();
+					}
+				}
+
+				if (jsonObj.getJSONArray("TxnsDateTime").getString(0) != "0") {
+					if (temprow
+							.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsDateTime").getString(0)) - 1) == null) {
+						TxnsDateTime = null;
+					} else {
+						TxnsDateTime = row
+								.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsDateTime").getString(0)) - 1)
+								.toString();
+					}
+				}
+
+				if (jsonObj.getJSONArray("AcquirerID").getString(0) != "0") {
+					if (temprow
+							.getCell(Integer.parseInt(jsonObj.getJSONArray("AcquirerID").getString(0)) - 1) == null) {
+						AcquirerID = null;
+					} else {
+						AcquirerID = row.getCell(Integer.parseInt(jsonObj.getJSONArray("AcquirerID").getString(0)) - 1)
+								.toString();
+					}
+				}
+
+				if (jsonObj.getJSONArray("ReferenceNumber").getString(0) != "0") {
+					if (temprow.getCell(
+							Integer.parseInt(jsonObj.getJSONArray("ReferenceNumber").getString(0)) - 1) == null) {
+						ReferenceNumber = null;
+					} else {
+						ReferenceNumber = row
+								.getCell(Integer.parseInt(jsonObj.getJSONArray("ReferenceNumber").getString(0)) - 1)
+								.toString();
+					}
+				}
+
+				if (jsonObj.getJSONArray("AuthCode").getString(0) != "0") {
+					if (temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("AuthCode").getString(0)) - 1) == null) {
+						AuthCode = null;
+					} else {
+						AuthCode = row.getCell(Integer.parseInt(jsonObj.getJSONArray("AuthCode").getString(0)) - 1)
+								.toString();
+					}
+				}
+
+				if (jsonObj.getJSONArray("ResponseCode1").getString(0) != "0") {
+					if (temprow.getCell(
+							Integer.parseInt(jsonObj.getJSONArray("ResponseCode1").getString(0)) - 1) == null) {
+						ResponseCode1 = null;
+					} else {
+						ResponseCode1 = row
+								.getCell(Integer.parseInt(jsonObj.getJSONArray("ResponseCode1").getString(0)) - 1)
+								.toString();
+					}
+				}
+
+				if (jsonObj.getJSONArray("TxnsPerticulars").getString(0) != "0") {
+					if (temprow.getCell(
+							Integer.parseInt(jsonObj.getJSONArray("TxnsPerticulars").getString(0)) - 1) == null) {
+						TxnsPerticulars = null;
+					} else {
+						TxnsPerticulars = row
+								.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsPerticulars").getString(0)) - 1)
+								.toString();
+					}
+				}
+
+				if (jsonObj.getJSONArray("CustAccountNo").getString(0) != "0") {
+					if (temprow.getCell(
+							Integer.parseInt(jsonObj.getJSONArray("CustAccountNo").getString(0)) - 1) == null) {
+						CustAccountNo = null;
+					} else {
+						CustAccountNo = row
+								.getCell(Integer.parseInt(jsonObj.getJSONArray("CustAccountNo").getString(0)) - 1)
+								.toString();
+					}
+				}
+
+				if (jsonObj.getJSONArray("ReserveField2").getString(0) != "0") {
+					if (temprow.getCell(
+							Integer.parseInt(jsonObj.getJSONArray("ReserveField2").getString(0)) - 1) == null) {
+						ReserveField2 = null;
+					} else {
+						ReserveField2 = row
+								.getCell(Integer.parseInt(jsonObj.getJSONArray("ReserveField2").getString(0)) - 1)
+								.toString();
+					}
+				}
+
+				if (jsonObj.getJSONArray("ReserveField3").getString(0) != "0") {
+					if (temprow.getCell(
+							Integer.parseInt(jsonObj.getJSONArray("ReserveField3").getString(0)) - 1) == null) {
+						ReserveField3 = null;
+					} else {
+						ReserveField3 = row
+								.getCell(Integer.parseInt(jsonObj.getJSONArray("ReserveField3").getString(0)) - 1)
+								.toString();
+					}
+				}
+
+				if (jsonObj.getJSONArray("ReserveField1").getString(0) != "0") {
+					if (temprow.getCell(
+							Integer.parseInt(jsonObj.getJSONArray("ReserveField1").getString(0)) - 1) == null) {
+						ReserveField1 = null;
+					} else {
+						ReserveField1 = row
+								.getCell(Integer.parseInt(jsonObj.getJSONArray("ReserveField1").getString(0)) - 1)
+								.toString();
+					}
+				}
 
 			}
+//				StoredProcedureQuery query = entityManager.createStoredProcedureQuery("spbulkinsertcbsdatadbbl");
+//				query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(4, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(5, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(6, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(7, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(8, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(9, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(10, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(11, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(12, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(13, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(14, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(15, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(16, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(17, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(18, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(19, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(20, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(21, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(22, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(23, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(24, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(25, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(26, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(27, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(28, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(29, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(30, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(31, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(32, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(33, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(34, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(35, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(36, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(37, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(38, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(39, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(40, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(41, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(42, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(43, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(44, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(45, String.class, ParameterMode.IN);
+//				query.registerStoredProcedureParameter(46, String.class, ParameterMode.IN);
+//
+//				query.setParameter(1, clientid);
+//				query.setParameter(2, Transdate);
+//				query.setParameter(3, Time);
+//				query.setParameter(4, Terminal_ID);
+//				query.setParameter(5, AccountNo);
+//				query.setParameter(6, CardNumber);
+//				query.setParameter(7, TraceNo);
+//				query.setParameter(8, Amount);
+//				query.setParameter(9, WithdrawalFlag);
+//				query.setParameter(10, Response);
+//				query.setParameter(11, ReversalFlag);
+//				query.setParameter(12, Db_Cr);
+//				query.setParameter(13, TransType);
+//				query.setParameter(14, MerchantType);
+//				query.setParameter(15, glCbs.getOriginalFilename());
+//				query.setParameter(16, FileDate);
+//				query.setParameter(17, createdby);
+//				query.setParameter(18, ChannelID);
+//				query.setParameter(19, ModeID);
+//				query.setParameter(20, CardType);
+//				query.setParameter(21, InterChangeAccNO);
+//				query.setParameter(22, ATMAccountNo);
+//				query.setParameter(23, Amount1);
+//				query.setParameter(24, Amount2);
+//				query.setParameter(25, Amount3);
+//				query.setParameter(26, TxnsStatus);
+//				query.setParameter(27, TxnsEntryType);
+//				query.setParameter(28, TxnsNumber);
+//				query.setParameter(29, TxnsPostDateTime);
+//				query.setParameter(30, AuthCode);
+//				query.setParameter(31, FeeAmount);
+//				query.setParameter(32, CurrencyCode);
+//				query.setParameter(33, CustBalance);
+//				query.setParameter(34, InterchangeBalance);
+//				query.setParameter(35, ATMBalance);
+//				query.setParameter(36, BranchCode);
+//				query.setParameter(37, ReserveField1);
+//				query.setParameter(38, ReserveField2);
+//				query.setParameter(39, ReserveField3);
+//				query.setParameter(40, ReserveField4);
+//				query.setParameter(41, ReserveField5);
+//				query.setParameter(42, RevEntryLeg);
+//				query.setParameter(43, NoOfDuplicate);
+//				query.setParameter(44, stan);
+//				query.setParameter(45, FilePath);
+//				query.setParameter(46, ProcessingCode);
+//
+//				query.execute();
+
 		}
-		return ejTemp;
+		return null;
 	}
 
 	@Override
@@ -4353,8 +5017,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		for (Object record : result) {
 			JSONObject obj = new JSONObject();
 			obj.put("formatid", result.get(0));
-			
-			System.out.println("formatid :"+result.get(0));
+
+			System.out.println("formatid :" + result.get(0));
 			JSONObjects.add(obj);
 
 		}
@@ -4750,8 +5414,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		}
 		return JSONObjects;
 	}
-	
-	public List<JSONObject> getcbsformatfileinxml(String clientid, String fileTypeName) {
+
+	public List<JSONObject> getcbsswitchformatfileinxml(String clientid, String fileTypeName) {
 		// TODO Auto-generated method stub
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("SPGETCBSFORMATDESCRIPTIONXML");
 		query.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
@@ -4904,9 +5568,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		if (obj.containsKey(nodeName)) {
 			transaction_Acquirer_Conversion_Rate = obj.get(nodeName).toString();
 		}
-		
-		
-		
+
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("SPIMPORTNPCIACQUIEREFILE");
 		query.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
@@ -4983,9 +5645,9 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query.setParameter(33, createdby);
 
 		query.execute();
-		
+
 		count++;
-		System.out.println("count:  "+count);
+		System.out.println("count:  " + count);
 //		List<Object[]> result = query.getResultList();
 //		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
 //		for (Object record : result) {
@@ -5000,6 +5662,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	public List<String> getData() {
 		return null;
 	}
+
 	public List<String> getXmlFields(NodeList nodeList, String xmlString, int j) {
 		List<String> returnNodeList = null;
 

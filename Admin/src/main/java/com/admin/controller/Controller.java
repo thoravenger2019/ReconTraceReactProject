@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -831,8 +832,10 @@ public class Controller {
 						xmlFormatDescription.get("FormatDescriptionXml"));
 				return xmlTojsonNETWORKList;
 			}
-			if (p_VendorType.equalsIgnoreCase("CBS") || p_VendorType.equalsIgnoreCase("Switch")||p_VendorType.equalsIgnoreCase("EJ")) {
-				List<JSONObject> xmlTojsonCBS_Switch_EJList = xmlTojsonCBS_Switch_EJ(xmlFormatDescription.get("FormatDescriptionXml"));
+			if (p_VendorType.equalsIgnoreCase("CBS") || p_VendorType.equalsIgnoreCase("Switch")
+					|| p_VendorType.equalsIgnoreCase("EJ")) {
+				List<JSONObject> xmlTojsonCBS_Switch_EJList = xmlTojsonCBS_Switch_EJ(
+						xmlFormatDescription.get("FormatDescriptionXml"));
 				return xmlTojsonCBS_Switch_EJList;
 			}
 		}
@@ -917,10 +920,8 @@ public class Controller {
 	}
 
 	@PostMapping("importGlcbsFileData/{clientid}/{fileTypeName}")
-	public List<JSONObject> importGlcbsFileData(
-												 @PathVariable("clientid")String
-												 clientid,@PathVariable("fileTypeName")String fileTypeName,
-												 @RequestParam("glCbs") MultipartFile glCbs) {
+	public List<JSONObject> importGlcbsFileData(@PathVariable("clientid") String clientid,
+			@PathVariable("fileTypeName") String fileTypeName, @RequestParam("glCbs") MultipartFile glCbs) {
 		String createdby = "suyog";
 //		String clientid = "1";
 //		String fileTypeName = "ATM_ISSUER_NPCI";
@@ -930,11 +931,12 @@ public class Controller {
 	}
 
 	@PostMapping("importSwitchFile")
-	public List<JSONObject> importSwitchFile(@RequestParam("sw") MultipartFile sw) {
-
+	public List<JSONObject> importSwitchFile(@RequestParam("sw") MultipartFile sw)
+			throws IOException, SQLException, ParserConfigurationException, SAXException {
+		String fileTypeName = "";
 		String createdby = "suyog";
 		String clientid = "1";
-		List<JSONObject> importSwitchFile = traceService.importSwitchFile(sw, clientid, createdby);
+		List<JSONObject> importSwitchFile = traceService.importSwitchFile(sw, clientid, createdby, fileTypeName);
 		return importSwitchFile;
 	}
 
@@ -1007,7 +1009,7 @@ public class Controller {
 	public List<JSONObject> getformatid(@PathVariable("clientid") String clientid,
 			@PathVariable("vendorid") String vendorid) {
 		List<JSONObject> getformatid = traceService.getformatid(clientid, vendorid);
-		System.out.println("getformatid:  "+getformatid);
+		System.out.println("getformatid:  " + getformatid);
 		return getformatid;
 
 	}
