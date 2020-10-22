@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FileFormat>
+   <Amount1Prefix>Amount1Prefix</Amount1Prefix>
+   <Amount2Prefix>Amount2Prefix</Amount2Prefix>
+   <Amount3Prefix>Amount3Prefix</Amount3Prefix>
+   <ATMAccountNoPrefix>ATMAccountNoPrefix</ATMAccountNoPrefix>
+   <ATMBalancePrefix>ATMBalancePrefix</ATMBalancePrefix>
+   <AuthCodePrefix>AuthCodePrefix</AuthCodePrefix>
+   <BranchCodePrefix>BranchCodePrefix</BranchCodePrefix>
+   <CardNumberPrefix>CardNumberPrefix</CardNumberPrefix>
+   <CardTypePrefix>CardTypePrefix</CardTypePrefix>
+   <Cassette1Prefix>Cassette1Prefix</Cassette1Prefix>
+   <Cassette2Prefix>Cassette2Prefix</Cassette2Prefix>
+   <Cassette3Prefix>Cassette3Prefix</Cassette3Prefix>
+   <Cassette4Prefix>Cassette4Prefix</Cassette4Prefix>
+   <CurrencyCodePrefix>CurrencyCodePrefix</CurrencyCodePrefix>
+   <CustAccountNoPrefix>CustAccountNoPrefix</CustAccountNoPrefix>
+   <CustBalancePrefix>CustBalancePrefix</CustBalancePrefix>
+   <DrCrTypePrefix>DrCrTypePrefix</DrCrTypePrefix>
+   <FeeAmountPrefix>FeeAmountPrefix</FeeAmountPrefix>
+   <NoOfDuplicatePrefix>NoOfDuplicatePrefix</NoOfDuplicatePrefix>
+   <ProcessingCodePrefix>ProcessingCodePrefix</ProcessingCodePrefix>
+   <ReferenceNumberPrefix>ReferenceNumberPrefix</ReferenceNumberPrefix>
+   <ReserveField1Prefix>ReserveField1Prefix</ReserveField1Prefix>
+   <ReserveField2Prefix>ReserveField2Prefix</ReserveField2Prefix>
+   <ReserveField3Prefix>ReserveField3Prefix</ReserveField3Prefix>
+   <ReserveField4Prefix>ReserveField4Prefix</ReserveField4Prefix>
+   <ReserveField5Prefix>ReserveField5Prefix</ReserveField5Prefix>
+   <ResponseCodePrefix>ResponseCodePrefix</ResponseCodePrefix>
+   <RevEntryLegPrefix>RevEntryLegPrefix</RevEntryLegPrefix>
+   <ReversalFlagPrefix>ReversalFlagPrefix</ReversalFlagPrefix>
+   <TerminalIdPrefix>TerminalIdPrefix</TerminalIdPrefix>
+   <TxnsAmountPrefix>TxnsAmountPrefix</TxnsAmountPrefix>
+   <TxnsDateTimePrefix>TxnsDateTimePrefix</TxnsDateTimePrefix>
+   <TxnsEntryTypePrefix>TxnsEntryTypePrefix</TxnsEntryTypePrefix>
+   <TxnsNumberPrefix>TxnsNumberPrefix</TxnsNumberPrefix>
+   <TxnsPerticularsPrefix>TxnsPerticularsPrefix</TxnsPerticularsPrefix>
+   <TxnsPostDateTimePrefix>TxnsPostDateTimePrefix</TxnsPostDateTimePrefix>
+   <TxnsStatusPrefix>TxnsStatusPrefix</TxnsStatusPrefix>
+   <TxnsSubTypePrefix>TxnsSubTypePrefix</TxnsSubTypePrefix>
+   <TxnsTypePrefix>TxnsTypePrefix</TxnsTypePrefix>
+   <TxnsValueDateTimePrefix>TxnsValueDateTimePrefix</TxnsValueDateTimePrefix>
+</FileFormat>
