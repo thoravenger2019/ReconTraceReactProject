@@ -10,8 +10,11 @@
     "@testing-library/user-event": "^7.2.1",
     "antd": "^4.2.4",
     "axios": "^0.19.2",
+    "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "dhx-suite": "^6.5.1",
+    "express": "^4.17.1",
+    "jquery": "^3.5.1",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.1",
     "react-color": "^2.18.1",
@@ -25,6 +28,7 @@
     "react-scripts": "3.4.1",
     "theme": "./theme.js",
     "use-state-if-mounted": "^1.0.3",
+    "xml-js": "^1.6.11",
     "xml2js": "^0.4.23",
     "xmlbuilder": "^15.1.1"
   },
@@ -48,5 +52,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "morgan": "^1.10.0"
   }
 }

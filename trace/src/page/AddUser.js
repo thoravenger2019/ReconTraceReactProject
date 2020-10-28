@@ -1,7 +1,6 @@
 import React, { useState,useEffect } from 'react';
-import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
-import axios, { axiosGet } from '../utils/axios';
+import axios from '../utils/axios';
 import MenuSideBar from './menuSideBar';
 import {
   Form,
@@ -11,15 +10,13 @@ import {
   Card,
   Row,
   Col,
-  Checkbox,
   Layout,
   Avatar,
 } from 'antd';
 import Password from 'antd/lib/input/Password';
-import { LayoutContext } from 'antd/lib/layout/layout';
 import Title from 'antd/lib/typography/Title';
-const {Header, Footer ,Sider,Content}=Layout;
-const FormItem = Form.Item;
+const {Header, Content}=Layout;
+
 const { Option } = Select;
 
 const AddUser = props => {

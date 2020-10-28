@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import 'antd/dist/antd.less'
 import 'antd/dist/antd.css';
-import axios, { axiosGet } from '../utils/axios';
-import Axios from "axios";
+import axios from '../utils/axios';
 import MenuSideBar from './menuSideBar';
-import { NavLink } from "react-router-dom";
-import { Spin, Avatar, Skeleton,Select } from 'antd';
+import {  Avatar, Skeleton } from 'antd';
 import '../App';
 import {
   Form,
@@ -13,25 +11,15 @@ import {
   Button,
   Card,
   Layout,
-  Space
 } from 'antd';
 import Title from 'antd/lib/typography/Title';
-import { Table } from 'antd';
-import {
-  UserSwitchOutlined,
-  EditOutlined,
-  DeleteOutlined,
-} from '@ant-design/icons';
-import Item from 'antd/lib/list/Item';
 
-const { Option } = Select;
-const { Header, Footer, Sider, Content } = Layout;
+const { Header, Content } = Layout;
 
-let TERA;
+
 const ChangePassword = props => {
 
   const [form] = Form.useForm()
-  const [data, setData] = useState([])
   const [loader, setLoader] = useState(true)
   const [username,setUserData]=useState([])
 

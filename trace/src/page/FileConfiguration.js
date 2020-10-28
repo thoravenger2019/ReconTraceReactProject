@@ -348,17 +348,10 @@ const editSwitch = (record) => {
       const editable = isEditing(record);
       return editable ? (
         <span>
-          <a
-            href="#"
-            onClick={() => save(record.key)}
-            style={{
-              marginRight: 8,
-            }}
-          >
-            Save
-          </a>
+        <Button type={"primary"}  onClick={() => save(record.key)} >Save</Button>
+
           <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-            <a>Cancel</a>
+              <Button type={"danger"}>Cancel</Button>
           </Popconfirm>
         </span>
       ) : (
@@ -408,19 +401,13 @@ const editSwitch = (record) => {
       const editable = isEditing(record);
       return editable ? (
         <span>
-          <a
-            href="#"
-            onClick={() => save(record.key)}
-            style={{
-              marginRight: 8,
-            }}
-          >
-            Save
-          </a>
+        <Button type={"primary"}  onClick={() => save(record.key)} >Save</Button>
+
           <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-            <a>Cancel</a>
+              <Button type={"danger"}>Cancel</Button>
           </Popconfirm>
         </span>
+
       ) : (
           <a onClick={() => editCBS(record)}>
             Edit
@@ -468,17 +455,10 @@ const editSwitch = (record) => {
       const editable = isEditing(record);
       return editable ? (
         <span>
-          <a
-            href="#"
-            onClick={() => save(record.key)}
-            style={{
-              marginRight: 8,
-            }}
-          >
-            Save
-          </a>
+        <Button type={"primary"}  onClick={() => save(record.key)} >Save</Button>
+
           <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-            <a>Cancel</a>
+              <Button type={"danger"}>Cancel</Button>
           </Popconfirm>
         </span>
       ) : (
@@ -528,17 +508,10 @@ const editSwitch = (record) => {
       const editable = isEditing(record);
       return editable ? (
         <span>
-          <a
-            href="#"
-            onClick={() => save(record.key)}
-            style={{
-              marginRight: 8,
-            }}
-          >
-            Save
-          </a>
+        <Button type={"primary"}  onClick={() => save(record.key)} >Save</Button>
+
           <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-            <a>Cancel</a>
+              <Button type={"danger"}>Cancel</Button>
           </Popconfirm>
         </span>
       ) : (
@@ -930,7 +903,12 @@ const editSwitch = (record) => {
      alert("in ajax cbc");
      const filePrefix = inputFilePre;
      const cutOff = valueTime;
-
+     var values=form.getFieldsValue();
+     console.log(values.P_SEPARATORTYPE);
+     alert("value in sep",septype);
+     var styp=(septype!='undefined') ? (septype):(0);
+     alert("sept type",styp);
+   
      var xmlcls = {
       "myXmlData": myxmlString,
       "clientID": P_CLIENTID,
@@ -941,7 +919,7 @@ const editSwitch = (record) => {
       "vendorID": P_VENDORID,
       "filePre": filePrefix,
       "cutOffTime": valueTime,
-      // "stype":styp,
+      "stype":styp,
     }
 
    }
@@ -994,7 +972,7 @@ const editSwitch = (record) => {
 
       data: JSON.stringify(xmlcls), // Note it is important
       success: function (result) {
-        // do what ever you want with data
+       console.log(result);
       }
     });
   }
@@ -1188,6 +1166,7 @@ const editSwitch = (record) => {
 
       //  props.history.push("/FileConfiguration#", menuData)
       //window.location.reload(false);
+      return false;
     } catch (errInfo) {
       console.log('Validate Failed:', errInfo);
     }
@@ -1266,8 +1245,8 @@ const editSwitch = (record) => {
           <Content>
             <div className="site-card-wrapper">
               <Row gutter={16}>
-                <Col span={14}>
-                  <Card title="File Configuration" bordered={false} style={{ width: 900 }} >
+                <Col span={12}>
+                  <Card title="File Configuration" bordered={false} style={{ width: 800 }} >
                     <Form layout={"vertical"} size={"large"} form={form} component={false}>
 
                       <Row gutter={[16, 16]} layout="inline">
@@ -1354,10 +1333,10 @@ const editSwitch = (record) => {
                               ) : (
                                     <Select defaultValue="--select--" style={{ width: 150 }} onChange={onChangeExt}>
                                       <Option value={".txt"}>.txt</Option>
+                                      <Option value={".csv"}>.csv</Option>
                                     </Select>
                                   )
                             }
-
                           </Form.Item>
                         </b></Col>
                         <Col span={5}><b>
@@ -1439,7 +1418,7 @@ const editSwitch = (record) => {
                         </Form.Item>
                       </Row>
                       {configLoader ? (
-                        <Card title={"Configured Format"} bordered={false} style={{ width: 800 }}>
+                        <Card title={"Configured Format"} bordered={false} >
 
                           <Table columns={columnsConfigFormat} dataSource={ConfigTableData}
                             scroll={{ y: 540 }} bordered />
@@ -1452,7 +1431,7 @@ const editSwitch = (record) => {
                 </Col>
                 <Col span={10}>
                   {clientInfoCard ? (
-                    <Card bordered={false} style={{ width: 600 }} style={{ height: "100%" }}>
+                    <Card bordered={false} style={{ width: 1000 }} style={{ height: "100%" }}>
                       <Form title="" layout={"horizontal"} size={"large"} form={form}>
                         <div>
                           <b>
@@ -1500,6 +1479,7 @@ const editSwitch = (record) => {
 
                                 },
                               }}
+                              style={{ width: 800 }}
                               columns={mergedColumns} dataSource={xmltable}
                               pagination={false}
                               rowClassName="editable-row"
@@ -1514,6 +1494,7 @@ const editSwitch = (record) => {
                                   cell: EditableCellCBS,
                                 },
                               }}
+                              style={{ width: 800 }}
                               columns={mergedColumnsCBS} dataSource={xmltable}
                               pagination={false}
                               rowClassName="editable-row"
@@ -1527,6 +1508,7 @@ const editSwitch = (record) => {
                                   cell: EditableCellSwitch,
                                 },
                               }}
+                              style={{ width: 800 }}
                               columns={mergedColumnsSwitch} dataSource={xmltable}
                               pagination={false}
                               rowClassName="editable-row"
@@ -1541,6 +1523,7 @@ const editSwitch = (record) => {
                                   cell: EditableCellEJ,
                                 },
                               }}
+                              style={{ width: 800 }}
                               columns={mergedColumnsEJ} dataSource={xmltable}
                               pagination={false}
                               rowClassName="editable-row"

@@ -125,9 +125,9 @@ const FieldIdentificationConfiguration = props => {
     const ongetchannelmodeinfo = async (value) => {
         try {
             ///alert("client id"+ClientData);
-            //alert("channel id"+value);
+            alert("channel id"+value);           
             const modeResponse = await axios.get(`getchannelmodeinfo/${clientID}/${value}`);
-            //console.log(modeResponse.data)
+            //console.log(zxxmodeResponse.data)
             setLoader(false);
 
             const modeN = modeResponse.data;
@@ -186,7 +186,9 @@ const FieldIdentificationConfiguration = props => {
             const txndt=values.P_TXNDATETIME;
             const txnvaldt=values.P_TXNVALUEDATETIME;
             const txnpstdt=values.P_TXNPOSTDATETIME;
+            alert("post time ",txnpstdt);
             const atmtype=values.P_ATMTYPE;
+            alert("atm type",txnpstdt);
             const posttype=values.P_POSTYPE;
             const ecomtype=values.P_ECOMTYPE;
             const impstype=values.P_IMPSTYPE;
@@ -239,7 +241,7 @@ const FieldIdentificationConfiguration = props => {
            
 
             //const response = await axios.get(`addfieldconfig/${values.P_CLIENTID}/${values.P_VENDORID}/${formatIDData}/${values.P_TERMINALCODE}/${values.P_BINNO}/${values.P_ACQUIRERID}/${values.P_REVCODE1}/${values.P_REVCODE2}/${values.P_REVTYPE}/${values.P_REVENTRY}/${values.P_TXNDATETIME}/${values.P_TXNVALUEDATETIME}/${values.P_TXNPOSTDATETIME}/${values.P_ATMTYPE}/${values.P_POSTYPE}/${values.P_ECOMTYPE}/${values.P_IMPSTYPE}/${values.P_UPITYPE}/${values.P_MICROATMTYPE}/${values.P_MOBILERECHARGETYPE}/${values.P_DEPOSIT}/${values.P_BALENQ}/${values.P_MINISTATEMENT}/${values.P_PINCHANGE}/${values.P_CHEQUEBOOKREQ}/${values.P_RESPCODE1}/${values.P_RESPCODE2}/${values.P_RESPTPE}/${values.P_EODCODE}/${values.P_OFFLINECODE}/${values.P_DEBITCODE}/${values.P_CREDITCODE}`);
-           const response = await axios.post(`addfieldconfig/${values.P_CLIENTID}/${values.P_VENDORID}/${formatIDData}`,formDataTerminal);
+           const response = await axios.post(`addfieldconfig/${values.P_CLIENTID}/${values.P_VENDORID}/${formatIDData}/${schannelID}`,formDataTerminal);
            //,values.P_BINNO,values.P_ACQUIRERID,values.P_REVCODE1,values.P_REVCODE2,values.P_REVTYPE,values.P_REVENTRY,values.P_TXNDATETIME,values.P_TXNVALUEDATETIME,values.P_TXNPOSTDATETIME,values.P_ATMTYPE,values.P_POSTYPE,values.P_ECOMTYPE,values.P_IMPSTYPE,values.P_UPITYPE,values.P_MICROATMTYPE,values.P_MOBILERECHARGETYPE,values.P_DEPOSIT,values.P_BALENQ,values.P_MINISTATEMENT,values.P_PINCHANGE,values.P_CHEQUEBOOKREQ,values.P_RESPCODE1,values.P_RESPCODE2,values.P_RESPTPE,values.P_EODCODE,values.P_OFFLINECODE,values.P_DEBITCODE,values.P_CREDITCODE
           console.log(response.data)
 
@@ -277,6 +279,7 @@ const FieldIdentificationConfiguration = props => {
 
     function onChangeChannel(value) {
         console.log(`selected channel ${value}`);
+        alert(value);
         ongetchannelmodeinfo(value);
         setChannelID(value);
     }
@@ -299,7 +302,7 @@ const FieldIdentificationConfiguration = props => {
                     <Content>
                         <Card title="Field Identification Configuration" bordered={false} style={{ width: 1400 }} >
 
-                            <Form initialValues={{ remember: true }} layout={"vertical"} form={form}>
+                            <Form initialValues={{ remember: true }} layout={"vertical"} form={form} size={"large"}>
                                 <Row gutter={[32, 32]} layout="inline">
                                     <Col span={12}><b>
                                         <Form.Item

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
-import axios, { axiosGet } from '../utils/axios';
+import axios from '../utils/axios';
 import MenuSideBar from './menuSideBar';
 import {
     Form,
@@ -18,20 +17,14 @@ import {
     Table,
     Space,
 } from 'antd';
-import MyPicker from '../page/MyPicker'
-import SketchExample,{handleChange}  from '../page/SketchExample';
-import InputColor from 'react-input-color';
 import Password from 'antd/lib/input/Password';
-import { LayoutContext } from 'antd/lib/layout/layout';
 import Title from 'antd/lib/typography/Title';
 import {
     PlusCircleOutlined,
     DeleteOutlined,
 } from '@ant-design/icons';
-import EditableTable from '../page/Editable'
-import { SketchPicker } from 'react-color';
-const { Header, Footer, Sider, Content } = Layout;
-const FormItem = Form.Item;
+const { Header,  Content } = Layout;
+
 const { Option } = Select;
 const { TextArea } = Input;
 

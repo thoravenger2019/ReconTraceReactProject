@@ -1,6 +1,6 @@
 import React, { useState,useEffect } from 'react';
 import 'antd/dist/antd.css';
-import axios, { axiosGet } from '../utils/axios';
+import axios from '../utils/axios';
 import MenuSideBar from './menuSideBar';
 import {
   Form,
@@ -13,16 +13,14 @@ import {
 } from 'antd';
 import Title from 'antd/lib/typography/Title';
 import { Button } from 'react-bootstrap';
-const {Header, Footer ,Sider,Content}=Layout;
-const FormItem = Form.Item;
-const { Option } = Select;
+const {Header,Content}=Layout;
 
 const AccessRight = props => {
   console.log(props)  
   const [selectionType, setSelectionType] = useState('checkbox');
   const [isActiveData,setIsActive]=useState([])
   const [form] = Form.useForm()
-  const FormItem = Form.Item;
+ 
   const [roleAccess, setRoleAccessData] = useState([])
   const [loader, setLoader] = useState(true)
   //const [activeID,setIsActive]= useState([])
