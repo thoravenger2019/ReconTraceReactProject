@@ -74,9 +74,6 @@ const onGetChannelDetails = async (value) => {
 
       const listChannel = channelN.map((item, index) => <Option value={item.channelid} key={index} label={item.channelName}>{item.channelName}</Option>)
       setChannelData(listChannel);
-
-
-
     } catch (e) {
       console.log(e)
     }
@@ -86,8 +83,12 @@ const onGetChannelDetails = async (value) => {
     try {
         ///alert("client id"+ClientData);
         //alert("channel id"+value);
-        const modeResponse = await axios.get(`getmatchingmodeinfo/${clientid}/${value}`);
-        console.log(modeResponse.data)
+//const modeResponse = await axios.get(`getmatchingmodeinfo/${clientid}/${value}`);
+const modeResponse = await axios.get(`getmatchingmodeinfo/${clientid}/${value}`);
+        
+        console.log(modeResponse.data);
+        
+       
         setLoader(false);
 
         const modeN = modeResponse.data;
@@ -108,7 +109,7 @@ const ongetMatchingRuleSetForClient= async (value) => {
         ///alert("client id"+ClientData);
         //alert("channel id"+value);
 
-  const modeResponse = await axios.get(`getMatchingRuleSetForClient/${clientid}/${channelid}/${value}`);
+        const modeResponse = await axios.get(`getMatchingRuleSetForClient/${clientid}/${channelid}/${value}`);
         console.log(modeResponse.data)
         setLoader(false);
 
@@ -152,8 +153,6 @@ const addMatchingRuleDetails = async () => {
     }
 }
 
-
- 
   const menuData = props.location.state;
   console.log(menuData);
 

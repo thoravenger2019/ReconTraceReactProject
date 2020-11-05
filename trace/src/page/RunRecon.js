@@ -46,7 +46,8 @@ const RunRecon = props => {
   }
 
   function onChangeMode(value) {
-    console.log(`selected ${value}`);  
+    console.log(`selected ${value}`);
+    
     //setClientId(value);
    // onDisplayChannel(value); 
   }
@@ -222,8 +223,7 @@ const ongetModeType = async (value) => {
                     </Form.Item>
 
                     </Col>
-                    <Col span={8}>
-                      
+                    <Col span={8}>                      
                       <Form.Item label="Channel Type" name="ChannelType" >
                         <Select defaultValue="--select--" style={{ width: 200 }} onChange={onChangeChannel}>
                               {channelData}
