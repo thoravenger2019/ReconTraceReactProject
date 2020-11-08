@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -160,17 +161,17 @@ public class Controller {
 		return hm;
 	}
 
-	@GetMapping("/{usAddUserername}/{clientID}/{branchID}/{roleID}")
-	public Map<String, String> addUser(@PathVariable("username") String username,
-			@PathVariable("clientID") String clientID, @PathVariable("branchID") String branchID,
-			@PathVariable("roleID") String roleID) {
-		Map<String, String> hm = new HashMap<String, String>();
-		String userList = traceService.getUserDetails(username, clientID, branchID, roleID);
-		hm.put("roleNames", userList);
-
-		return hm;
-
-	}
+//	@GetMapping("/{usAddUserername}/{clientID}/{branchID}/{roleID}")
+//	public Map<String, String> addUser(@PathVariable("username") String username,
+//			@PathVariable("clientID") String clientID, @PathVariable("branchID") String branchID,
+//			@PathVariable("roleID") String roleID) {
+//		Map<String, String> hm = new HashMap<String, String>();
+//		String userList = traceService.getUserDetails(username, clientID, branchID, roleID);
+//		hm.put("roleNames", userList);
+//
+//		return hm;
+//
+//	}
 
 	@GetMapping("getUploadFiletype")
 	public List<JSONObject> getUploadFiletype() {
@@ -238,15 +239,15 @@ public class Controller {
 		return "success";
 	}
 
-	@GetMapping(value = "AddUser/{clientId}/{FirstName}/{LastName}/{UserId}/{EmailID}/{Channel}/{RoleType}/{Password}/{ConfirmPassword}/{BranchName}/{ContactNo}")
+	@GetMapping(value = "AddUser/{clientId}/{FirstName}/{LastName}/{UserId}/{EmailID}/{RoleType}/{Password}/{ConfirmPassword}/{BranchID}/{ContactNo}")
 	public Map<String, String> addUser(@PathVariable("clientId") String clientId,
 			@PathVariable("FirstName") String FirstName, @PathVariable("LastName") String LastName,
 			@PathVariable("UserId") String UserId, @PathVariable("EmailID") String EmailId,
-			@PathVariable("Channel") String Channel, @PathVariable("RoleType") String RoleType,
-			@PathVariable("Password") String password, @PathVariable("ConfirmPassword") String ConfirmPassword,
-			@PathVariable("BranchName") String BranchName, @PathVariable("ContactNo") String ContactNo) {
+			@PathVariable("RoleType") String RoleType, @PathVariable("Password") String password,
+			@PathVariable("ConfirmPassword") String ConfirmPassword, @PathVariable("BranchID") String BranchID,
+			@PathVariable("ContactNo") String ContactNo) {
 		Map<String, String> hm = new HashMap<String, String>();
-
+//		System.out.println("BranchName:======"+BranchName);
 		String userid = UserId;
 
 		String password1 = password;
@@ -262,11 +263,11 @@ public class Controller {
 		String securityq = "";
 		String securitya = "";
 		String createdby = "sam";
-		String salt = "525252";
-		String channel = Channel;
+		String salt = password1;
+//		String channel = Channel;
 
-		String addUserList = traceService.addUser(userid, password1, firstname, lastname, RoleType, clientId,
-				BranchName, emailid, contactno, securityq, securitya, createdby, salt, channel);
+		String addUserList = traceService.addUser(userid, password1, firstname, lastname, RoleType, clientId, BranchID,
+				emailid, contactno, securityq, securitya, createdby, salt);
 
 		hm.put("addedUser", addUserList);
 
@@ -481,7 +482,10 @@ public class Controller {
 		String P_FILEPREFIX = xmlcls.getFilePre();
 		String P_FILEEXT = xmlcls.getFileExt();
 		String P_MODEID = xmlcls.getModeID();
-		String P_SEPARATORTYPE = "";
+		String P_SEPARATORTYPE = xmlcls.getSepratorType();
+		if (P_SEPARATORTYPE == null) {
+			P_SEPARATORTYPE = "";
+		}
 		String P_CUTOFFTIME = xmlcls.getCutOffTime();
 		System.out.println("P_CUTOFFTIME" + P_CUTOFFTIME);
 		List<JSONObject> getinsertfileformat = traceService.getinsertfileformat(P_CLIENTID, P_VENDORID, P_FILEEXT,
@@ -489,26 +493,27 @@ public class Controller {
 		return getinsertfileformat;
 	}
 
-	@PostMapping("/uploadBranchMasterFile")
-	public Map<String, String> mapBranchMasterReapExcelDatatoDB(@RequestParam("file") MultipartFile reapExcelDataFile) {
+	@PostMapping("/uploadBranchMasterFile/{clientid}")
+	public Map<String, String> mapBranchMasterReapExcelDatatoDB(@PathVariable("clientid") String clientid,
+			@RequestParam("file") MultipartFile reapExcelDataFile) {
 		Map<String, String> hm = new HashMap<String, String>();
 		String extFile = FilenameUtils.getExtension(reapExcelDataFile.getOriginalFilename());
 
 		String user = username.getUsername();
 
-		List result = traceService.mapBranchMasterReapExcelDatatoDB(reapExcelDataFile, user);
+		List result = traceService.mapBranchMasterReapExcelDatatoDB(reapExcelDataFile, user, clientid);
 		hm.put("mapBranchMasterReapExcelDatatoDB", result.toString());
 		return hm;
 	}
 
-	@PostMapping("/uploadTerminalMasterFile")
-	public Map<String, String> mapTerminaMasterReapExcelDatatoDB(
+	@PostMapping("/uploadTerminalMasterFile/{clientid}")
+	public Map<String, String> mapTerminaMasterReapExcelDatatoDB(@PathVariable("clientid") String clientid,
 			@RequestParam("file") MultipartFile reapExcelDataFile) {
 		String user = username.getUsername();
 		String extFile = FilenameUtils.getExtension(reapExcelDataFile.getOriginalFilename());
 
 		Map<String, String> hm = new HashMap<String, String>();
-		List result = traceService.mapTerminalMasterReapExcelDatatoDB(reapExcelDataFile, user);
+		List result = traceService.mapTerminalMasterReapExcelDatatoDB(reapExcelDataFile, user, clientid);
 		hm.put("mapTerminaMasterReapExcelDatatoDB", result.toString());
 		return hm;
 	}
@@ -569,6 +574,13 @@ public class Controller {
 	public List<JSONObject> getfileformatclient(@PathVariable("clientid") String clientid) {
 		List<JSONObject> getfileformatclient = traceService.getfileformatclient(clientid);
 		return getfileformatclient;
+	}
+
+	@PostMapping("getbranchname/{clientid}")
+	public List<JSONObject> getbranchname(@PathVariable("clientid") String clientid) {
+		List<JSONObject> getbranchname = traceService.getbranchname(clientid);
+		System.out.println("getbranchname===" + getbranchname.toString());
+		return getbranchname;
 	}
 
 	@GetMapping("getFileFormatHistory/{p_VendorType}/{p_ClientID}/{p_ChannelID}/{p_ModeID}/{p_VendorID}")
@@ -910,11 +922,12 @@ public class Controller {
 		return importPosSettlementSummaryReportFiles;
 	}
 
-	@PostMapping("importEJFiledata")
-	public List<JSONObject> importEJFileData(@RequestParam("ej") MultipartFile ej) {
-		String createdby = "suyog";
-		String clientid = "1";
-		List<JSONObject> importEJFileData = traceService.importEJFileData(ej, clientid, createdby);
+	@PostMapping("importEJFiledata/{clientid}/{fileTypeName}")
+	public List<JSONObject> importEJFileData(@PathVariable("clientid") String clientid,
+			@PathVariable("fileTypeName") String fileTypeName, @RequestParam("ej") MultipartFile ej)
+			throws ParseException {
+		String createdby = username.getUsername();
+		List<JSONObject> importEJFileData = traceService.importEJFileData(ej, clientid, createdby, fileTypeName);
 		return importEJFileData;
 
 	}
@@ -922,7 +935,7 @@ public class Controller {
 	@PostMapping("importGlcbsFileData/{clientid}/{fileTypeName}")
 	public List<JSONObject> importGlcbsFileData(@PathVariable("clientid") String clientid,
 			@PathVariable("fileTypeName") String fileTypeName, @RequestParam("glCbs") MultipartFile glCbs) {
-		String createdby = "suyog";
+		String createdby = username.getUsername();
 //		String clientid = "1";
 //		String fileTypeName = "ATM_ISSUER_NPCI";
 		List<JSONObject> importGlcbsFileData = traceService.importGlcbsFileData(glCbs, clientid, createdby,
@@ -930,12 +943,13 @@ public class Controller {
 		return importGlcbsFileData;
 	}
 
-	@PostMapping("importSwitchFile")
-	public List<JSONObject> importSwitchFile(@RequestParam("sw") MultipartFile sw)
+	@PostMapping("importSwitchFile/{clientid}/{fileTypeName}")
+	public List<JSONObject> importSwitchFile(@PathVariable("clientid") String clientid,
+			@PathVariable("fileTypeName") String fileTypeName, @RequestParam("sw") MultipartFile sw)
 			throws IOException, SQLException, ParserConfigurationException, SAXException {
-		String fileTypeName = "";
-		String createdby = "suyog";
-		String clientid = "1";
+
+		String createdby = username.getUsername();
+
 		List<JSONObject> importSwitchFile = traceService.importSwitchFile(sw, clientid, createdby, fileTypeName);
 		return importSwitchFile;
 	}
@@ -948,6 +962,20 @@ public class Controller {
 				modeid, formatid);
 		return getfieldidentification;
 	}
+	
+	
+	@GetMapping("getdispensesummaryreport/{clientID}/{channelID}/{modeID}/{terminalID}/{fromDateTxns}/{toDateTxns}/{txnType}")
+	public List<JSONObject> getdispensesummaryreport(@PathVariable("clientID") String clientID,
+			@PathVariable("channelID") String channelID, @PathVariable("modeID") String modeID,
+			@PathVariable("terminalID") String terminalID, @PathVariable("fromDateTxns") String fromDateTxns, 
+			@PathVariable("toDateTxns") String toDateTxns,@PathVariable("txnType") String txnType) throws ParseException {
+		List<JSONObject> getdispensesummaryreport = traceService.getdispensesummaryreport(clientID, channelID, modeID,
+				terminalID, fromDateTxns,toDateTxns,txnType);
+		return getdispensesummaryreport;
+	}
+	
+	
+	
 
 	@GetMapping("getFileType/{clientid}")
 	public List<JSONObject> getFileType(@PathVariable("clientid") String clientid) {
@@ -961,9 +989,10 @@ public class Controller {
 		return getfilevendordetails;
 	}
 
-	@PostMapping("addfieldconfig/{P_CLIENTID}/{P_VENDORID}/{P_FORMATID}")
+	@PostMapping("addfieldconfig/{P_CLIENTID}/{P_VENDORID}/{P_FORMATID}/{P_CHANNELID}")
 	public Map<String, String> addfieldconfig(@PathVariable("P_CLIENTID") String P_CLIENTID,
 			@PathVariable("P_VENDORID") String P_VENDORID, @PathVariable("P_FORMATID") String P_FORMATID,
+			@PathVariable("P_CHANNELID") String P_CHANNELID,
 			@RequestParam(value = "P_TERMINALCODE", defaultValue = "0") String P_TERMINALCODE,
 			@RequestParam(value = "P_BINNO", defaultValue = "0") String P_BINNO,
 			@RequestParam(value = "P_ACQUIRERID", defaultValue = "0") String P_ACQUIRERID,
@@ -996,12 +1025,15 @@ public class Controller {
 
 		Map<String, String> hm = new HashMap<>();
 		String createdby = username.getUsername();
-		System.out.println("P_TXNPOSTDATETIME:  "+P_TXNPOSTDATETIME);
+		System.out.println("P_TXNPOSTDATETIME:  " + P_TXNPOSTDATETIME);
+		if (P_REVENTRY.equalsIgnoreCase("undefined")) {
+			P_REVENTRY = "0";
+		}
 		String addfieldconfig = traceService.addfieldconfig(P_CLIENTID, P_VENDORID, P_FORMATID, P_TERMINALCODE, P_BINNO,
 				P_ACQUIRERID, P_REVCODE1, P_REVCODE2, P_REVTYPE, P_REVENTRY, P_TXNDATETIME, P_TXNVALUEDATETIME,
 				P_TXNPOSTDATETIME, P_ATMTYPE, P_POSTYPE, P_ECOMTYPE, P_IMPSTYPE, P_UPITYPE, P_MICROATMTYPE,
 				P_MOBILERECHARGETYPE, P_DEPOSIT, P_BALENQ, P_MINISTATEMENT, P_PINCHANGE, P_CHEQUEBOOKREQ, P_RESPCODE1,
-				P_RESPCODE2, P_RESPTPE, P_EODCODE, P_OFFLINECODE, P_DEBITCODE, P_CREDITCODE, createdby);
+				P_RESPCODE2, P_RESPTPE, P_EODCODE, P_OFFLINECODE, P_DEBITCODE, P_CREDITCODE, createdby, P_CHANNELID);
 		hm.put("status:", addfieldconfig);
 		return hm;
 	}
@@ -1085,6 +1117,21 @@ public class Controller {
 		String userid = username.getUsername();
 		List<JSONObject> getchanneltypeall = traceService.getchanneltypeall(clientid, userid);
 		return getchanneltypeall;
+	}
+
+	@GetMapping("/getterminaldetailschannelwise/{clientid}/{channelid}")
+	public List<JSONObject> getterminaldetailschannelwise(@PathVariable("clientid") String clientid,
+			@PathVariable("channelid") String channelid) {
+		String userid = username.getUsername();
+		List<JSONObject> getterminaldetailschannelwise = traceService.getterminaldetailschannelwise(clientid, channelid,
+				userid);
+		return getterminaldetailschannelwise;
+	}
+	@GetMapping("/getchannelmodedetailsremodify/{clientid}")
+	public List<JSONObject> getchannelmodedetailsremodify(@PathVariable("clientid") String clientid) {
+		String userid = username.getUsername();
+		List<JSONObject> getchannelmodedetailsremodify = traceService.getchannelmodedetailsremodify(clientid);
+		return getchannelmodedetailsremodify;
 	}
 
 	@GetMapping("/getFileFormatDefualt/{p_FileExt}/{ p_SeparatorType}/{p_ChannelID}/{p_ModeID}/{p_VendorID}")
