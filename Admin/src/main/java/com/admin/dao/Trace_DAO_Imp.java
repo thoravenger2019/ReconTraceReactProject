@@ -7756,12 +7756,12 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	}
 
 	@Override
-	public void ntsAtmFile(String description, double noOftxn, double credit, double debit, MultipartFile file,
+	public Boolean ntsAtmFile(String description, double noOftxn, double credit, double debit, MultipartFile file,
 			String date, String clientid, String createdby) {
 		String fileName = file.getOriginalFilename();
 		String cycle = fileName.substring(fileName.length() - 6, fileName.length() - 4);
 		String remarks = "NA";
-
+		Boolean statusFromDB=false;
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("SPIMPORTNPCIATMSETTLEMENT");
 
 		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
@@ -7787,10 +7787,17 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query.setParameter(9, fileName);
 		query.setParameter(10, createdby);
 
-		query.execute();
+		if(query.execute())
+		{
+			statusFromDB=true;
+		}
+		else
+		{
+			statusFromDB=false;
+		}
 
 		List<Object[]> result = query.getResultList();
-
+		return statusFromDB;
 	}
 
 //	@Override

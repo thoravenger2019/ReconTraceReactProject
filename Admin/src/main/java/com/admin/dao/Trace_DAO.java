@@ -203,7 +203,7 @@ public interface Trace_DAO {
 			String acquirer_settlement_processing_fee, String transaction_Acquirer_Conversion_Rate, String forceMatch,
 			String clientid, String cycle, String fileDate, String createdby) throws ParseException;
 
-	public void ntsAtmFile(String description, double noOftxn, double credit, double debit, MultipartFile file,
+	public Boolean ntsAtmFile(String description, double noOftxn, double credit, double debit, MultipartFile file,
 			String date, String clientid, String createdby);
 
 //	public List<JSONObject> getchannelmodeinfo(String clientid);

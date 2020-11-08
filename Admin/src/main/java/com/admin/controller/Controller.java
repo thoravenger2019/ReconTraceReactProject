@@ -962,20 +962,17 @@ public class Controller {
 				modeid, formatid);
 		return getfieldidentification;
 	}
-	
-	
+
 	@GetMapping("getdispensesummaryreport/{clientID}/{channelID}/{modeID}/{terminalID}/{fromDateTxns}/{toDateTxns}/{txnType}")
 	public List<JSONObject> getdispensesummaryreport(@PathVariable("clientID") String clientID,
 			@PathVariable("channelID") String channelID, @PathVariable("modeID") String modeID,
-			@PathVariable("terminalID") String terminalID, @PathVariable("fromDateTxns") String fromDateTxns, 
-			@PathVariable("toDateTxns") String toDateTxns,@PathVariable("txnType") String txnType) throws ParseException {
+			@PathVariable("terminalID") String terminalID, @PathVariable("fromDateTxns") String fromDateTxns,
+			@PathVariable("toDateTxns") String toDateTxns, @PathVariable("txnType") String txnType)
+			throws ParseException {
 		List<JSONObject> getdispensesummaryreport = traceService.getdispensesummaryreport(clientID, channelID, modeID,
-				terminalID, fromDateTxns,toDateTxns,txnType);
+				terminalID, fromDateTxns, toDateTxns, txnType);
 		return getdispensesummaryreport;
 	}
-	
-	
-	
 
 	@GetMapping("getFileType/{clientid}")
 	public List<JSONObject> getFileType(@PathVariable("clientid") String clientid) {
@@ -1127,6 +1124,7 @@ public class Controller {
 				userid);
 		return getterminaldetailschannelwise;
 	}
+
 	@GetMapping("/getchannelmodedetailsremodify/{clientid}")
 	public List<JSONObject> getchannelmodedetailsremodify(@PathVariable("clientid") String clientid) {
 		String userid = username.getUsername();
