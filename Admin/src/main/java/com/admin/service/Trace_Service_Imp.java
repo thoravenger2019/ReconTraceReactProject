@@ -37,6 +37,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellReference;
 import org.json.simple.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,7 +64,9 @@ public class Trace_Service_Imp implements Trace_Service {
 
 	@PersistenceContext
 	private EntityManager entityManager;
-
+	
+	
+	
 	public static String checkDateFormat(String format, String strDate) throws ParseException {
 		System.out.println("strDate   " + strDate);
 		String d = null;
@@ -531,10 +535,11 @@ public class Trace_Service_Imp implements Trace_Service {
 		List<String> content = null;
 		String fileName = file.getOriginalFilename();
 		String ext = FilenameUtils.getExtension(file.getOriginalFilename());
-
+		
 		if (fileName.contains("ACQ")) {
 			List<JSONObject> importFileNpciATMFilesACQ = new ArrayList<JSONObject>();
 			JSONObject obj1 = new JSONObject();
+
 			try {
 				String participant_ID = null, transaction_Type = null, from_Account_Type = null, to_Account_Type = null,
 						RRN = null, response_Code = null, card_number = null, member_Number = null,
@@ -571,15 +576,16 @@ public class Trace_Service_Imp implements Trace_Service {
 				String ForceMatch = file.getOriginalFilename();
 				String cycle = ForceMatch.substring(15, 17);
 				String fileDate = ForceMatch.substring(8, 14).trim();
-				
+
 				JSONObject obj = new JSONObject();
-				
+
 				int count = 0, batchSize = 30000;
 				long start = System.currentTimeMillis();
-				Boolean fileUploadingStatus=false;
+				Boolean fileUploadingStatus = false;
 				for (int i = 0; i < content.size(); i++) {
+					String parseExce = null;
 					contentData = content.get(i);
-					fileUploadingStatus=false;
+					fileUploadingStatus = false;
 					for (int j = 0; j < nodeList.getLength(); j++) {
 						List<String> nodeData = getXmlFields(nodeList, nodeList.item(j).getNodeName(), j);
 						String nodeName = nodeList.item(j).getNodeName();
@@ -749,11 +755,15 @@ public class Trace_Service_Imp implements Trace_Service {
 					if (transaction_Date != null & transaction_Time != null) {
 						String pattern = "yyyy-MM-dd HH:mm:ss";
 						String temp = transaction_Date + " " + transaction_Time;
-						SimpleDateFormat sdf = new SimpleDateFormat("yyMMdd HHmmss");
-						Date d = sdf.parse(temp);
-						sdf.applyPattern(pattern);
-						TxnsDateTimeMain = sdf.format(d);
+						SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HHmmss");
+						try {
+							Date d = sdf.parse(temp);
+							sdf.applyPattern(pattern);
 
+							TxnsDateTimeMain = sdf.format(d);
+						} catch (ParseException p) {
+
+						}
 					}
 					if (acquirer_Settlement_Date != null) {
 						String pattern = "yyyy-MM-dd";
@@ -819,33 +829,42 @@ public class Trace_Service_Imp implements Trace_Service {
 					count++;
 					System.out.println("count: " + count);
 					if (count % batchSize == 0 || count == content.size()) {
-						stmt.executeBatch();
+						int[] countBatch = stmt.executeBatch();
 						long end = System.currentTimeMillis();
 						System.out.println("TIME:  " + (end - start));
-						fileUploadingStatus=true;
+						fileUploadingStatus = true;
+						System.out.println("countBatch:    " + countBatch);
+						System.out.println("countBatchLength:    " + countBatch.length);
 					}
 				}
 				stmt.close();
 				con.close();
-				if(fileUploadingStatus==true)
-				{
-					obj1.put("NPCIACQFILEUPLOADEDSTATUSTRUE", "NPCI_ATM_ACQ_FILE_UPLOADED");
+				if (fileUploadingStatus == true) {
+//					LOGGER.info("NPCI_ATM_ACQ_FILE_UPLOADED");
+					obj1.put("NPCIFILESTATUS", "NPCI_ATM_ACQ_FILE_UPLOADED");
+					importFileNpciATMFilesACQ.add(obj1);
+					return importFileNpciATMFilesACQ;
+				} else {
+//					LOGGER.info("NPCI_ATM_ACQ_FILE_UPLOADED_INTRRRUPTED");
+					obj1.put("NPCIFILESTATUS", "NPCI_ATM_ACQ_FILE_UPLOADED_INTRRRUPTED");
 					importFileNpciATMFilesACQ.add(obj1);
 					return importFileNpciATMFilesACQ;
 				}
-				else
-				{
-					obj1.put("NPCIACQFILEUPLOADEDSTATUSFALSE", "NPCI_ATM_ACQ_FILE_UPLOADED_INTRRRUPTED");
-					importFileNpciATMFilesACQ.add(obj1);
-					return importFileNpciATMFilesACQ;
-				}
-			} catch (Exception e) {
-				obj1.put("NPCIACQFILEUPLOADEDSTATUSEXCEPTION", e.toString());
+			}
+			catch (SQLException s) {
+//				LOGGER.error(e.toString());
+				obj1.put("NPCIFILESTATUS", s.toString());
+				importFileNpciATMFilesACQ.add(obj1);
+				return importFileNpciATMFilesACQ;
+			} 
+			catch (Exception e) {
+//				LOGGER.error(e.toString());
+				obj1.put("NPCIFILESTATUS", e.toString());
 				importFileNpciATMFilesACQ.add(obj1);
 				return importFileNpciATMFilesACQ;
 			}
 		} else if (fileName.contains("ISS")) {
-			
+
 			String participant_ID = null;
 			String transaction_Type = null;
 			String from_Account_Type = null;
@@ -905,7 +924,7 @@ public class Trace_Service_Imp implements Trace_Service {
 				fos.write(file.getBytes());
 				fos.close();
 				content = Files.readAllLines(convFile.toPath());
-				
+
 				JSONObject obj = new JSONObject();
 				String contentData = "";
 				int count = 0, batchSize = 30000;
@@ -915,9 +934,9 @@ public class Trace_Service_Imp implements Trace_Service {
 				long start = System.currentTimeMillis();
 				String TxnsDateTimeMain = null;
 				String CARDACCEPTERSETDATEMain = null;
-				Boolean fileUploadingStatus=false;
+				Boolean fileUploadingStatus = false;
 				for (int i = 0; i < content.size(); i++) {
-					fileUploadingStatus=false;
+					fileUploadingStatus = false;
 					contentData = content.get(i);
 					for (int j = 0; j < nodeList.getLength(); j++) {
 						List<String> nodeData = getXmlFields(nodeList, nodeList.item(j).getNodeName(), j);
@@ -1168,26 +1187,23 @@ public class Trace_Service_Imp implements Trace_Service {
 						stmt.executeBatch();
 						long end = System.currentTimeMillis();
 						System.out.println("TIME:  " + (end - start));
-						fileUploadingStatus=true;
+						fileUploadingStatus = true;
 					}
 				}
-				
+
 				stmt.close();
 				con.close();
-				if(fileUploadingStatus==true)
-				{
-					obj1.put("NPCIISSFILEUPLOADEDSTATUSTRUE", "NPCI_ATM_ISS_FILE_UPLOADED");
+				if (fileUploadingStatus == true) {
+					obj1.put("NPCIFILESTATUS", "NPCI_ATM_ISS_FILE_UPLOADED");
 					importFileNpciATMFilesISS.add(obj1);
 					return importFileNpciATMFilesISS;
-				}
-				else
-				{
-					obj1.put("NPCIISSFILEUPLOADEDSTATUSFALSE", "NPCI_ATM_ISS_FILE_INTRRRUPTED");
+				} else {
+					obj1.put("NPCIFILESTATUS", "NPCI_ATM_ISS_FILE_INTRRRUPTED");
 					importFileNpciATMFilesISS.add(obj1);
 					return importFileNpciATMFilesISS;
 				}
 			} catch (Exception e) {
-				obj1.put("NPCIISSFILEUPLOADEDSTATUSEXCEPTION", e.toString());
+				obj1.put("NPCIFILESTATUS", e.toString());
 				importFileNpciATMFilesISS.add(obj1);
 				return importFileNpciATMFilesISS;
 			}
@@ -1195,11 +1211,11 @@ public class Trace_Service_Imp implements Trace_Service {
 			Workbook tempWorkBook = null;
 			List<JSONObject> importFileNTSSET = new ArrayList<JSONObject>();
 			JSONObject obj1 = new JSONObject();
-			Boolean fileUploadingStatus=false,fileUploadingStatus1=false;
+			Boolean fileUploadingStatus = false, fileUploadingStatus1 = false;
 			try {
 				tempWorkBook = new HSSFWorkbook(file.getInputStream());
 			} catch (IOException e) {
-				obj1.put("NPCINETSETFILEUPLOADEDSTATUSEXCEPTION", e.toString());
+				obj1.put("NPCIFILESTATUS", e.toString());
 				importFileNTSSET.add(obj1);
 				return importFileNTSSET;
 			}
@@ -1207,7 +1223,7 @@ public class Trace_Service_Imp implements Trace_Service {
 			DataFormatter formatter = new DataFormatter();
 			int dec = 0, setAmt = 0;
 			for (int i = 0; i < sheet.getPhysicalNumberOfRows(); i++) {
-				fileUploadingStatus=false;
+				fileUploadingStatus = false;
 				int tempDec = 0;
 				int tempSetamt = 0;
 				Row row = sheet.getRow(i);
@@ -1235,25 +1251,21 @@ public class Trace_Service_Imp implements Trace_Service {
 					setAmt = tempSetamt;
 				}
 				if (dec != 0 && setAmt != 0) {
-					fileUploadingStatus1=ntslAtmFile(sheet, dec, setAmt, file, clientid, createdby);
+					fileUploadingStatus1 = ntslAtmFile(sheet, dec, setAmt, file, clientid, createdby);
 					dec = 0;
 					setAmt = 0;
-					if(fileUploadingStatus1==true)
-					{
-						fileUploadingStatus=true;
+					if (fileUploadingStatus1 == true) {
+						fileUploadingStatus = true;
 					}
 				}
 
 			}
-			if(fileUploadingStatus==true)
-			{
-				obj1.put("NPCINETSETFILEUPLOADEDSTATUSTRUE", "NPCI_ATM_NET_SET_FILE_UPLOADED");
+			if (fileUploadingStatus == true) {
+				obj1.put("NPCIFILESTATUS", "NPCI_ATM_NET_SET_FILE_UPLOADED");
 				importFileNTSSET.add(obj1);
 				return importFileNTSSET;
-			}
-			else
-			{
-				obj1.put("NPCINETSETFILEUPLOADEDSTATUSFALSE", "NPCI_ATM_NET_SET_FILE_INTRRRUPTED");
+			} else {
+				obj1.put("NPCIFILESTATUS", "NPCI_ATM_NET_SET_FILE_INTRRRUPTED");
 				importFileNTSSET.add(obj1);
 				return importFileNTSSET;
 			}
@@ -1262,14 +1274,15 @@ public class Trace_Service_Imp implements Trace_Service {
 		return null;
 	}
 
-	private Boolean ntslAtmFile(Sheet sheet, int dec2, int setAmt, MultipartFile file, String clientid, String createdby) {
+	private Boolean ntslAtmFile(Sheet sheet, int dec2, int setAmt, MultipartFile file, String clientid,
+			String createdby) {
 		HSSFRow tempRow = null, forTitle = null;
 		String description = null;
 		double noOftxn = 0, debit = 0, credit = 0;
 		forTitle = (HSSFRow) sheet.getRow(dec2 - 2);
 		String titleString = forTitle.getCell(0).getStringCellValue();
 		String date = titleString.substring(titleString.length() - 10);
-		Boolean statusFromDB=false;
+		Boolean statusFromDB = false;
 		for (int i = dec2 + 1; i < setAmt + 1; i++) {
 			tempRow = (HSSFRow) sheet.getRow(i);
 			if (tempRow.getCell(0) == null) {
@@ -1291,7 +1304,7 @@ public class Trace_Service_Imp implements Trace_Service {
 			} else {
 				credit = tempRow.getCell(3).getNumericCellValue();
 			}
-			statusFromDB=traceDao.ntsAtmFile(description, noOftxn, credit, debit, file, date, clientid, createdby);
+			statusFromDB = traceDao.ntsAtmFile(description, noOftxn, credit, debit, file, date, clientid, createdby);
 		}
 		return statusFromDB;
 	}
