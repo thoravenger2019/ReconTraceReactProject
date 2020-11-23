@@ -64,9 +64,7 @@ public class Trace_Service_Imp implements Trace_Service {
 
 	@PersistenceContext
 	private EntityManager entityManager;
-	
-	
-	
+
 	public static String checkDateFormat(String format, String strDate) throws ParseException {
 		System.out.println("strDate   " + strDate);
 		String d = null;
@@ -535,7 +533,7 @@ public class Trace_Service_Imp implements Trace_Service {
 		List<String> content = null;
 		String fileName = file.getOriginalFilename();
 		String ext = FilenameUtils.getExtension(file.getOriginalFilename());
-		
+
 		if (fileName.contains("ACQ")) {
 			List<JSONObject> importFileNpciATMFilesACQ = new ArrayList<JSONObject>();
 			JSONObject obj1 = new JSONObject();
@@ -850,14 +848,12 @@ public class Trace_Service_Imp implements Trace_Service {
 					importFileNpciATMFilesACQ.add(obj1);
 					return importFileNpciATMFilesACQ;
 				}
-			}
-			catch (SQLException s) {
+			} catch (SQLException s) {
 //				LOGGER.error(e.toString());
 				obj1.put("NPCIFILESTATUS", s.toString());
 				importFileNpciATMFilesACQ.add(obj1);
 				return importFileNpciATMFilesACQ;
-			} 
-			catch (Exception e) {
+			} catch (Exception e) {
 //				LOGGER.error(e.toString());
 				obj1.put("NPCIFILESTATUS", e.toString());
 				importFileNpciATMFilesACQ.add(obj1);

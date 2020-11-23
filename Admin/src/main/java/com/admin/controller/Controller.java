@@ -951,7 +951,7 @@ public class Controller {
 		String createdby = username.getUsername();
 
 		List<JSONObject> importSwitchFile = traceService.importSwitchFile(sw, clientid, createdby, fileTypeName);
-		System.out.println("importSwitchFile     "+importSwitchFile.toString());
+		System.out.println("importSwitchFile     " + importSwitchFile.toString());
 		return importSwitchFile;
 	}
 
