@@ -3831,78 +3831,94 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							}
 						}
 						if (atmType != null) {
-							if (atmType.equals(TxnsSubType) && TerminalID.substring(0, 2) != microAtmType) {
+//							&& TerminalID.substring(0, 2) != microAtmType)
+							Boolean isFound=atmType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true && TerminalID.substring(0, 2) != microAtmType) {
 								ATM = true;
 							}
 						}
 						if (posType != null) {
-							if (posType.equals(TxnsSubType)) {
+							Boolean isFound=posType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound==true) {
 								POS = true;
 							}
 						}
 						if (ecomType != null) {
-							if (ecomType.equals(TxnsSubType)) {
+							Boolean isFound=ecomType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound==true) {
 								ECOM = true;
 							}
 						}
 						if (impType != null) {
-							if (impType.equals(TxnsSubType)) {
+							Boolean isFound=impType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound==true) {
 								IMPS = true;
 							}
 						}
 						if (upiType != null) {
-							if (upiType.equals(TxnsSubType)) {
+							Boolean isFound=upiType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound==true) {
 								UPI = true;
 							}
 						}
 						if (microAtmType != null) {
-							if (microAtmType == TxnsSubType || TerminalID.substring(0, 2).equals(microAtmType)) {
+							Boolean isFound=microAtmType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound==true || TerminalID.substring(0, 2).equals(microAtmType)) {
 								MicroATM = true;
 							}
 						}
 						if (mobileRecharge != null) {
-							if (mobileRecharge == TxnsSubType) {
+							Boolean isFound=mobileRecharge.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound==true) {
 								MobileRecharge = true;
 							}
 						}
 					} else {
 						if (CDMType != null) {
-							if (CDMType.equals(ChannelType)) {
+							Boolean isFound=CDMType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound==true) {
 								CDM = true;
 							}
 						}
 						if (atmType != null) {
-							if (atmType.equals(ChannelType) && TerminalID.substring(0, 2) != microAtmType) {
+							Boolean isFound=atmType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound==true && TerminalID.substring(0, 2) != microAtmType) {
 								ATM = true;
 							}
 						}
 						if (posType != null) {
-							if (posType.equals(ChannelType)) {
+							Boolean isFound=posType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound==true) {
 								POS = true;
 							}
 						}
 						if (ecomType != null) {
-							if (ecomType.equals(ChannelType)) {
+							Boolean isFound=ecomType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound==true) {
 								ECOM = true;
 							}
 						}
 						if (impType != null) {
-							if (impType.equals(ChannelType)) {
+							Boolean isFound=impType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound==true) {
 								IMPS = true;
 							}
 						}
 						if (upiType != null) {
-							if (upiType.equals(ChannelType)) {
+							Boolean isFound=upiType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound==true) {
 								UPI = true;
 							}
 						}
 						if (microAtmType != null) {
-							if (microAtmType == ChannelType || TerminalID.substring(0, 2).equals(microAtmType)) {
+							Boolean isFound=microAtmType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound=true || TerminalID.substring(0, 2).equals(microAtmType)) {
 								MicroATM = true;
 							}
 						}
 						if (mobileRecharge != null) {
-							if (mobileRecharge == ChannelType) {
+							Boolean isFound=mobileRecharge.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound=true) {
 								MobileRecharge = true;
 							}
 						}
@@ -3918,22 +3934,26 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						}
 					}
 					if (balanceInq != null) {
-						if (balanceInq.equals(TxnsSubType)) {
+						Boolean isFound=balanceInq.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+						if (isFound==true) {
 							BAL = true;
 						}
 					}
 					if (miniStatement != null) {
-						if (miniStatement.equals(TxnsSubType)) {
+						Boolean isFound=miniStatement.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+						if (isFound==true) {
 							MS = true;
 						}
 					}
 					if (pinChange != null) {
-						if (pinChange.equals(TxnsSubType)) {
+						Boolean isFound=pinChange.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+						if (isFound==true) {
 							PC = true;
 						}
 					}
 					if (checkBookReq != null) {
-						if (checkBookReq.equals(TxnsSubType)) {
+						Boolean isFound=checkBookReq.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+						if (isFound==true) {
 							CB = true;
 						}
 					}
@@ -8870,6 +8890,59 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			obj.put("UNSETTLEDAMOUNT", fields[14]);
 			JSONObjects.add(obj);
 		}
+		return JSONObjects;
+	}
+
+	@Override
+	public List<JSONObject> getnetworktype(String clientid) {
+		// TODO Auto-generated method stub
+		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("spGetNetworkType");
+		query.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(2, String.class, ParameterMode.REF_CURSOR);
+		query.setParameter(1, Integer.parseInt(clientid));
+		query.execute();
+		List<Object[]> result = query.getResultList();
+
+		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
+		for (Object record : result) {
+			Object[] fields = (Object[]) record;
+			JSONObject obj = new JSONObject();
+			obj.put("vendorID", fields[0]);
+			obj.put("vendorName", fields[1]);
+			JSONObjects.add(obj);
+		}
+		return JSONObjects;
+	}
+
+	@Override
+	public List<JSONObject> runreconall(String clientid, String fromdate, String todate, String channelid, String user,
+			String modeid, String terminalid) {
+		// TODO Auto-generated method stub
+		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("sprunreconall1");
+		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(4, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(5, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(6, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(7, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(8, String.class, ParameterMode.REF_CURSOR);
+		query.setParameter(1, clientid);
+		query.setParameter(2, fromdate);
+		query.setParameter(3, todate);
+		query.setParameter(4, channelid);
+		query.setParameter(5, user);
+		query.setParameter(6, modeid);
+		query.setParameter(7, terminalid);
+		query.execute();
+		List<Object[]> result = query.getResultList();
+		System.out.println("result:"  + result.toString() );
+		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
+		for (Object record : result) {
+			JSONObject obj = new JSONObject();
+			obj.put("strMasg", result.toString());
+			JSONObjects.add(obj);		
+			}
 		return JSONObjects;
 	}
 }

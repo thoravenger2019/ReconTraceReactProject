@@ -37,8 +37,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellReference;
 import org.json.simple.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -1744,5 +1742,18 @@ public class Trace_Service_Imp implements Trace_Service {
 		// TODO Auto-generated method stub
 		return traceDao.getdispensesummaryreport(clientID, channelID, modeID, terminalID, fromDateTxns, toDateTxns,
 				txnType);
+	}
+
+	@Override
+	public List<JSONObject> getnetworktype(String clientid) {
+		// TODO Auto-generated method stub
+		return traceDao.getnetworktype(clientid);
+	}
+
+	@Override
+	public List<JSONObject> runreconall(String clientid, String fromdate, String todate, String channelid, String user,
+			String modeid, String terminalid) {
+		// TODO Auto-generated method stub
+		return traceDao.runreconall(clientid, fromdate, todate, channelid, user, modeid, terminalid);
 	}
 }

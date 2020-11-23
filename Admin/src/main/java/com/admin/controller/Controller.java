@@ -433,10 +433,27 @@ public class Controller {
 		return getclientmastermodeget;
 	}
 
+	@GetMapping("runreconall/{clientid}/{fromdate}/{todate}/{channelid}/{modeid}")
+	public List<JSONObject> runreconall(@PathVariable("clientid") String clientid,
+			@PathVariable("fromdate") String fromdate, @PathVariable("todate") String todate,
+			@PathVariable("channelid") String channelid, @PathVariable("modeid") String modeid) {
+		String user = username.getUsername();
+		String terminalid = "0";
+		List<JSONObject> runreconall = traceService.runreconall(clientid, fromdate, todate, channelid, user, modeid,
+				terminalid);
+		return runreconall;
+	}
+
 	@GetMapping("/getclientcurrency/{countryid}")
 	public List<JSONObject> getclientcurrency(@PathVariable("countryid") String countryid) {
 		List<JSONObject> getclientcurrency = traceService.getclientcurrency(countryid);
 		return getclientcurrency;
+	}
+
+	@GetMapping("/getnetworktype/{clientid}")
+	public List<JSONObject> getnetworktype(@PathVariable("clientid") String clientid) {
+		List<JSONObject> getnetworktype = traceService.getnetworktype(clientid);
+		return getnetworktype;
 	}
 
 	@GetMapping("/getClientCode/{clientcode}")

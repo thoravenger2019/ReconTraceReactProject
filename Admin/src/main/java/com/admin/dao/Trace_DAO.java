@@ -273,4 +273,9 @@ public interface Trace_DAO {
 	public List<JSONObject> getdispensesummaryreport(String clientID, String channelID, String modeID,
 			String terminalID, String fromDateTxns, String toDateTxns, String txnType) throws ParseException;
 
+	public List<JSONObject> getnetworktype(String clientid);
+
+	public List<JSONObject> runreconall(String clientid, String fromdate, String todate, String channelid, String user,
+			String modeid, String terminalid);
+
 }
