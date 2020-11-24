@@ -94,7 +94,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	}
 
 	public static File csvToexcel(MultipartFile csvFile, String sepratorType) throws Exception {
-
+		System.out.println("sepratorType:="+sepratorType);
 		byte[] bytes = csvFile.getBytes();
 		String completeData = new String(bytes);
 		String[] rows = completeData.split(",");
@@ -110,15 +110,15 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		List<String> result = new ArrayList<>();
 		try {
 
-			String line;
+			String line=null;
 			InputStream is = csvFile.getInputStream();
 			br = new BufferedReader(new InputStreamReader(is));
 			arList = new ArrayList<>();
 			while ((line = br.readLine()) != null) {
-				String strar[] = line.split(",");
+				String strar[] = line.split("\\"+"|");
 				al = new ArrayList<>();
 				for (int i = 0; i < strar.length; i++) {
-					System.out.println(strar[i]);
+//					System.out.println(strar[i]);
 					al.add(strar[i]);
 				}
 				arList.add(al);
@@ -177,14 +177,14 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			XSSFSheet sheet = hwb.createSheet("new sheet");
 			for (int k = 0; k < arList.size(); k++) {
 				ArrayList ardata = (ArrayList) arList.get(k);
-				System.out.println("ardata " + ardata.size());
+//				System.out.println("ardata " + ardata.size());
 				XSSFRow row = sheet.createRow((short) 0 + k);
 				for (int p = 0; p < ardata.size(); p++) {
-					System.out.print(ardata.get(p));
+//					System.out.print(ardata.get(p));
 					XSSFCell cell = row.createCell((short) p);
 					cell.setCellValue(ardata.get(p).toString());
 				}
-				System.out.println();
+//				System.out.println();
 			}
 			FileOutputStream fileOut = new FileOutputStream(convFile);
 			FileOutputStream fileOut1 = new FileOutputStream("C:\\Users\\suyog.mate.MAXIMUS\\Desktop\\azizi\\s1.xls");

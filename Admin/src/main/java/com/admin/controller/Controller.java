@@ -1206,6 +1206,15 @@ public class Controller {
 			@PathVariable("channelid") String channelid, @PathVariable("modeid") String modeid,
 			@PathVariable("terminalid") String terminalid, @PathVariable("fromdatetxns") String fromdatetxns,
 			@PathVariable("todatetxns") String todatetxns, @PathVariable("txntype") String txntype) {
+		
+		
+		System.out.println("terminalid:==="+terminalid);
+		
+		if(terminalid.equalsIgnoreCase("undefined"))
+		{
+			terminalid="0";
+		}
+		
 		List<JSONObject> getunmatchedtxnreport = traceService.getunmatchedtxnreport(clientid, channelid, modeid,
 				terminalid, fromdatetxns, todatetxns, txntype);
 		return getunmatchedtxnreport;
@@ -1216,6 +1225,10 @@ public class Controller {
 			@PathVariable("channelid") String channelid, @PathVariable("modeid") String modeid,
 			@PathVariable("terminalid") String terminalid, @PathVariable("fromdatetxns") String fromdatetxns,
 			@PathVariable("todatetxns") String todatetxns, @PathVariable("txntype") String txntype) {
+		if(terminalid.equalsIgnoreCase("undefined"))
+		{
+			terminalid="0";
+		}
 		List<JSONObject> getsuccessfultxnreport = traceService.getsuccessfultxnreport(clientid, channelid, modeid,
 				terminalid, fromdatetxns, todatetxns, txntype);
 		return getsuccessfultxnreport;
@@ -1226,6 +1239,10 @@ public class Controller {
 			@PathVariable("channelid") String channelid, @PathVariable("modeid") String modeid,
 			@PathVariable("terminalid") String terminalid, @PathVariable("fromdatetxns") String fromdatetxns,
 			@PathVariable("todatetxns") String todatetxns, @PathVariable("txntype") String txntype) {
+		if(terminalid.equalsIgnoreCase("undefined"))
+		{
+			terminalid="0";
+		}
 		List<JSONObject> getreversaltxnreport = traceService.getreversaltxnreport(clientid, channelid, modeid,
 				terminalid, fromdatetxns, todatetxns, txntype);
 		return getreversaltxnreport;
