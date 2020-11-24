@@ -1756,4 +1756,37 @@ public class Trace_Service_Imp implements Trace_Service {
 		// TODO Auto-generated method stub
 		return traceDao.runreconall(clientid, fromdate, todate, channelid, user, modeid, terminalid);
 	}
+
+	@Override
+	public List<JSONObject> getunmatchedtxnreport(String clientid, String channelid, String modeid, String terminalid,
+			String fromdatetxns, String todatetxns, String txntype) {
+		// TODO Auto-generated method stub
+		return traceDao.getunmatchedtxnreport(clientid, channelid, modeid, terminalid, fromdatetxns, todatetxns,
+				txntype);
+	}
+
+	@Override
+	public List<JSONObject> getsuccessfultxnreport(String clientid, String channelid, String modeid, String terminalid,
+			String fromdatetxns, String todatetxns, String txntype) {
+		// TODO Auto-generated method stub
+		return traceDao.getsuccessfultxnreport(clientid, channelid, modeid, terminalid, fromdatetxns, todatetxns,
+				txntype);
+	}
+
+	@Override
+	public List<JSONObject> getreversaltxnreport(String clientid, String channelid, String modeid, String terminalid,
+			String fromdatetxns, String todatetxns, String txntype) {
+		// TODO Auto-generated method stub
+		return traceDao.getreversaltxnreport(clientid, channelid, modeid, terminalid, fromdatetxns, todatetxns,
+				txntype);
+	}
+
+	@Override
+	public List<JSONObject> getforcesettlementtxns(String clientid, String channelid, String modeid, String glstatus,
+			String ejstatus, String nwstatus, String swstatus, String fromdatetxns, String todatetxns, String recontype,
+			String settlementtype, String userid) {
+		// TODO Auto-generated method stub
+		return traceDao.getforcesettlementtxns(clientid, channelid, modeid, glstatus, ejstatus, nwstatus, swstatus,
+				fromdatetxns, todatetxns, recontype, settlementtype, userid);
+	}
 }

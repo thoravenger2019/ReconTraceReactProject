@@ -1201,4 +1201,47 @@ public class Controller {
 		return JSONObjects;
 	}
 
+	@GetMapping("getunmatchedtxnreport/{clientid}/{channelid}/{modeid}/{terminalid}/{fromdatetxns}/{todatetxns}/{txntype}")
+	public List<JSONObject> getunmatchedtxnreport(@PathVariable("clientid") String clientid,
+			@PathVariable("channelid") String channelid, @PathVariable("modeid") String modeid,
+			@PathVariable("terminalid") String terminalid, @PathVariable("fromdatetxns") String fromdatetxns,
+			@PathVariable("todatetxns") String todatetxns, @PathVariable("txntype") String txntype) {
+		List<JSONObject> getunmatchedtxnreport = traceService.getunmatchedtxnreport(clientid, channelid, modeid,
+				terminalid, fromdatetxns, todatetxns, txntype);
+		return getunmatchedtxnreport;
+	}
+
+	@GetMapping("getsuccessfultxnreport/{clientid}/{channelid}/{modeid}/{terminalid}/{fromdatetxns}/{todatetxns}/{txntype}")
+	public List<JSONObject> getsuccessfultxnreport(@PathVariable("clientid") String clientid,
+			@PathVariable("channelid") String channelid, @PathVariable("modeid") String modeid,
+			@PathVariable("terminalid") String terminalid, @PathVariable("fromdatetxns") String fromdatetxns,
+			@PathVariable("todatetxns") String todatetxns, @PathVariable("txntype") String txntype) {
+		List<JSONObject> getsuccessfultxnreport = traceService.getsuccessfultxnreport(clientid, channelid, modeid,
+				terminalid, fromdatetxns, todatetxns, txntype);
+		return getsuccessfultxnreport;
+	}
+
+	@GetMapping("getreversaltxnreport/{clientid}/{channelid}/{modeid}/{terminalid}/{fromdatetxns}/{todatetxns}/{txntype}")
+	public List<JSONObject> getreversaltxnreport(@PathVariable("clientid") String clientid,
+			@PathVariable("channelid") String channelid, @PathVariable("modeid") String modeid,
+			@PathVariable("terminalid") String terminalid, @PathVariable("fromdatetxns") String fromdatetxns,
+			@PathVariable("todatetxns") String todatetxns, @PathVariable("txntype") String txntype) {
+		List<JSONObject> getreversaltxnreport = traceService.getreversaltxnreport(clientid, channelid, modeid,
+				terminalid, fromdatetxns, todatetxns, txntype);
+		return getreversaltxnreport;
+	}
+
+	@GetMapping("getforcesettlementtxns/{clientid}/{channelid}/{modeid}/{glstatus}/{ejstatus}/{nwstatus}/{swstatus}/{fromdatetxns}/{todatetxns}/{recontype}/{settlementtype}")
+	public List<JSONObject> getforcesettlementtxns(@PathVariable("clientid") String clientid,
+			@PathVariable("channelid") String channelid, @PathVariable("modeid") String modeid,
+			@PathVariable("glstatus") String glstatus, @PathVariable("ejstatus") String ejstatus,
+			@PathVariable("nwstatus") String nwstatus, @PathVariable("swstatus") String swstatus,
+			@PathVariable("fromdatetxns") String fromdatetxns, @PathVariable("todatetxns") String todatetxns,
+			@PathVariable("recontype") String recontype, @PathVariable("settlementtype") String settlementtype) {
+		String userid = username.getUsername();
+		List<JSONObject> getforcesettlementtxns = traceService.getforcesettlementtxns(clientid, channelid, modeid,
+				glstatus, ejstatus, nwstatus, swstatus, fromdatetxns, todatetxns, recontype, settlementtype, userid);
+		return getforcesettlementtxns;
+	}
+
 }

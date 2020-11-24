@@ -3832,93 +3832,93 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						}
 						if (atmType != null) {
 //							&& TerminalID.substring(0, 2) != microAtmType)
-							Boolean isFound=atmType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							Boolean isFound = atmType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
 							if (isFound == true && TerminalID.substring(0, 2) != microAtmType) {
 								ATM = true;
 							}
 						}
 						if (posType != null) {
-							Boolean isFound=posType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
-							if (isFound==true) {
+							Boolean isFound = posType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								POS = true;
 							}
 						}
 						if (ecomType != null) {
-							Boolean isFound=ecomType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
-							if (isFound==true) {
+							Boolean isFound = ecomType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								ECOM = true;
 							}
 						}
 						if (impType != null) {
-							Boolean isFound=impType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
-							if (isFound==true) {
+							Boolean isFound = impType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								IMPS = true;
 							}
 						}
 						if (upiType != null) {
-							Boolean isFound=upiType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
-							if (isFound==true) {
+							Boolean isFound = upiType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								UPI = true;
 							}
 						}
 						if (microAtmType != null) {
-							Boolean isFound=microAtmType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
-							if (isFound==true || TerminalID.substring(0, 2).equals(microAtmType)) {
+							Boolean isFound = microAtmType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true || TerminalID.substring(0, 2).equals(microAtmType)) {
 								MicroATM = true;
 							}
 						}
 						if (mobileRecharge != null) {
-							Boolean isFound=mobileRecharge.indexOf(TxnsSubType.trim()) != -1 ? true : false;
-							if (isFound==true) {
+							Boolean isFound = mobileRecharge.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								MobileRecharge = true;
 							}
 						}
 					} else {
 						if (CDMType != null) {
-							Boolean isFound=CDMType.indexOf(ChannelType.trim()) != -1 ? true : false;
-							if (isFound==true) {
+							Boolean isFound = CDMType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								CDM = true;
 							}
 						}
 						if (atmType != null) {
-							Boolean isFound=atmType.indexOf(ChannelType.trim()) != -1 ? true : false;
-							if (isFound==true && TerminalID.substring(0, 2) != microAtmType) {
+							Boolean isFound = atmType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound == true && TerminalID.substring(0, 2) != microAtmType) {
 								ATM = true;
 							}
 						}
 						if (posType != null) {
-							Boolean isFound=posType.indexOf(ChannelType.trim()) != -1 ? true : false;
-							if (isFound==true) {
+							Boolean isFound = posType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								POS = true;
 							}
 						}
 						if (ecomType != null) {
-							Boolean isFound=ecomType.indexOf(ChannelType.trim()) != -1 ? true : false;
-							if (isFound==true) {
+							Boolean isFound = ecomType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								ECOM = true;
 							}
 						}
 						if (impType != null) {
-							Boolean isFound=impType.indexOf(ChannelType.trim()) != -1 ? true : false;
-							if (isFound==true) {
+							Boolean isFound = impType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								IMPS = true;
 							}
 						}
 						if (upiType != null) {
-							Boolean isFound=upiType.indexOf(ChannelType.trim()) != -1 ? true : false;
-							if (isFound==true) {
+							Boolean isFound = upiType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								UPI = true;
 							}
 						}
 						if (microAtmType != null) {
-							Boolean isFound=microAtmType.indexOf(ChannelType.trim()) != -1 ? true : false;
-							if (isFound=true || TerminalID.substring(0, 2).equals(microAtmType)) {
+							Boolean isFound = microAtmType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound = true || TerminalID.substring(0, 2).equals(microAtmType)) {
 								MicroATM = true;
 							}
 						}
 						if (mobileRecharge != null) {
-							Boolean isFound=mobileRecharge.indexOf(ChannelType.trim()) != -1 ? true : false;
-							if (isFound=true) {
+							Boolean isFound = mobileRecharge.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound = true) {
 								MobileRecharge = true;
 							}
 						}
@@ -3934,26 +3934,26 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						}
 					}
 					if (balanceInq != null) {
-						Boolean isFound=balanceInq.indexOf(TxnsSubType.trim()) != -1 ? true : false;
-						if (isFound==true) {
+						Boolean isFound = balanceInq.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+						if (isFound == true) {
 							BAL = true;
 						}
 					}
 					if (miniStatement != null) {
-						Boolean isFound=miniStatement.indexOf(TxnsSubType.trim()) != -1 ? true : false;
-						if (isFound==true) {
+						Boolean isFound = miniStatement.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+						if (isFound == true) {
 							MS = true;
 						}
 					}
 					if (pinChange != null) {
-						Boolean isFound=pinChange.indexOf(TxnsSubType.trim()) != -1 ? true : false;
-						if (isFound==true) {
+						Boolean isFound = pinChange.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+						if (isFound == true) {
 							PC = true;
 						}
 					}
 					if (checkBookReq != null) {
-						Boolean isFound=checkBookReq.indexOf(TxnsSubType.trim()) != -1 ? true : false;
-						if (isFound==true) {
+						Boolean isFound = checkBookReq.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+						if (isFound == true) {
 							CB = true;
 						}
 					}
@@ -8936,13 +8936,205 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query.setParameter(7, terminalid);
 		query.execute();
 		List<Object[]> result = query.getResultList();
-		System.out.println("result:"  + result.toString() );
+		System.out.println("result:" + result.toString());
 		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
 		for (Object record : result) {
 			JSONObject obj = new JSONObject();
 			obj.put("strMasg", result.toString());
-			JSONObjects.add(obj);		
-			}
+			JSONObjects.add(obj);
+		}
+		return JSONObjects;
+	}
+
+	@Override
+	public List<JSONObject> getunmatchedtxnreport(String clientid, String channelid, String modeid, String terminalid,
+			String fromdatetxns, String todatetxns, String txntype) {
+		// TODO Auto-generated method stub
+		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("spunmatchedtxnsreport");
+		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(4, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(5, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(6, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(7, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(8, String.class, ParameterMode.REF_CURSOR);
+		query.setParameter(1, clientid);
+		query.setParameter(2, channelid);
+		query.setParameter(3, modeid);
+		query.setParameter(4, terminalid);
+		query.setParameter(5, fromdatetxns);
+		query.setParameter(6, todatetxns);
+		query.setParameter(7, txntype);
+		query.execute();
+		List<Object[]> result = query.getResultList();
+		System.out.println("result:" + result.toString());
+		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
+		for (Object record : result) {
+			Object[] fields = (Object[]) record;
+			JSONObject obj = new JSONObject();
+			obj.put("ChannelName", fields[0]);
+			obj.put("TransactionMode", fields[1]);
+			obj.put("TerminalId", fields[2]);
+			obj.put("TxnsValueDateTime", fields[3]);
+			obj.put("ReferenceNumber", fields[4]);
+			obj.put("CardNumber", fields[5]);
+			obj.put("CustAccountNo", fields[6]);
+			obj.put("TxnsAmount", fields[7]);
+			obj.put("ejstatus", fields[8]);
+			obj.put("swstatus", fields[9]);
+			obj.put("nwstatus", fields[10]);
+			obj.put("glstatus", fields[11]);
+			obj.put("TxnsSubType", fields[12]);
+			JSONObjects.add(obj);
+		}
+		return JSONObjects;
+	}
+
+	@Override
+	public List<JSONObject> getsuccessfultxnreport(String clientid, String channelid, String modeid, String terminalid,
+			String fromdatetxns, String todatetxns, String txntype) {
+		// TODO Auto-generated method stub
+		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("spsuccessfultxnsreport");
+		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(4, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(5, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(6, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(7, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(8, String.class, ParameterMode.REF_CURSOR);
+		query.setParameter(1, clientid);
+		query.setParameter(2, channelid);
+		query.setParameter(3, modeid);
+		query.setParameter(4, terminalid);
+		query.setParameter(5, fromdatetxns);
+		query.setParameter(6, todatetxns);
+		query.setParameter(7, txntype);
+		query.execute();
+		List<Object[]> result = query.getResultList();
+		System.out.println("result:" + result.toString());
+		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
+		for (Object record : result) {
+			Object[] fields = (Object[]) record;
+			JSONObject obj = new JSONObject();
+			obj.put("ChannelName", fields[0]);
+			obj.put("TransactionMode", fields[1]);
+			obj.put("TerminalId", fields[2]);
+			obj.put("TxnsValueDateTime", fields[3]);
+			obj.put("ReferenceNumber", fields[4]);
+			obj.put("CardNumber", fields[5]);
+			obj.put("CustAccountNo", fields[6]);
+			obj.put("TxnsAmount", fields[7]);
+			obj.put("ejstatus", fields[8]);
+			obj.put("swstatus", fields[9]);
+			obj.put("nwstatus", fields[10]);
+			obj.put("glstatus", fields[11]);
+			obj.put("TxnsSubType", fields[12]);
+			JSONObjects.add(obj);
+		}
+		return JSONObjects;
+	}
+
+	@Override
+	public List<JSONObject> getreversaltxnreport(String clientid, String channelid, String modeid, String terminalid,
+			String fromdatetxns, String todatetxns, String txntype) {
+		// TODO Auto-generated method stub
+		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("spreversaltxnsreport");
+		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(4, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(5, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(6, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(7, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(8, String.class, ParameterMode.REF_CURSOR);
+		query.setParameter(1, clientid);
+		query.setParameter(2, channelid);
+		query.setParameter(3, modeid);
+		query.setParameter(4, terminalid);
+		query.setParameter(5, fromdatetxns);
+		query.setParameter(6, todatetxns);
+		query.setParameter(7, txntype);
+		query.execute();
+		List<Object[]> result = query.getResultList();
+		System.out.println("result:" + result.toString());
+		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
+		for (Object record : result) {
+			Object[] fields = (Object[]) record;
+			JSONObject obj = new JSONObject();
+			obj.put("ChannelName", fields[0]);
+			obj.put("TransactionMode", fields[1]);
+			obj.put("TerminalId", fields[2]);
+			obj.put("TxnsValueDateTime", fields[3]);
+			obj.put("ReferenceNumber", fields[4]);
+			obj.put("CardNumber", fields[5]);
+			obj.put("CustAccountNo", fields[6]);
+			obj.put("TxnsAmount", fields[7]);
+			obj.put("ejstatus", fields[8]);
+			obj.put("swstatus", fields[9]);
+			obj.put("nwstatus", fields[10]);
+			obj.put("glstatus", fields[11]);
+			obj.put("TxnsSubType", fields[12]);
+			JSONObjects.add(obj);
+		}
+		return JSONObjects;
+	}
+
+	@Override
+	public List<JSONObject> getforcesettlementtxns(String clientid, String channelid, String modeid, String glstatus,
+			String ejstatus, String nwstatus, String swstatus, String fromdatetxns, String todatetxns, String recontype,
+			String settlementtype, String userid) {
+		// TODO Auto-generated method stub
+		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("spforcesettlementtxns");
+		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(4, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(5, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(6, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(7, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(8, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(9, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(10, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(11, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(12, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(13, String.class, ParameterMode.REF_CURSOR);
+		query.setParameter(1, clientid);
+		query.setParameter(2, channelid);
+		query.setParameter(3, modeid);
+		query.setParameter(4, glstatus);
+		query.setParameter(5, ejstatus);
+		query.setParameter(6, nwstatus);
+		query.setParameter(7, swstatus);
+		query.setParameter(8, fromdatetxns);
+		query.setParameter(9, todatetxns);
+		query.setParameter(10, recontype);
+		query.setParameter(11, settlementtype);
+		query.setParameter(12, userid);
+		query.execute();
+		List<Object[]> result = query.getResultList();
+		System.out.println("result:" + result.toString());
+		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
+		for (Object record : result) {
+			Object[] fields = (Object[]) record;
+			JSONObject obj = new JSONObject();
+			obj.put("ClientName", fields[0]);
+			obj.put("ChannelName", fields[1]);
+			obj.put("TransactionMode", fields[2]);
+			obj.put("TxnsDateTime", fields[3]);
+			obj.put("TerminalID", fields[4]);
+			obj.put("Referencenumber", fields[5]);
+			obj.put("Cardnumber", fields[6]);
+			obj.put("Amount", fields[7]);
+			obj.put("EJstatus", fields[8]);
+			obj.put("swstatus", fields[9]);
+			obj.put("nwstatus", fields[10]);
+			obj.put("glstatus", fields[11]);
+			obj.put("ReconType", fields[12]);
+			obj.put("TxnsSubType", fields[13]);
+			JSONObjects.add(obj);
+		}
 		return JSONObjects;
 	}
 }
