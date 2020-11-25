@@ -751,7 +751,7 @@ public class Trace_Service_Imp implements Trace_Service {
 					if (transaction_Date != null & transaction_Time != null) {
 						String pattern = "yyyy-MM-dd HH:mm:ss";
 						String temp = transaction_Date + " " + transaction_Time;
-						SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HHmmss");
+						SimpleDateFormat sdf = new SimpleDateFormat("yyMMdd HHmmss");
 						try {
 							Date d = sdf.parse(temp);
 							sdf.applyPattern(pattern);

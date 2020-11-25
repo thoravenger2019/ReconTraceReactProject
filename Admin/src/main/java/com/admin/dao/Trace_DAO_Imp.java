@@ -4224,7 +4224,14 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			List<JSONObject> cbsfileformatxml = getcbsswitchformatfileinxml(clientid, fileTypeName, "." + extFile);
 			List<JSONObject> cbsIdentificationfileformatxml = getcbsswitchejIdentificationfileformatxml(clientid,
 					fileTypeName, "." + extFile);
+			System.out.println("cbsfileformatxml===="+cbsfileformatxml.toString());
+			System.out.println("cbsIdentificationfileformatxml===="+cbsIdentificationfileformatxml.toString());
 			JSONObject xmlFormatDescription = cbsfileformatxml.get(0);
+			
+			
+			
+			
+			
 			String tempStr = xmlFormatDescription.get("FormatDescriptionXml").toString();
 			System.out.println("tempStr:" + tempStr);
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -5076,83 +5083,99 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 					if (ChannelType == null && TxnsSubType != null) {
 						if (CDMType != null) {
-							if (CDMType.equals(TxnsSubType)) {
+							Boolean isFound = CDMType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								CDM = true;
 							}
 						}
 						if (atmType != null) {
-							if (atmType.equals(TxnsSubType) && TerminalID.substring(0, 2) != microAtmType) {
+							Boolean isFound = CDMType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true && TerminalID.substring(0, 2) != microAtmType) {
 								ATM = true;
 							}
 						}
 						if (posType != null) {
-							if (posType.equals(TxnsSubType)) {
+							Boolean isFound = posType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								POS = true;
 							}
 						}
 						if (ecomType != null) {
-							if (ecomType.equals(TxnsSubType)) {
+							Boolean isFound = ecomType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								ECOM = true;
 							}
 						}
 						if (impType != null) {
-							if (impType.equals(TxnsSubType)) {
+							Boolean isFound = impType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								IMPS = true;
 							}
 						}
 						if (upiType != null) {
-							if (upiType.equals(TxnsSubType)) {
+							Boolean isFound = upiType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								UPI = true;
 							}
 						}
 						if (microAtmType != null) {
-							if (microAtmType == TxnsSubType || TerminalID.substring(0, 2).equals(microAtmType)) {
+							Boolean isFound = microAtmType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true || TerminalID.substring(0, 2).equals(microAtmType)) {
 								MicroATM = true;
 							}
 						}
 						if (mobileRecharge != null) {
-							if (mobileRecharge == TxnsSubType) {
+							Boolean isFound = mobileRecharge.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								MobileRecharge = true;
 							}
 						}
 					} else {
 						if (CDMType != null) {
-							if (CDMType.equals(ChannelType)) {
+							Boolean isFound = CDMType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								CDM = true;
 							}
 						}
 						if (atmType != null) {
-							if (atmType.equals(ChannelType) && TerminalID.substring(0, 2) != microAtmType) {
+							Boolean isFound = atmType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound == true && TerminalID.substring(0, 2) != microAtmType) {
 								ATM = true;
 							}
 						}
 						if (posType != null) {
-							if (posType.equals(ChannelType)) {
+							Boolean isFound = posType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								POS = true;
 							}
 						}
 						if (ecomType != null) {
-							if (ecomType.equals(ChannelType)) {
+							Boolean isFound = ecomType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								ECOM = true;
 							}
 						}
 						if (impType != null) {
-							if (impType.equals(ChannelType)) {
+							Boolean isFound = impType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								IMPS = true;
 							}
 						}
 						if (upiType != null) {
-							if (upiType.equals(ChannelType)) {
+							Boolean isFound = upiType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								UPI = true;
 							}
 						}
 						if (microAtmType != null) {
-							if (microAtmType == ChannelType || TerminalID.substring(0, 2).equals(microAtmType)) {
+							Boolean isFound = microAtmType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound == true || TerminalID.substring(0, 2).equals(microAtmType)) {
 								MicroATM = true;
 							}
 						}
 						if (mobileRecharge != null) {
-							if (mobileRecharge == ChannelType) {
+							Boolean isFound = mobileRecharge.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								MobileRecharge = true;
 							}
 						}
@@ -5168,22 +5191,26 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						}
 					}
 					if (balanceInq != null) {
-						if (balanceInq.equals(TxnsSubType)) {
+						Boolean isFound = balanceInq.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+						if (isFound == true) {
 							BAL = true;
 						}
 					}
 					if (miniStatement != null) {
-						if (miniStatement.equals(TxnsSubType)) {
+						Boolean isFound = miniStatement.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+						if (isFound == true) {
 							MS = true;
 						}
 					}
 					if (pinChange != null) {
-						if (pinChange.equals(TxnsSubType)) {
+						Boolean isFound = pinChange.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+						if (isFound == true) {
 							PC = true;
 						}
 					}
 					if (checkBookReq != null) {
-						if (checkBookReq.equals(TxnsSubType)) {
+						Boolean isFound = checkBookReq.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+						if (isFound == true) {
 							CB = true;
 						}
 					}
@@ -6202,83 +6229,99 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 					if (ChannelType == null && TxnsSubType != null) {
 						if (CDMType != null) {
-							if (CDMType.equals(TxnsSubType)) {
+							Boolean isFound = CDMType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								CDM = true;
 							}
 						}
 						if (atmType != null) {
-							if (atmType.equals(TxnsSubType) && TerminalID.substring(0, 2) != microAtmType) {
+							Boolean isFound = atmType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true && TerminalID.substring(0, 2) != microAtmType) {
 								ATM = true;
 							}
 						}
 						if (posType != null) {
-							if (posType.equals(TxnsSubType)) {
+							Boolean isFound = posType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								POS = true;
 							}
 						}
 						if (ecomType != null) {
-							if (ecomType.equals(TxnsSubType)) {
+							Boolean isFound = ecomType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								ECOM = true;
 							}
 						}
 						if (impType != null) {
-							if (impType.equals(TxnsSubType)) {
+							Boolean isFound = impType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								IMPS = true;
 							}
 						}
 						if (upiType != null) {
-							if (upiType.equals(TxnsSubType)) {
+							Boolean isFound = upiType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								UPI = true;
 							}
 						}
 						if (microAtmType != null) {
-							if (microAtmType == TxnsSubType || TerminalID.substring(0, 2).equals(microAtmType)) {
+							Boolean isFound = microAtmType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true || TerminalID.substring(0, 2).equals(microAtmType)) {
 								MicroATM = true;
 							}
 						}
 						if (mobileRecharge != null) {
-							if (mobileRecharge == TxnsSubType) {
+							Boolean isFound = mobileRecharge.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								MobileRecharge = true;
 							}
 						}
 					} else {
 						if (CDMType != null) {
-							if (CDMType.equals(ChannelType)) {
+							Boolean isFound = CDMType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								CDM = true;
 							}
 						}
 						if (atmType != null) {
-							if (atmType.equals(ChannelType) && TerminalID.substring(0, 2) != microAtmType) {
+							Boolean isFound = atmType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound == true && TerminalID.substring(0, 2) != microAtmType) {
 								ATM = true;
 							}
 						}
 						if (posType != null) {
-							if (posType.equals(ChannelType)) {
+							Boolean isFound = posType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								POS = true;
 							}
 						}
 						if (ecomType != null) {
-							if (ecomType.equals(ChannelType)) {
+							Boolean isFound = ecomType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								ECOM = true;
 							}
 						}
 						if (impType != null) {
-							if (impType.equals(ChannelType)) {
+							Boolean isFound = impType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								IMPS = true;
 							}
 						}
 						if (upiType != null) {
-							if (upiType.equals(ChannelType)) {
+							Boolean isFound = upiType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								UPI = true;
 							}
 						}
 						if (microAtmType != null) {
-							if (microAtmType == ChannelType || TerminalID.substring(0, 2).equals(microAtmType)) {
+							Boolean isFound = microAtmType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound == true || TerminalID.substring(0, 2).equals(microAtmType)) {
 								MicroATM = true;
 							}
 						}
 						if (mobileRecharge != null) {
-							if (mobileRecharge == ChannelType) {
+							Boolean isFound = mobileRecharge.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound == true) {
 								MobileRecharge = true;
 							}
 						}
@@ -6294,22 +6337,26 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						}
 					}
 					if (balanceInq != null) {
-						if (balanceInq.equals(TxnsSubType)) {
+						Boolean isFound = balanceInq.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+						if (isFound == true) {
 							BAL = true;
 						}
 					}
 					if (miniStatement != null) {
-						if (miniStatement.equals(TxnsSubType)) {
+						Boolean isFound = miniStatement.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+						if (isFound == true) {
 							MS = true;
 						}
 					}
 					if (pinChange != null) {
-						if (pinChange.equals(TxnsSubType)) {
+						Boolean isFound = pinChange.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+						if (isFound == true) {
 							PC = true;
 						}
 					}
 					if (checkBookReq != null) {
-						if (checkBookReq.equals(TxnsSubType)) {
+						Boolean isFound = checkBookReq.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+						if (isFound == true) {
 							CB = true;
 						}
 					}
@@ -6528,12 +6575,12 @@ public class Trace_DAO_Imp implements Trace_DAO {
 					stmt.addBatch();
 					incr++;
 					System.out.println("incr:" + incr + "    " + "ROWS == " + sheet.getPhysicalNumberOfRows());
-					if (incr % batchSize == 0 || incr == (sheet.getPhysicalNumberOfRows()) - 1) {
+//					if (incr % batchSize == 0 || incr == (sheet.getPhysicalNumberOfRows()) - 1) {
 						stmt.executeBatch();
 						long end = System.currentTimeMillis();
 						System.out.println("TIME:  " + (end - start));
 						glcbsStatus = true;
-					}
+//					}
 
 				}
 				stmt.close();
@@ -7040,7 +7087,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							ReserveField2 = null;
 						} else {
 							ReserveField2 = row
-									.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsSubType").getString(0)) - 1)
+									.getCell(Integer.parseInt(jsonObj.getJSONArray("ReserveField2").getString(0)) - 1)
 									.toString();
 						}
 					}
@@ -7387,83 +7434,99 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 				if (ChannelType == null && TxnsSubType != null) {
 					if (CDMType != null) {
-						if (CDMType.equals(TxnsSubType)) {
+						Boolean isFound = CDMType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+						if (isFound == true) {
 							CDM = true;
 						}
 					}
 					if (atmType != null) {
-						if (atmType.equals(TxnsSubType) && TerminalID.substring(0, 2) != microAtmType) {
+						Boolean isFound = atmType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+						if (isFound == true && TerminalID.substring(0, 2) != microAtmType) {
 							ATM = true;
 						}
 					}
 					if (posType != null) {
-						if (posType.equals(TxnsSubType)) {
+						Boolean isFound = posType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+						if (isFound == true) {
 							POS = true;
 						}
 					}
 					if (ecomType != null) {
-						if (ecomType.equals(TxnsSubType)) {
+						Boolean isFound = ecomType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+						if (isFound == true) {
 							ECOM = true;
 						}
 					}
 					if (impType != null) {
-						if (impType.equals(TxnsSubType)) {
+						Boolean isFound = impType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+						if (isFound == true) {
 							IMPS = true;
 						}
 					}
 					if (upiType != null) {
-						if (upiType.equals(TxnsSubType)) {
+						Boolean isFound = upiType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+						if (isFound == true) {
 							UPI = true;
 						}
 					}
 					if (microAtmType != null) {
-						if (microAtmType == TxnsSubType || TerminalID.substring(0, 2).equals(microAtmType)) {
+						Boolean isFound = microAtmType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+						if (isFound == true || TerminalID.substring(0, 2).equals(microAtmType)) {
 							MicroATM = true;
 						}
 					}
 					if (mobileRecharge != null) {
-						if (mobileRecharge == TxnsSubType) {
+						Boolean isFound = mobileRecharge.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+						if (isFound == true) {
 							MobileRecharge = true;
 						}
 					}
 				} else {
 					if (CDMType != null) {
-						if (CDMType.equals(ChannelType)) {
+						Boolean isFound = CDMType.indexOf(ChannelType.trim()) != -1 ? true : false;
+						if (isFound == true) {
 							CDM = true;
 						}
 					}
 					if (atmType != null) {
-						if (atmType.equals(ChannelType) && TerminalID.substring(0, 2) != microAtmType) {
+						Boolean isFound = atmType.indexOf(ChannelType.trim()) != -1 ? true : false;
+						if (isFound==true && TerminalID.substring(0, 2) != microAtmType) {
 							ATM = true;
 						}
 					}
 					if (posType != null) {
-						if (posType.equals(ChannelType)) {
+						Boolean isFound = posType.indexOf(ChannelType.trim()) != -1 ? true : false;
+						if (isFound == true) {
 							POS = true;
 						}
 					}
 					if (ecomType != null) {
-						if (ecomType.equals(ChannelType)) {
+						Boolean isFound = ecomType.indexOf(ChannelType.trim()) != -1 ? true : false;
+						if (isFound == true) {
 							ECOM = true;
 						}
 					}
 					if (impType != null) {
-						if (impType.equals(ChannelType)) {
+						Boolean isFound = impType.indexOf(ChannelType.trim()) != -1 ? true : false;
+						if (isFound == true) {
 							IMPS = true;
 						}
 					}
 					if (upiType != null) {
-						if (upiType.equals(ChannelType)) {
+						Boolean isFound = upiType.indexOf(ChannelType.trim()) != -1 ? true : false;
+						if (isFound == true) {
 							UPI = true;
 						}
 					}
 					if (microAtmType != null) {
-						if (microAtmType == ChannelType || TerminalID.substring(0, 2).equals(microAtmType)) {
+						Boolean isFound = microAtmType.indexOf(ChannelType.trim()) != -1 ? true : false;
+						if (isFound == true || TerminalID.substring(0, 2).equals(microAtmType)) {
 							MicroATM = true;
 						}
 					}
 					if (mobileRecharge != null) {
-						if (mobileRecharge == ChannelType) {
+						Boolean isFound = mobileRecharge.indexOf(ChannelType.trim()) != -1 ? true : false;
+						if (isFound == true) {
 							MobileRecharge = true;
 						}
 					}

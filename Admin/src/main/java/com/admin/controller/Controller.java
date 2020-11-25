@@ -1041,6 +1041,9 @@ public class Controller {
 		Map<String, String> hm = new HashMap<>();
 		String createdby = username.getUsername();
 		System.out.println("P_TXNPOSTDATETIME:  " + P_TXNPOSTDATETIME);
+		if (P_TXNPOSTDATETIME.equalsIgnoreCase("undefined")) {
+			P_TXNPOSTDATETIME = "";
+		}
 		if (P_REVENTRY.equalsIgnoreCase("undefined")) {
 			P_REVENTRY = "0";
 		}
