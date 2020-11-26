@@ -779,7 +779,40 @@ public class Trace_Service_Imp implements Trace_Service {
 					if (card_number != null) {
 						ecard_number = card_number;
 					}
-
+					if(transaction_Amount != null)
+					{
+						Double transaction_Amount_double=Double.parseDouble(transaction_Amount);
+						transaction_Amount=String.valueOf(transaction_Amount_double);
+					}
+					
+					if(actual_Transaction_Amount !=null)
+					{
+						Double actual_Transaction_Amount_double=Double.parseDouble(actual_Transaction_Amount);
+						actual_Transaction_Amount=String.valueOf(actual_Transaction_Amount_double);
+					}
+					
+					if(transaction_Acitivity_fee !=null)
+					{
+						Double transaction_Acitivity_fee_double=Double.parseDouble(transaction_Acitivity_fee);
+						transaction_Acitivity_fee=String.valueOf(transaction_Acitivity_fee_double);
+					}
+					
+					if(acquirer_settlement_Amount !=null)
+					{
+						Double acquirer_settlement_Amount_double=Double.parseDouble(acquirer_settlement_Amount);
+						acquirer_settlement_Amount=String.valueOf(acquirer_settlement_Amount_double);
+					}
+					
+					if(acquirer_Settlement_Fee !=null)
+					{
+						Double acquirer_Settlement_Fee_double=Double.parseDouble(acquirer_Settlement_Fee);
+						acquirer_Settlement_Fee=String.valueOf(acquirer_Settlement_Fee_double);
+					}
+					if(acquirer_settlement_processing_fee !=null)
+					{
+						Double acquirer_settlement_processing_fee_double=Double.parseDouble(acquirer_settlement_processing_fee);
+						acquirer_settlement_processing_fee=String.valueOf(acquirer_settlement_processing_fee_double);
+					}
 					stmt.setString(1, clientid);
 					stmt.setString(2, participant_ID);
 					stmt.setString(3, transaction_Type);
@@ -1123,7 +1156,57 @@ public class Trace_Service_Imp implements Trace_Service {
 					if (card_number != null) {
 						ecard_number = card_number;
 					}
-
+					
+					if(txnAmount !=null)
+					{
+						Double txnAmount_double=Double.parseDouble(txnAmount);
+						txnAmount=String.valueOf(txnAmount_double);
+					}
+					if(actualTransAmount !=null)
+					{
+						Double actualTransAmount_double=Double.parseDouble(actualTransAmount);
+						actualTransAmount=String.valueOf(actualTransAmount_double);
+					}
+					if(tranActivityFee !=null)
+					{
+						Double tranActivityFee_double=Double.parseDouble(tranActivityFee);
+						tranActivityFee=String.valueOf(tranActivityFee_double);
+					}
+					if(issuerSetAmount !=null)
+					{
+						Double issuerSetAmount_double=Double.parseDouble(issuerSetAmount);
+						issuerSetAmount=String.valueOf(issuerSetAmount_double);
+					}
+					if(issuerSetFee !=null)
+					{
+						Double issuerSetFee_double=Double.parseDouble(issuerSetFee);
+						issuerSetFee=String.valueOf(issuerSetFee_double);
+					}
+					if(issuerSetProcFee !=null)
+					{
+						Double issuerSetProcFee_double=Double.parseDouble(issuerSetProcFee);
+						issuerSetProcFee=String.valueOf(issuerSetProcFee_double);
+					}
+					if(cardHolderBillAmount !=null)
+					{
+						Double cardHolderBillAmount_double=Double.parseDouble(cardHolderBillAmount);
+						cardHolderBillAmount=String.valueOf(cardHolderBillAmount_double);
+					}
+					if(cardHolderBillActFee !=null)
+					{
+						Double cardHolderBillActFee_double=Double.parseDouble(cardHolderBillActFee);
+						cardHolderBillActFee=String.valueOf(cardHolderBillActFee_double);
+					}
+					if(cardHolderBillProcFee !=null)
+					{
+						Double cardHolderBillProcFee_double=Double.parseDouble(cardHolderBillProcFee);
+						cardHolderBillProcFee=String.valueOf(cardHolderBillProcFee_double);
+					}
+					if(cardHolderBillServiceFee !=null)
+					{
+						Double cardHolderBillServiceFee_double=Double.parseDouble(cardHolderBillServiceFee);
+						cardHolderBillServiceFee=String.valueOf(cardHolderBillServiceFee_double);
+					}
 					stmt.setString(1, clientid);
 					stmt.setString(2, participant_ID);
 					stmt.setString(3, transaction_Type);
