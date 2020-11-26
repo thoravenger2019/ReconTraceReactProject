@@ -3484,6 +3484,15 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							String amountstr = contentData.substring(contentData.indexOf(":") + 1).replace("RS.", "")
 									.trim();
 							TxnsAmount = amountstr;
+							if(TxnsAmount != null)
+							{
+								Double TxnsAmount_double=Double.parseDouble(TxnsAmount);
+								TxnsAmount=String.valueOf(TxnsAmount_double);
+							}
+							else
+							{
+								TxnsAmount="0.0";
+							}
 
 						}
 
@@ -6734,6 +6743,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						}
 					}
 					if (jsonObj.getJSONArray("Amount2").getString(0).equals("0")) {
+						Amount2 = "0.0";
 					} else {
 						if (temprow
 								.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount2").getString(0)) - 1) == null) {
@@ -6746,6 +6756,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						}
 					}
 					if (jsonObj.getJSONArray("Amount3").getString(0).equals("0")) {
+						Amount3 = "0.0";
 					} else {
 						if (temprow
 								.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount3").getString(0)) - 1) == null) {
@@ -6780,6 +6791,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						}
 					}
 					if (jsonObj.getJSONArray("FeeAmount").getString(0).equals("0")) {
+						FeeAmount = "0.0";
 					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("FeeAmount").getString(0)) - 1) == null) {
@@ -6804,6 +6816,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						}
 					}
 					if (jsonObj.getJSONArray("CustBalance").getString(0).equals("0")) {
+						CustBalance = "0.0";
 					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("CustBalance").getString(0)) - 1) == null) {
@@ -6817,6 +6830,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						}
 					}
 					if (jsonObj.getJSONArray("InterchangeBalance").getString(0).equals("0")) {
+						InterchangeBalance = "0.0";
 					} else {
 						if (temprow.getCell(Integer.parseInt(jsonObj.getJSONArray("InterchangeBalance").getString(0))
 								- 1) == null) {
@@ -6830,6 +6844,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						}
 					}
 					if (jsonObj.getJSONArray("ATMBalance").getString(0).equals("0")) {
+						
+						ATMBalance = "0.0";
 					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("ATMBalance").getString(0)) - 1) == null) {
@@ -6886,6 +6902,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						}
 					}
 					if (jsonObj.getJSONArray("Amount1").getString(0).equals("0")) {
+						Amount1 = "0.0";
 					} else {
 						if (temprow
 								.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount1").getString(0)) - 1) == null) {
@@ -7090,6 +7107,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						}
 					}
 					if (jsonObj.getJSONArray("TxnsAmount").getString(0).equals("0")) {
+						TxnsAmount = "0.0";
 					} else {
 						if (temprow.getCell(
 								Integer.parseInt(jsonObj.getJSONArray("TxnsAmount").getString(0)) - 1) == null) {
