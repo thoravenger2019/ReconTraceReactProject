@@ -1220,6 +1220,7 @@ public class Controller {
 		
 		List<JSONObject> getunmatchedtxnreport = traceService.getunmatchedtxnreport(clientid, channelid, modeid,
 				terminalid, fromdatetxns, todatetxns, txntype);
+		System.out.println("getunmatchedtxnreport::"+getunmatchedtxnreport.toString());
 		return getunmatchedtxnreport;
 	}
 
@@ -1234,6 +1235,7 @@ public class Controller {
 		}
 		List<JSONObject> getsuccessfultxnreport = traceService.getsuccessfultxnreport(clientid, channelid, modeid,
 				terminalid, fromdatetxns, todatetxns, txntype);
+		System.out.println("getsuccessfultxnreport::"+getsuccessfultxnreport.toString());
 		return getsuccessfultxnreport;
 	}
 

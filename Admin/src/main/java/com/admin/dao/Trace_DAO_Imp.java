@@ -37,6 +37,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -94,7 +95,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	}
 
 	public static File csvToexcel(MultipartFile csvFile, String sepratorType) throws Exception {
-		System.out.println("sepratorType:="+sepratorType);
+		System.out.println("sepratorType:=" + sepratorType);
 		byte[] bytes = csvFile.getBytes();
 		String completeData = new String(bytes);
 		String[] rows = completeData.split(",");
@@ -110,12 +111,12 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		List<String> result = new ArrayList<>();
 		try {
 
-			String line=null;
+			String line = null;
 			InputStream is = csvFile.getInputStream();
 			br = new BufferedReader(new InputStreamReader(is));
 			arList = new ArrayList<>();
 			while ((line = br.readLine()) != null) {
-				String strar[] = line.split("\\"+"|");
+				String strar[] = line.split("\\" + "|");
 				al = new ArrayList<>();
 				for (int i = 0; i < strar.length; i++) {
 //					System.out.println(strar[i]);
@@ -3348,6 +3349,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	@Override
 	public List<JSONObject> importEJFileData(MultipartFile ej, String clientid, String createdby, String fileTypeName)
 			throws ParseException {
+		System.out.println("suyog");
 		String EjFileName = ej.getOriginalFilename();
 		String extFile = FilenameUtils.getExtension(EjFileName);
 		List<String> content = null;
@@ -3427,7 +3429,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 				startIndex = GetIndex(content, i, "TRANSACTION START");
 				endIndex = GetIndex(content, i, "TRANSACTION END");
-				ejStatus = false;
+				
 				if (startIndex > -1) {
 					a = startIndex;
 				}
@@ -3436,20 +3438,19 @@ public class Trace_DAO_Imp implements Trace_DAO {
 				}
 
 				if (a != -1 && b != -1) {
-
+					ejStatus = false;
 					for (int k = a; k <= b; k++) {
 						contentData = content.get(k);
 						if (contentData.contains("ATM ID")) {
-							TerminalID = contentData.substring(contentData.indexOf(":") + 1);
+							TerminalID = contentData.substring(contentData.indexOf(":") + 1).trim();
 
 						}
 						if (contentData.contains("REF NO") || contentData.contains("RRN NO")) {
-							ReferenceNumber = contentData.substring(contentData.indexOf(":") + 1);
+							ReferenceNumber = contentData.substring(contentData.indexOf(":") + 1).trim();
 
 						}
 						if (contentData.contains("DATE     :")) {
 							TxnsDate = contentData.substring(contentData.indexOf(":") + 1);
-
 						}
 						if (contentData.contains("TIME     :")) {
 							TxnsTime = contentData.substring(contentData.indexOf(":") + 1);
@@ -3484,14 +3485,11 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							String amountstr = contentData.substring(contentData.indexOf(":") + 1).replace("RS.", "")
 									.trim();
 							TxnsAmount = amountstr;
-							if(TxnsAmount != null)
-							{
-								Double TxnsAmount_double=Double.parseDouble(TxnsAmount);
-								TxnsAmount=String.valueOf(TxnsAmount_double);
-							}
-							else
-							{
-								TxnsAmount="0.0";
+							if (TxnsAmount != null) {
+								Double TxnsAmount_double = Double.parseDouble(TxnsAmount);
+								TxnsAmount = String.valueOf(TxnsAmount_double);
+							} else {
+								TxnsAmount = "0.0";
 							}
 
 						}
@@ -3882,7 +3880,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 								MobileRecharge = true;
 							}
 						}
-					} else {
+					} else if (ChannelType != null) {
 						if (CDMType != null) {
 							Boolean isFound = CDMType.indexOf(ChannelType.trim()) != -1 ? true : false;
 							if (isFound == true) {
@@ -3942,28 +3940,30 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							}
 						}
 					}
-					if (balanceInq != null) {
-						Boolean isFound = balanceInq.indexOf(TxnsSubType.trim()) != -1 ? true : false;
-						if (isFound == true) {
-							BAL = true;
+					if (TxnsSubType != null) {
+						if (balanceInq != null) {
+							Boolean isFound = balanceInq.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true) {
+								BAL = true;
+							}
 						}
-					}
-					if (miniStatement != null) {
-						Boolean isFound = miniStatement.indexOf(TxnsSubType.trim()) != -1 ? true : false;
-						if (isFound == true) {
-							MS = true;
+						if (miniStatement != null) {
+							Boolean isFound = miniStatement.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true) {
+								MS = true;
+							}
 						}
-					}
-					if (pinChange != null) {
-						Boolean isFound = pinChange.indexOf(TxnsSubType.trim()) != -1 ? true : false;
-						if (isFound == true) {
-							PC = true;
+						if (pinChange != null) {
+							Boolean isFound = pinChange.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true) {
+								PC = true;
+							}
 						}
-					}
-					if (checkBookReq != null) {
-						Boolean isFound = checkBookReq.indexOf(TxnsSubType.trim()) != -1 ? true : false;
-						if (isFound == true) {
-							CB = true;
+						if (checkBookReq != null) {
+							Boolean isFound = checkBookReq.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true) {
+								CB = true;
+							}
 						}
 					}
 					if (responseType.equals("1") && responsecode1 != null && ResponseCode1 != null) {
@@ -3985,14 +3985,18 @@ public class Trace_DAO_Imp implements Trace_DAO {
 					}
 
 					if (debitCode != null) {
-						if (debitCode.equals(DrCrType)) {
-							D = true;
+						if (DrCrType != null) {
+							if (debitCode.equals(DrCrType)) {
+								D = true;
+							}
 						}
 					}
 
 					if (creditCode != null) {
-						if (creditCode.equals(DrCrType)) {
-							C = true;
+						if (DrCrType != null) {
+							if (creditCode.equals(DrCrType)) {
+								C = true;
+							}
 						}
 					}
 					if (AcquirerID == null || acqID == null) {
@@ -4233,8 +4237,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			List<JSONObject> cbsfileformatxml = getcbsswitchformatfileinxml(clientid, fileTypeName, "." + extFile);
 			List<JSONObject> cbsIdentificationfileformatxml = getcbsswitchejIdentificationfileformatxml(clientid,
 					fileTypeName, "." + extFile);
-			System.out.println("cbsfileformatxml===="+cbsfileformatxml.toString());
-			System.out.println("cbsIdentificationfileformatxml===="+cbsIdentificationfileformatxml.toString());
+			System.out.println("cbsfileformatxml====" + cbsfileformatxml.toString());
+			System.out.println("cbsIdentificationfileformatxml====" + cbsIdentificationfileformatxml.toString());
 			JSONObject xmlFormatDescription = cbsfileformatxml.get(0);
 			String tempStr = xmlFormatDescription.get("FormatDescriptionXml").toString();
 			System.out.println("tempStr:" + tempStr);
@@ -4244,7 +4248,19 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			doc.getDocumentElement().normalize();
 			NodeList nodeList = doc.getDocumentElement().getChildNodes();
 			System.out.println("nodelistLength" + nodeList.getLength());
-			for (int i = 0; i < nodeList.getLength(); i++) {
+			String RowName = nodeList.item(0).getNodeName();
+			int actualRowPosition=-1;
+			if(RowName.equalsIgnoreCase("ActualRowPostion"))
+			{
+				Node startPosNode = nodeList.item(0);
+				NodeList startPosNodeValue = startPosNode.getChildNodes();
+				actualRowPosition = Integer.parseInt(startPosNodeValue.item(0).getNodeValue());
+			}
+			else
+			{
+				actualRowPosition=0;
+			}
+			for (int i = 1; i < nodeList.getLength(); i++) {
 				String nodeName = nodeList.item(i).getNodeName();
 				Node startPosNode = nodeList.item(i);
 				NodeList startPosNodeValue = startPosNode.getChildNodes();
@@ -4271,7 +4287,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 				FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
 				Row row1 = sheet.getRow(0);
 				int tempcolindex = -1;
-				
+
 				String ATMAccountNo = "";
 				String Amount1 = "";
 				String Amount2 = "";
@@ -4343,8 +4359,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 								Amount2 = row
 										.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount2").getString(0)) - 1)
 										.toString();
-								Double amount2_double=Double.parseDouble(Amount2);
-								Amount2=String.valueOf(amount2_double);
+								Double amount2_double = Double.parseDouble(Amount2);
+								Amount2 = String.valueOf(amount2_double);
 							}
 						}
 						if (jsonObj.getJSONArray("Amount3").getString(0).equals("0")) {
@@ -4356,8 +4372,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 								Amount3 = row
 										.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount3").getString(0)) - 1)
 										.toString();
-								Double amount3_double=Double.parseDouble(Amount3);
-								Amount3=String.valueOf(amount3_double);
+								Double amount3_double = Double.parseDouble(Amount3);
+								Amount3 = String.valueOf(amount3_double);
 							}
 						}
 						if (jsonObj.getJSONArray("ResponseCode2").getString(0).equals("0")) {
@@ -4391,8 +4407,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 								FeeAmount = row
 										.getCell(Integer.parseInt(jsonObj.getJSONArray("FeeAmount").getString(0)) - 1)
 										.toString();
-								Double FeeAmount_double=Double.parseDouble(FeeAmount);
-								FeeAmount=String.valueOf(FeeAmount_double);
+								Double FeeAmount_double = Double.parseDouble(FeeAmount);
+								FeeAmount = String.valueOf(FeeAmount_double);
 							}
 						}
 						if (jsonObj.getJSONArray("CurrencyCode").getString(0).equals("0")) {
@@ -4416,8 +4432,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 								CustBalance = row
 										.getCell(Integer.parseInt(jsonObj.getJSONArray("CustBalance").getString(0)) - 1)
 										.toString();
-								Double CustBalance_double=Double.parseDouble(CustBalance);
-								CustBalance=String.valueOf(CustBalance_double);
+								Double CustBalance_double = Double.parseDouble(CustBalance);
+								CustBalance = String.valueOf(CustBalance_double);
 							}
 						}
 						if (jsonObj.getJSONArray("InterchangeBalance").getString(0).equals("0")) {
@@ -4430,8 +4446,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 								InterchangeBalance = row.getCell(
 										Integer.parseInt(jsonObj.getJSONArray("InterchangeBalance").getString(0)) - 1)
 										.toString();
-								Double InterchangeBalance_double=Double.parseDouble(InterchangeBalance);
-								InterchangeBalance=String.valueOf(InterchangeBalance_double);
+								Double InterchangeBalance_double = Double.parseDouble(InterchangeBalance);
+								InterchangeBalance = String.valueOf(InterchangeBalance_double);
 							}
 						}
 						if (jsonObj.getJSONArray("ATMBalance").getString(0).equals("0")) {
@@ -4443,8 +4459,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 								ATMBalance = row
 										.getCell(Integer.parseInt(jsonObj.getJSONArray("ATMBalance").getString(0)) - 1)
 										.toString();
-								Double ATMBalance_double=Double.parseDouble(ATMBalance);
-								ATMBalance=String.valueOf(ATMBalance_double);
+								Double ATMBalance_double = Double.parseDouble(ATMBalance);
+								ATMBalance = String.valueOf(ATMBalance_double);
 							}
 						}
 						if (jsonObj.getJSONArray("BranchCode").getString(0).equals("0")) {
@@ -4501,8 +4517,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 								Amount1 = row
 										.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount1").getString(0)) - 1)
 										.toString();
-								Double Amount1_double=Double.parseDouble(Amount1);
-								Amount1=String.valueOf(Amount1_double);
+								Double Amount1_double = Double.parseDouble(Amount1);
+								Amount1 = String.valueOf(Amount1_double);
 							}
 						}
 						if (jsonObj.getJSONArray("ReserveField5").getString(0).equals("0")) {
@@ -4680,7 +4696,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							if (ReferenceNumber.length() < 6) {
 								String concatStr = "000000000000" + ReferenceNumber;
 								ReferenceNumber = concatStr.substring(concatStr.length() - 12);
-							} 
+							}
 
 						}
 						if (jsonObj.getJSONArray("CardNumber").getString(0).equals("0")) {
@@ -4703,8 +4719,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 								TxnsAmount = row
 										.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsAmount").getString(0)) - 1)
 										.toString();
-								Double TxnsAmount_double=Double.parseDouble(TxnsAmount);
-								TxnsAmount=String.valueOf(TxnsAmount_double);
+								Double TxnsAmount_double = Double.parseDouble(TxnsAmount);
+								TxnsAmount = String.valueOf(TxnsAmount_double);
 							}
 						}
 						if (jsonObj.getJSONArray("TxnsSubType").getString(0).equals("0")) {
@@ -5510,7 +5526,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 					glcbsStatus = false;
 					Row row = itr.next();
 					temprow = sheet.getRow(row.getRowNum());
-					if (row.getRowNum() < 1) {
+					if (row.getRowNum() < actualRowPosition) {
 						continue;
 					} else {
 						if (jsonObj.getJSONArray("ATMAccountNo").getString(0).equals("0")) {
@@ -5534,8 +5550,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 								Amount2 = row
 										.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount2").getString(0)) - 1)
 										.toString();
-								Double Amount2_double=Double.parseDouble(Amount2);
-								Amount2=String.valueOf(Amount2_double);
+								Double Amount2_double = Double.parseDouble(Amount2);
+								Amount2 = String.valueOf(Amount2_double);
 							}
 						}
 						if (jsonObj.getJSONArray("Amount3").getString(0).equals("0")) {
@@ -5547,8 +5563,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 								Amount3 = row
 										.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount3").getString(0)) - 1)
 										.toString();
-								Double Amount3_double=Double.parseDouble(Amount3);
-								Amount3=String.valueOf(Amount3_double);
+								Double Amount3_double = Double.parseDouble(Amount3);
+								Amount3 = String.valueOf(Amount3_double);
 							}
 						}
 						if (jsonObj.getJSONArray("ResponseCode2").getString(0).equals("0")) {
@@ -5582,8 +5598,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 								FeeAmount = row
 										.getCell(Integer.parseInt(jsonObj.getJSONArray("FeeAmount").getString(0)) - 1)
 										.toString();
-								Double FeeAmount_double=Double.parseDouble(FeeAmount);
-								FeeAmount=String.valueOf(FeeAmount_double);
+								Double FeeAmount_double = Double.parseDouble(FeeAmount);
+								FeeAmount = String.valueOf(FeeAmount_double);
 							}
 						}
 						if (jsonObj.getJSONArray("CurrencyCode").getString(0).equals("0")) {
@@ -5607,8 +5623,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 								CustBalance = row
 										.getCell(Integer.parseInt(jsonObj.getJSONArray("CustBalance").getString(0)) - 1)
 										.toString();
-								Double CustBalance_double=Double.parseDouble(CustBalance);
-								CustBalance=String.valueOf(CustBalance_double);
+								Double CustBalance_double = Double.parseDouble(CustBalance);
+								CustBalance = String.valueOf(CustBalance_double);
 							}
 						}
 						if (jsonObj.getJSONArray("InterchangeBalance").getString(0).equals("0")) {
@@ -5621,8 +5637,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 								InterchangeBalance = row.getCell(
 										Integer.parseInt(jsonObj.getJSONArray("InterchangeBalance").getString(0)) - 1)
 										.toString();
-								Double InterchangeBalance_double=Double.parseDouble(InterchangeBalance);
-								InterchangeBalance=String.valueOf(InterchangeBalance_double);
+								Double InterchangeBalance_double = Double.parseDouble(InterchangeBalance);
+								InterchangeBalance = String.valueOf(InterchangeBalance_double);
 							}
 						}
 						if (jsonObj.getJSONArray("ATMBalance").getString(0).equals("0")) {
@@ -5634,8 +5650,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 								ATMBalance = row
 										.getCell(Integer.parseInt(jsonObj.getJSONArray("ATMBalance").getString(0)) - 1)
 										.toString();
-								Double ATMBalance_double=Double.parseDouble(ATMBalance);
-								ATMBalance=String.valueOf(ATMBalance_double);
+								Double ATMBalance_double = Double.parseDouble(ATMBalance);
+								ATMBalance = String.valueOf(ATMBalance_double);
 							}
 						}
 						if (jsonObj.getJSONArray("BranchCode").getString(0).equals("0")) {
@@ -5692,8 +5708,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 								Amount1 = row
 										.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount1").getString(0)) - 1)
 										.toString();
-								Double Amount1_double=Double.parseDouble(Amount1);
-								Amount1=String.valueOf(Amount1_double);
+								Double Amount1_double = Double.parseDouble(Amount1);
+								Amount1 = String.valueOf(Amount1_double);
 							}
 						}
 						if (jsonObj.getJSONArray("ReserveField5").getString(0).equals("0")) {
@@ -5844,9 +5860,11 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									Integer.parseInt(jsonObj.getJSONArray("TxnsTime").getString(0)) - 1) == null) {
 								TxnsTime = null;
 							} else {
-								TxnsTime = row
-										.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsTime").getString(0)) - 1)
-										.toString();
+							System.out.println("Integer.parseInt(jsonObj.getJSONArray(\"TxnsTime\").getString(0)) - 1)" + (Integer.parseInt(jsonObj.getJSONArray("TxnsTime").getString(0)) - 1));
+								TxnsTime = String.valueOf(row
+										.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsTime").getString(0)) - 1));
+							
+								TxnsTime = TxnsTime.replace("AM", "").replace("PM", "");
 							}
 						}
 						if (jsonObj.getJSONArray("ReferenceNumber").getString(0).equals("0")) {
@@ -5885,8 +5903,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 								TxnsAmount = row
 										.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsAmount").getString(0)) - 1)
 										.toString();
-								Double TxnsAmount_double=Double.parseDouble(TxnsAmount);
-								TxnsAmount=String.valueOf(TxnsAmount_double);
+								Double TxnsAmount_double = Double.parseDouble(TxnsAmount);
+								TxnsAmount = String.valueOf(TxnsAmount_double);
 							}
 						}
 						if (jsonObj.getJSONArray("TxnsSubType").getString(0).equals("0")) {
@@ -5906,8 +5924,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									Integer.parseInt(jsonObj.getJSONArray("ReserveField2").getString(0)) - 1) == null) {
 								ReserveField2 = null;
 							} else {
-								ReserveField2 = row
-										.getCell(Integer.parseInt(jsonObj.getJSONArray("ReserveField2").getString(0)) - 1)
+								ReserveField2 = row.getCell(
+										Integer.parseInt(jsonObj.getJSONArray("ReserveField2").getString(0)) - 1)
 										.toString();
 							}
 						}
@@ -6603,10 +6621,10 @@ public class Trace_DAO_Imp implements Trace_DAO {
 					incr++;
 					System.out.println("incr:" + incr + "    " + "ROWS == " + sheet.getPhysicalNumberOfRows());
 //					if (incr % batchSize == 0 || incr == (sheet.getPhysicalNumberOfRows()) - 1) {
-						stmt.executeBatch();
-						long end = System.currentTimeMillis();
-						System.out.println("TIME:  " + (end - start));
-						glcbsStatus = true;
+					stmt.executeBatch();
+					long end = System.currentTimeMillis();
+					System.out.println("TIME:  " + (end - start));
+					glcbsStatus = true;
 //					}
 
 				}
@@ -6651,6 +6669,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 					fileTypeName, "." + extFile);
 			JSONObject xmlFormatDescription = switchfileformatxml.get(0);
 			String tempStr = xmlFormatDescription.get("FormatDescriptionXml").toString();
+			System.out.println("tempcbsIdentificationfileformatxml=" + cbsIdentificationfileformatxml.toString());
 			System.out.println("tempStr:" + tempStr);
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
@@ -6751,8 +6770,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						} else {
 							Amount2 = row.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount2").getString(0)) - 1)
 									.toString();
-							Double amount2_double=Double.parseDouble(Amount2);
-							Amount2=String.valueOf(amount2_double);
+							Double amount2_double = Double.parseDouble(Amount2);
+							Amount2 = String.valueOf(amount2_double);
 						}
 					}
 					if (jsonObj.getJSONArray("Amount3").getString(0).equals("0")) {
@@ -6764,8 +6783,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						} else {
 							Amount3 = row.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount3").getString(0)) - 1)
 									.toString();
-							Double amount3_double=Double.parseDouble(Amount3);
-							Amount3=String.valueOf(amount3_double);
+							Double amount3_double = Double.parseDouble(Amount3);
+							Amount3 = String.valueOf(amount3_double);
 						}
 					}
 					if (jsonObj.getJSONArray("ResponseCode2").getString(0).equals("0")) {
@@ -6800,8 +6819,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							FeeAmount = row
 									.getCell(Integer.parseInt(jsonObj.getJSONArray("FeeAmount").getString(0)) - 1)
 									.toString();
-							Double FeeAmount_double=Double.parseDouble(FeeAmount);
-							FeeAmount=String.valueOf(FeeAmount_double);
+							Double FeeAmount_double = Double.parseDouble(FeeAmount);
+							FeeAmount = String.valueOf(FeeAmount_double);
 						}
 					}
 					if (jsonObj.getJSONArray("CurrencyCode").getString(0).equals("0")) {
@@ -6825,8 +6844,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							CustBalance = row
 									.getCell(Integer.parseInt(jsonObj.getJSONArray("CustBalance").getString(0)) - 1)
 									.toString();
-							Double CustBalance_double=Double.parseDouble(CustBalance);
-							CustBalance=String.valueOf(CustBalance_double);
+							Double CustBalance_double = Double.parseDouble(CustBalance);
+							CustBalance = String.valueOf(CustBalance_double);
 						}
 					}
 					if (jsonObj.getJSONArray("InterchangeBalance").getString(0).equals("0")) {
@@ -6839,12 +6858,12 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							InterchangeBalance = row.getCell(
 									Integer.parseInt(jsonObj.getJSONArray("InterchangeBalance").getString(0)) - 1)
 									.toString();
-							Double InterchangeBalance_double=Double.parseDouble(InterchangeBalance);
-							InterchangeBalance=String.valueOf(InterchangeBalance_double);
+							Double InterchangeBalance_double = Double.parseDouble(InterchangeBalance);
+							InterchangeBalance = String.valueOf(InterchangeBalance_double);
 						}
 					}
 					if (jsonObj.getJSONArray("ATMBalance").getString(0).equals("0")) {
-						
+
 						ATMBalance = "0.0";
 					} else {
 						if (temprow.getCell(
@@ -6854,8 +6873,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							ATMBalance = row
 									.getCell(Integer.parseInt(jsonObj.getJSONArray("ATMBalance").getString(0)) - 1)
 									.toString();
-							Double ATMBalance_double=Double.parseDouble(ATMBalance);
-							ATMBalance=String.valueOf(ATMBalance_double);
+							Double ATMBalance_double = Double.parseDouble(ATMBalance);
+							ATMBalance = String.valueOf(ATMBalance_double);
 						}
 					}
 					if (jsonObj.getJSONArray("BranchCode").getString(0).equals("0")) {
@@ -6910,8 +6929,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						} else {
 							Amount1 = row.getCell(Integer.parseInt(jsonObj.getJSONArray("Amount1").getString(0)) - 1)
 									.toString();
-							Double Amount1_double=Double.parseDouble(Amount1);
-							Amount1=String.valueOf(Amount1_double);
+							Double Amount1_double = Double.parseDouble(Amount1);
+							Amount1 = String.valueOf(Amount1_double);
 						}
 					}
 					if (jsonObj.getJSONArray("ReserveField5").getString(0).equals("0")) {
@@ -7088,10 +7107,10 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 						if (ReferenceNumber != null) {
 							if (ReferenceNumber.length() < 6) {
-								
+
 								String concatStr = "000000000000" + ReferenceNumber;
 								ReferenceNumber = concatStr.substring(concatStr.length() - 12);
-							} 
+							}
 						}
 
 					}
@@ -7116,8 +7135,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							TxnsAmount = row
 									.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsAmount").getString(0)) - 1)
 									.toString();
-							Double TxnsAmount_double=Double.parseDouble(TxnsAmount);
-							TxnsAmount=String.valueOf(TxnsAmount_double);
+							Double TxnsAmount_double = Double.parseDouble(TxnsAmount);
+							TxnsAmount = String.valueOf(TxnsAmount_double);
 						}
 					}
 					if (jsonObj.getJSONArray("TxnsSubType").getString(0).equals("0")) {
@@ -7541,7 +7560,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 					}
 					if (atmType != null) {
 						Boolean isFound = atmType.indexOf(ChannelType.trim()) != -1 ? true : false;
-						if (isFound==true && TerminalID.substring(0, 2) != microAtmType) {
+						if (isFound == true && TerminalID.substring(0, 2) != microAtmType) {
 							ATM = true;
 						}
 					}
@@ -7677,7 +7696,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 				}
 
 				if (debitCode != null) {
-					
+
 					if (debitCode.equals(DrCrType)) {
 						D = true;
 					}
@@ -7847,14 +7866,14 @@ public class Trace_DAO_Imp implements Trace_DAO {
 				stmt.addBatch();
 				System.out.println(incr + "        " + sheet.getPhysicalNumberOfRows());
 				int diff = sheet.getPhysicalNumberOfRows() - incr;
-				if (incr % batchSize == 0 || diff < 10) {
+//				if (incr % batchSize == 0 || diff < 10) {
 
-					stmt.executeBatch();
-					w++;
-					long end = System.currentTimeMillis();
-					System.out.println("EXECUTE TIME:  " + (end - start) + "   " + w);
-					switchStatus = true;
-				}
+				stmt.executeBatch();
+				w++;
+				long end = System.currentTimeMillis();
+				System.out.println("EXECUTE TIME:  " + (end - start) + "   " + w);
+				switchStatus = true;
+//				}
 				incr++;
 			}
 			int justCheck = 0;
