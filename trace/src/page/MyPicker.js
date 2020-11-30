@@ -1,7 +1,6 @@
-import React from 'react'
-
-import { CustomPicker } from 'react-color'
-import { EditableInput, Hue } from 'react-color/lib/components/common'
+import React from 'react';
+import { CustomPicker } from 'react-color';
+import { EditableInput, Hue } from 'react-color/lib/components/common';
 
 export const MyPicker = ({ hex, hsl, onChange }) => {
   const styles = {

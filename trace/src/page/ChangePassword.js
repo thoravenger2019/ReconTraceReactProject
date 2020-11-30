@@ -44,7 +44,7 @@ const ChangePassword = props => {
   const onChangePassword = async () => {
     try {
 
-      const validateFields = await form.validateFields()
+      //const validateFields = await form.validateFields()
       const values = form.getFieldsValue();
       console.log(values)
       const response = await axios.post(`updateChangePwd/${username}/${"1"}/${values.oldpassword}/${values.newpassword}/${values.confirmpassword}`);
@@ -66,9 +66,7 @@ const ChangePassword = props => {
   const onFormLayoutChange = ({ size }) => {
     setComponentSize(size);
   };
-  const tailLayout = {
-    wrapperCol: { offset: 10 },
-  };
+
 
   const menuData = props.location.state;
 

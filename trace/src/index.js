@@ -3,11 +3,8 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import 'antd/dist/antd.css';
 import 'antd/dist/antd.js';
-import App from './App';
-import Login from './page/login'
 import * as serviceWorker from './serviceWorker';
 import AppRouter from './utils/router';
-import Dashboard from './page/dasboard';
 import { BrowserRouter } from 'react-router-dom';
 ReactDOM.render(
  

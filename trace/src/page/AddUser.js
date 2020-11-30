@@ -26,11 +26,12 @@ const AddUser = props => {
   const [ClientData, setClientData] = useState([])
   const [branchdata, setBranchData] = useState([])
   const [loader, setLoader] = useState(true)
+  const [clientId,setClientID]=useState([])
 
 useEffect(() => {
-  onDisplayUserRole();
+  
   onDisplayChannel();
-  onDisplayBranch();
+ 
   onDisplayClientNameList();
 }, [])
 
@@ -54,9 +55,9 @@ const onDisplayClientNameList = async () => {
 };
 
 
-  const onDisplayUserRole = async()=> {
+  const onDisplayUserRole = async(value)=> {
     try{
-          const roleResponse = await axios.get(`GetRoleDetails/${1}`);
+          const roleResponse = await axios.get(`GetRoleDetails/${value}`);
           console.log(roleResponse.data)
           setLoader(false);
 
@@ -75,17 +76,18 @@ const onDisplayClientNameList = async () => {
    };
   
    
-   const onDisplayBranch = async()=> {
+   const onDisplayBranch = async(value)=> {
     try{
-      const branchResponse = await axios.get(`GetBranchDetails/${"1"}/${"0"}`);
+      //alert(clientId);
+      const branchResponse = await axios.post(`getbranchname/${value}`);
       console.log(branchResponse.data)
           setLoader(false);
 
           const branchN = branchResponse.data;
           console.log(branchN);
-          const branch = JSON.parse(branchN.branchName);
-          console.log(branch);
-          const listBranch=branch.map((item,index) => <Option value={item.branchCode} key={index}>{item.branchName}</Option>)
+          // const branch = JSON.parse(branchN.branchName);
+          // console.log(branch);
+          const listBranch=branchN.map((item,index) => <Option value={item.branchcode} key={index}>{item.branchname}</Option>)
           setBranchData(listBranch);
       
        }catch(e) {
@@ -113,22 +115,28 @@ const onDisplayClientNameList = async () => {
   const menuData = props.location.state;
   console.log(menuData);
 
+  function onChangeClient(value) {
+    console.log(`selected ${value}`);
+    setClientID(value);
+    onDisplayBranch(value);
+    onDisplayUserRole(value);
+  }
   function onChange(value) {
     console.log(`selected ${value}`);
   }
-  function handleChange(value) {
-    console.log(`selected ${value}`);
-  }
+  // function handleChange(value) {
+  //   console.log(`selected ${value}`);
+  // }
 
   const [form] = Form.useForm()
 
   const onAddUser= async()=> {
 
     try{
-    const validateFields = await form.validateFields();    
+    //const validateFields = await form.validateFields();    
     const values = form.getFieldsValue();
     console.log(values)
-    const response = await axios.get(`AddUser/${values.clientId}/${values.FirstName}/${values.LastName}/${values.UserId}/${values.EmailID}/${values.Channel}/${values.RoleType}/${values.Password}/${values.ConfirmPassword}/${values.BranchName}/${values.ContactNo}`);
+    const response = await axios.get(`AddUser/${values.clientId}/${values.FirstName}/${values.LastName}/${values.UserId}/${values.EmailID}/${values.RoleType}/${values.Password}/${values.ConfirmPassword}/${values.BranchID}/${values.ContactNo}`);
     console.log(response.data)
       
     if(JSON.stringify(response.data) === 'Save')
@@ -144,24 +152,14 @@ const onDisplayClientNameList = async () => {
     }
 }
 
-  const [componentSize, setComponentSize] = useState('small');
-
-  const onFormLayoutChange = ({ size }) => {
-    setComponentSize(size);
-  };
   
-  const tailLayout = {
-    wrapperCol: { offset: 10 },
-  };
-  const FormItem = Form.Item;
-
-  function onChange(checkedValues) {
-    console.log('checked = ', checkedValues);
-  }
-  function onChangeClientName(value) {
-    console.log(`selected ${value}`);
+  // function onChange(checkedValues) {
+  //   console.log('checked = ', checkedValues);
+  // }
+  // function onChangeClientName(value) {
+  //   console.log(`selected ${value}`);
    
-  }
+  // }
   return (
       <Layout>
          <Header style={{padding:"20px"}}>
@@ -177,7 +175,7 @@ const onDisplayClientNameList = async () => {
       
     <Form  initialValues={{ remember: true }} layout={"vertical"}  form={form}>
     <Form.Item label="Client Name" name="clientId" >
-    <Select defaultValue="--select--" style={{ width: 150 }} onChange={onChangeClientName}>
+    <Select defaultValue="--select--" style={{ width: 600 }} size={"large"} onChange={onChangeClient}>
                               {ClientData}
                             </Select>                  
                   </Form.Item>
@@ -216,24 +214,7 @@ const onDisplayClientNameList = async () => {
             </b></Col>  
         </Row>
         <Row gutter={8}>
-            <Col xs={2} sm={16} md={12} lg={8} xl={10}><b>
-                <Form.Item 
-                    label="Channel"
-                    name="Channel"
-                    rules={[{ required: true, message: 'Please input your Channel!' }]}>
-                      
-                      <Select
-                        mode="multiple"
-                        style={{ width: '100%' }}
-                        placeholder="select channels"
-                        onChange={handleChange}
-                        optionLabelProp="title"
-                      >
-                        {channeldata}
-                </Select>
-            </Form.Item>  
-            </b></Col>
-            <Col xs={2} sm={16} md={12} lg={8} xl={10}><b>
+        <Col xs={2} sm={16} md={12} lg={8} xl={10}><b>
                 <Form.Item 
                     label="Role Type"
                     name="RoleType"
@@ -243,6 +224,16 @@ const onDisplayClientNameList = async () => {
                   </Select>
                     </Form.Item>    
             </b></Col>  
+        <Col xs={2} sm={16} md={12} lg={8} xl={10}><b>
+                <Form.Item 
+                    label="Branch Name"
+                    name="BranchID"
+                    rules={[{ required: true, message: 'Please input your Branch Name!' }]}>
+                    <Select onChange={onChange}>
+                        {branchdata}
+                    </Select>                    
+                </Form.Item>    
+            </b></Col>           
         </Row>
         <Row gutter={8}>
             <Col xs={2} sm={16} md={12} lg={8} xl={10}><b>
@@ -262,16 +253,7 @@ const onDisplayClientNameList = async () => {
         </Row>
 
         <Row gutter={8}>
-            <Col xs={2} sm={16} md={12} lg={8} xl={10}><b>
-                <Form.Item 
-                    label="Branch Name"
-                    name="BranchName"
-                    rules={[{ required: true, message: 'Please input your Branch Name!' }]}>
-                    <Select onChange={onChange}>
-                        {branchdata}
-                    </Select>                    
-                </Form.Item>    
-            </b></Col>
+            
             <Col xs={2} sm={16} md={12} lg={8} xl={10}><b>
                 <Form.Item 
                     label="Contact No"

@@ -32,28 +32,28 @@ const { TextArea } = Input;
 const AddClient = props => {
     console.log(props)
     const [currencyIDdata, setCurrencyID] = useState('')
-    const [currentFile, setCurrentFile] = useState(undefined);
+    //const [currentFile, setCurrentFile] = useState(undefined);
     const [clientcurrency, setclientcurrency] = useState([])
     const [countrydata, setCountryData] = useState([])
     const [loader, setLoader] = useState(true)
-    const [color, setColor] = React.useState({});
+    //const [color, setColor] = React.useState({});
     const [domaindata, setDomainData] = useState([])
     const [clientdata, setClientData] = useState([])
     const [moduledata, setModuleData] = useState([])
     const [selectedFileData, setStateFile] = useState(undefined)
-    const [pageDisplay, setPage] = useState(false)
-    const [clientCodeData,setClientCode]=useState()
+    //const [pageDisplay, setPage] = useState(false)
+    //const [clientCodeData,setClientCode]=useState()
     const [clientCodeDataID,setClientCodeID]=useState()
     const [vendorData, setVendorData] = useState(true);
     const [ChannelID,setChannelID]=useState()
     const [modelId,setModelID]=useState({})
     const [channelData,setChannelData]=useState([])
     
-    const [tableData,setNewState]=useState([])
-    const { count, setCount } = useState();
-    console.log(ChannelID);
-    console.log(modelId);
-    console.log(clientCodeDataID)
+  //  const [tableData,setNewState]=useState([])
+    //const { count, setCount } = useState();
+    // console.log(ChannelID);
+    // console.log(modelId);
+    // console.log(clientCodeDataID)
    
 
     const recordClient = props.location.state.record;
@@ -270,20 +270,20 @@ const AddClient = props => {
             console.log(e)
         }
     }
-    const onColor = async() =>{
-        const abc=props.colorHex
-    }
+    // const onColor = async() =>{
+    //     const abc=props.colorHex
+    // }
 
    
-    const [componentSize, setComponentSize] = useState('small');
+    // const [componentSize, setComponentSize] = useState('small');
 
-    const onFormLayoutChange = ({ size }) => {
-        setComponentSize(size);
-    };
-    const tailLayout = {
-        wrapperCol: { offset: 10 },
-    };
-    const FormItem = Form.Item;
+    // const onFormLayoutChange = ({ size }) => {
+    //     setComponentSize(size);
+    // };
+    // const tailLayout = {
+    //     wrapperCol: { offset: 10 },
+    // };
+    // const FormItem = Form.Item;
 
     function onChange(checkedValues) {
         console.log('checked = ', checkedValues);

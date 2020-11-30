@@ -26,7 +26,10 @@ import RunRecon from '../page/RunRecon';
 import MatchingRuleConfiguration from '../page/MatchingRuleConfiguration';
 import ForceSettlementRuleConfiguration from '../page/ForceSettlementRuleConfiguration';
 import Demo from '../page/demo';
-
+import DispenseSummaryReport from '../page/DispenseSummaryReport';
+import MatchedTxnsReport from '../page/MatchedTxnsReport';
+import UnmatchedTxnsReport from '../page/UnmatchedTxnsReport';
+import ReversalTxnsReport from '../page/ReversalTxnsReport';
 const AppRouter = props => {
 
     return (
@@ -55,6 +58,11 @@ const AppRouter = props => {
             <Route path="/MatchingRuleConfiguration" component={MatchingRuleConfiguration} />
             <Route path="/ForceSettlementRuleConfiguration" component={ForceSettlementRuleConfiguration} />
             <Route path="/demo" component={Demo}></Route>
+            <Route path="/DispenseSummaryReport" component={DispenseSummaryReport}/>
+            <Route path="/MatchedTxnsReport" component={MatchedTxnsReport}/>
+            <Route path="/UnmatchedTxnsReport" component={UnmatchedTxnsReport}/>
+            <Route path="/ReversalTxnsReport" component={ReversalTxnsReport}/>
+
         </Switch>
 )
 }

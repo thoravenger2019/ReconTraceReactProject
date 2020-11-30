@@ -1,13 +1,13 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { withRouter } from "react-router-dom";
 import { Layout, Menu } from 'antd';
-import MenuContext from '../utils/MenuContext';
+
 import {
     DesktopOutlined,   
     FileOutlined,
 } from '@ant-design/icons';
 import SubMenu from 'antd/lib/menu/SubMenu';
-import axios, { axiosGet } from '../utils/axios';
+import axios from '../utils/axios';
 
 const MenuSideBar = props => {
     //console.log(props)

@@ -1,6 +1,7 @@
 import http from "../utils/http-common";
 
-const uploadBranch = (file, onUploadProgress) => {
+const uploadBranch = (file, clientID) => {
+  alert(clientID);
   let formData = new FormData();
 
   formData.append("file", file);
@@ -8,12 +9,12 @@ const uploadBranch = (file, onUploadProgress) => {
   return http.post("/uploadBranchMasterFile", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
-    },
-    onUploadProgress,
+    },  
   });
 };
 
-const uploadTerminal= (file, onUploadProgress) => {
+const uploadTerminal= (file, clientID) => {
+  alert(clientID);
   let formData = new FormData();
 
   formData.append("file", file);
@@ -22,15 +23,14 @@ const uploadTerminal= (file, onUploadProgress) => {
     headers: {
       "Content-Type": "multipart/form-data",
     },
-    onUploadProgress,
   });
 };
 const getFiles = () => {
-  return http.get("/files");
+ // return http.get("/files");
 };
 
 export default {
   uploadBranch,
   uploadTerminal,
-  getFiles,
+ // getFiles,
 };

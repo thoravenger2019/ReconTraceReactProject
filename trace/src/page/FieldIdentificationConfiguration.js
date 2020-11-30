@@ -34,6 +34,7 @@ const FieldIdentificationConfiguration = props => {
     const [schannelID,setChannelID]=useState([])
     const [smodeID,setModeID]=useState([])
     const [loader, setLoader] = useState(true) 
+    const [formLoder,setFormLoader]=useState(false)
     console.log(clientID);
 
     useEffect(() => {   
@@ -149,7 +150,11 @@ const FieldIdentificationConfiguration = props => {
           // alert("formatid"+formatIDData);
             const getFieldResponse = await axios.get(`getfieldidentification/${clientID}/${vendorId}/${schannelID}/${value}/${formatIDData}`);
             console.log(getFieldResponse.data)
-            setLoader(false);
+            const fieldData=getFieldResponse.data;
+            if(fieldData!=null){
+                setFormLoader(true);
+            }
+          
 
            /* const modeN = modeResponse.data;
             //console.log(modeN);
@@ -186,9 +191,7 @@ const FieldIdentificationConfiguration = props => {
             const txndt=values.P_TXNDATETIME;
             const txnvaldt=values.P_TXNVALUEDATETIME;
             const txnpstdt=values.P_TXNPOSTDATETIME;
-            alert("post time ",txnpstdt);
             const atmtype=values.P_ATMTYPE;
-            alert("atm type",txnpstdt);
             const posttype=values.P_POSTYPE;
             const ecomtype=values.P_ECOMTYPE;
             const impstype=values.P_IMPSTYPE;
@@ -297,11 +300,11 @@ const FieldIdentificationConfiguration = props => {
                     level={3} style={{ color: "white" }}>Trace</Title>
             </Header>
             <Layout>
-                <MenuSideBar menuData={menuData} />
+            <MenuSideBar menuData={menuData} />
                 <Layout style={{ height: "100vh", backgroundColor: "white" }}>
                     <Content>
                         <Card title="Field Identification Configuration" bordered={false} style={{ width: 1400 }} >
-
+                        
                             <Form initialValues={{ remember: true }} layout={"vertical"} form={form} size={"large"}>
                                 <Row gutter={[32, 32]} layout="inline">
                                     <Col span={12}><b>

@@ -1,7 +1,6 @@
 import React, { useState,useEffect } from 'react';
-import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
-import axios, { axiosGet } from '../utils/axios';
+import axios from '../utils/axios';
 import MenuSideBar from './menuSideBar';
 import {
   Form,
@@ -14,13 +13,11 @@ import {
   Checkbox,
   Layout,
   Avatar,
-  DatePicker,
- 
+  
 } from 'antd';
-import Password from 'antd/lib/input/Password';
-import { LayoutContext } from 'antd/lib/layout/layout';
+
 import Title from 'antd/lib/typography/Title';
-const {Header, Footer ,Sider,Content}=Layout;
+const {Header, Content}=Layout;
 const { Option } = Select;
 const { Search } = Input;
 const ForceSettlementRuleConfiguration = props => {
@@ -48,8 +45,8 @@ const ForceSettlementRuleConfiguration = props => {
   const [AcqStatus,setAcqStatus]=useState(false);
   const [IssStatus,setIssStatus]=useState(false);
 
-   const dateFormat = 'YYYY/MM/DD';
-   const monthFormat = 'MM/YYYY';
+  //  const dateFormat = 'YYYY/MM/DD';
+  //  const monthFormat = 'MM/YYYY';
 
 useEffect(() => {
 //   onDisplayUserRole();
@@ -101,14 +98,14 @@ const onGetChannelDetails = async (value) => {
   try {
     let selectedclientID=value;
     alert(selectedclientID);
-    const channelResponse = await axios.get(`getchanneltypeall/${selectedclientID}`);
+    const channelResponse = await axios.get(`getchanneldetails/${selectedclientID}`);
     console.log(channelResponse.data)
     setLoader(false);
 
     const channelN = channelResponse.data;
     //console.log(channelN);
 
-    const listChannel = channelN.map((item, index) => <Option value={item.channelid} key={index} label={item.channelname}>{item.channelname}</Option>)
+    const listChannel = channelN.map((item, index) => <Option value={item.channelid} key={index} label={item.channelName}>{item.channelName}</Option>)
     setChannelData(listChannel);
 
 
@@ -286,10 +283,10 @@ const ongetStatusMaster = async () => {
     console.log(`selected ${value}`);
    
   }
-  function onChangeSettlementType(value) {
-    console.log(`selected ${value}`);
+  // function onChangeSettlementType(value) {
+  //   console.log(`selected ${value}`);
    
-  }
+  // }
   
   function range(start, end) {
     const result = [];

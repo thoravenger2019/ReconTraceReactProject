@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { Layout, Form, Input, Button, Row, Col, Card } from 'antd';
 import axios from '../utils/axios';
 import MenuContext from '../utils/MenuContext';
-
-
 const Login = props => {
 
     const [form] = Form.useForm()
@@ -12,7 +10,7 @@ const Login = props => {
     const onLogin = async () => {
 
         try {
-            const validateFields = await form.validateFields()
+            //const validateFields = await form.validateFields()
             const values = form.getFieldsValue();
             console.log(values)
             const response = await axios.get(`login1/${values.username}/${values.password}`);
@@ -60,7 +58,6 @@ const Login = props => {
             <Layout.Footer>
                 Footer
         </Layout.Footer>
-
         </Layout></MenuContext.Provider>)
 }
 

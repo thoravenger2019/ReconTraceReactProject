@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import 'antd/dist/antd.less'
 import 'antd/dist/antd.css';
-import axios, { axiosGet,getFileToDownload} from '../utils/axios';
-import Axios from "axios";
+import axios, {getFileToDownload} from '../utils/axios';
+
 import MenuSideBar from './menuSideBar';
 import {  Avatar, Skeleton,Select } from 'antd';
 import '../App';
-import UploadService from "../services/FileUploadService";
 
 import {
   Form,
@@ -14,10 +13,8 @@ import {
   Button,
   Card,
   Layout,
-  Space,
-  Icon,
- Col,
- Row,
+  Col,
+  Row,
 } from 'antd';
 import Title from 'antd/lib/typography/Title';
 import {
@@ -25,9 +22,8 @@ import {
 } from '@ant-design/icons';
 
 const { Option } = Select;
-const { Header, Footer, Sider, Content } = Layout;
+const { Header} = Layout;
 
-let TERA;
 const TerminalBranchUpload = props => {
 
   const [form] = Form.useForm()
@@ -45,12 +41,12 @@ const TerminalBranchUpload = props => {
     onDisplayClientNameList();
   }, [])
 //....................................................................
-  const [selectedFiles, setSelectedFiles] = useState(undefined);
-  const [currentFile, setCurrentFile] = useState(undefined);
-  const [progress, setProgress] = useState(0);
-  const [message, setMessage] = useState("");
+  // const [selectedFiles, setSelectedFiles] = useState(undefined);
+  // const [currentFile, setCurrentFile] = useState(undefined);
+  // const [progress, setProgress] = useState(0);
+  // const [message, setMessage] = useState("");
 
-  const [fileInfos, setFileInfos] = useState([]);
+  // const [fileInfos, setFileInfos] = useState([]);
   
   const onBranchFile = event => { 
     // Update the state 
@@ -61,73 +57,84 @@ const TerminalBranchUpload = props => {
     // Update the state 
     setTerminalMasterFile(event.target.files);
   };
-  const onUploadBranch= async () =>{
+  const onUploadBranch= async () => {
 
     let currentFile = BranchFile[0];
+    const formData = new FormData();
+    formData.append('file', currentFile);
+    console.log(currentFile);
+    console.log(formData);
+    const response = await axios.post(`uploadBranchMasterFile/${clientId}`, formData);
+    //const response = await axios.post(`importFileNpciATMFiles`,formData);
+    // const response = await axios.post(`importPosSettlementSummaryReportFiles/${clientid}`,formData);
+    console.log(response);
 
-    setProgress(0);
-    setCurrentFile(currentFile);
+    // setProgress(0);
+    // setCurrentFile(currentFile);
 
-    UploadService.uploadBranch(currentFile, (event) => {
-      setProgress(Math.round((100 * event.loaded) / event.total));
-    })
-      .then((response) => {
-        setMessage(response.data.message);
-        console.log(response.data)
-        const branchIdresponse=response.data;
-        if(JSON.stringify(branchIdresponse)==="[ ]"){
-          alert("branch imported successfully")
-        }
-        else{
-          alert("already exist"+(JSON.stringify(branchIdresponse)))
-        }
+    // UploadService.uploadBranch(currentFile,clientId)
+    //   .then((response) => {
+    //     setMessage(response.data.message);
+    //     console.log(response.data)
+    //     const branchIdresponse=response.data;
+    //     if(JSON.stringify(branchIdresponse)==="[ ]"){
+    //       alert("branch imported successfully")
+    //     }
+    //     else{
+    //       alert("already exist"+(JSON.stringify(branchIdresponse)))
+    //     }
 
-        return UploadService.getFiles();
-      })
-      .then((files) => {
-        setFileInfos(files.data);
-      })
-      .catch(() => {
-        setProgress(0);
-        setMessage("Could not upload the file!");
-        setCurrentFile(undefined);
-      });
+    //     return UploadService.getFiles();
+    //   })
+    //   // .then((files) => {
+    //   //   setFileInfos(files.data);
+    //   // })
+    //   .catch(() => {
+    //     setProgress(0);
+    //     setMessage("Could not upload the file!");
+    //     setCurrentFile(undefined);
+    //   });
 
-    setSelectedFiles(undefined);
+    // setSelectedFiles(undefined);
   };
 
-  const onUploadTerminal= async () =>{
-
+  const onUploadTerminal= async () => {
     let currentFile = TerminalFile[0];
+    const formData = new FormData();
+    formData.append('file', currentFile);
+    console.log(currentFile);
+    console.log(formData);
+    const response = await axios.post(`uploadTerminalMasterFile/${clientId}`, formData);
+    //const response = await axios.post(`importFileNpciATMFiles`,formData);
+    // const response = await axios.post(`importPosSettlementSummaryReportFiles/${clientid}`,formData);
+    console.log(response);
 
-    setProgress(0);
-    setCurrentFile(currentFile);
+    // setProgress(0);
+    // setCurrentFile(currentFile);
 
-    UploadService.uploadTerminal(currentFile, (event) => {
-      setProgress(Math.round((100 * event.loaded) / event.total));
-    })
-      .then((response) => {
-        setMessage(response.data.message);
-        console.log(response.data)
-        const terminalIdresponse=response.data;
-        if(JSON.stringify(terminalIdresponse)==="[ ]"){
-          alert("terminal imported successfully")
-        }
-        else{
-          alert("already exist"+(JSON.stringify(terminalIdresponse)))
-        }
-        return UploadService.getFiles();
-      })
-      .then((files) => {
-        setFileInfos(files.data);
-      })
-      .catch(() => {
-        setProgress(0);
-        setMessage("Could not upload the file!");
-        setCurrentFile(undefined);
-      });
+    // UploadService.uploadTerminal(currentFile,clientId)
+    //   .then((response) => {
+    //     setMessage(response.data.message);
+    //     console.log(response.data)
+    //     const terminalIdresponse=response.data;
+    //     if(JSON.stringify(terminalIdresponse)==="[ ]"){
+    //       alert("terminal imported successfully")
+    //     }
+    //     else{
+    //       alert("already exist"+(JSON.stringify(terminalIdresponse)))
+    //     }
+    //     return UploadService.getFiles();
+    //   })
+    //   .then((files) => {
+    //     setFileInfos(files.data);
+    //   })
+    //   .catch(() => {
+    //     setProgress(0);
+    //     setMessage("Could not upload the file!");
+    //     setCurrentFile(undefined);
+    //   });
 
-    setSelectedFiles(undefined);
+    // setSelectedFiles(undefined);
   };
   //........................................................................................
   const onDisplayClientNameList = async () => {
@@ -152,11 +159,10 @@ const TerminalBranchUpload = props => {
   const onTerminalBranch = async () => {
     try {
 
-      const validateFields = await form.validateFields()     
-      const values = form.getFieldsValue();
-      
+      //const validateFields = await form.validateFields()     
+     // const values = form.getFieldsValue();
       onUploadBranch();
-      onUploadTerminal();
+       onUploadTerminal();
       
 
     } catch (e) {
@@ -171,7 +177,7 @@ const TerminalBranchUpload = props => {
   }
   const onBranchMaster = async () => {
     try {
-      getFileToDownload(`http://localhost:8080/Admin/api/branchTemplate/${clientId}`)
+      getFileToDownload(`http://192.168.1.34:8080/Admin/api/branchTemplate/${clientId}`)
       .then (response => {
       const type = response.headers['content-type']
       const blob = new Blob([response.data], { type: type, encoding: 'UTF-8' })
@@ -187,7 +193,7 @@ const TerminalBranchUpload = props => {
 
   const onTerminalMaster = async () => {
     try {
-      getFileToDownload(`http://localhost:8080/Admin/api/terminalTemplate/${clientId}`)
+      getFileToDownload(`http://192.168.1.34:8080/Admin/api/terminalTemplate/${clientId}`)
       .then (response => {
       const type = response.headers['content-type']
       const blob = new Blob([response.data], { type: type, encoding: 'UTF-8' })
@@ -199,11 +205,6 @@ const TerminalBranchUpload = props => {
     } catch (e) {
       console.log(e)
     }
-  };
-
-  
-  const tailLayout = {
-    wrapperCol: { offset: 10 },
   };
 
   const menuData = props.location.state;

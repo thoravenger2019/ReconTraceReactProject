@@ -1,31 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom';
+//import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
-import axios, { axiosGet } from '../utils/axios';
+import axios from '../utils/axios';
 import MenuSideBar from './menuSideBar';
 import {
     Form,
-    Input,
     Button,
     Select,
     Card,
     Row,
     Col,
-    Checkbox,
     Layout,
     Avatar,
     Table,
     Space,
-    Popconfirm,
+
 } from 'antd';
 import {
     EditOutlined,
   } from '@ant-design/icons';
-import Password from 'antd/lib/input/Password';
-import { LayoutContext } from 'antd/lib/layout/layout';
 import Title from 'antd/lib/typography/Title';
-const { Header, Footer, Sider, Content } = Layout;
-const FormItem = Form.Item;
+const { Header, Content } = Layout;
+//const FormItem = Form.Item;
 const { Option } = Select;
 
 const ClientRegistration = props => {

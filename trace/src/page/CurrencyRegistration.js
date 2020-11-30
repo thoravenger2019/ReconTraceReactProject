@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'antd/dist/antd.less'
 import 'antd/dist/antd.css';
-import axios, { axiosGet } from '../utils/axios';
-import Axios from "axios";
+import axios from '../utils/axios';
 import MenuSideBar from './menuSideBar';
 import {  Avatar, Select } from 'antd';
 import '../App';
@@ -19,14 +18,9 @@ import {
 } from 'antd';
 import Title from 'antd/lib/typography/Title';
 import { Table } from 'antd';
-import {
-  UserSwitchOutlined,
-  EditOutlined,
-  DeleteOutlined,
-} from '@ant-design/icons';
-const FormItem = Form.Item;
+
 const { Option } = Select;
-const { Header, Footer, Sider, Content } = Layout
+const { Header, Content } = Layout
 
 
 /*const originData = [];
@@ -355,20 +349,18 @@ const save = async(record)=> {
    setSelectData(value);
   }
 
- const onAccess = (roleId) => {
-    /*//props.history.push("/AccessRight",roleId)
-    props.history.push("/AccessRight", { menuData, roleId })
-    //props.history.push("/AccessRight", roleId) 
-    console.log(roleId)*/
-  }
+//  const onAccess = (roleId) => {
+//     /*//props.history.push("/AccessRight",roleId)
+//     props.history.push("/AccessRight", { menuData, roleId })
+//     //props.history.push("/AccessRight", roleId) 
+//     console.log(roleId)*/
+//   }
 
-  const [componentSize, setComponentSize] = useState('small');
-  const onFormLayoutChange = ({ size }) => {
-    setComponentSize(size);
-  };
-  const tailLayout = {
-    wrapperCol: { offset: 10 },
-  };
+//  // const [componentSize, setComponentSize] = useState('small');
+//   const onFormLayoutChange = ({ size }) => {
+//     setComponentSize(size);
+//   };
+  
   const menuData = props.location.state;
   return (
     <Layout>

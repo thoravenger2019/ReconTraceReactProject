@@ -2,7 +2,7 @@
 import React from 'react'
 import reactCSS from 'reactcss'
 import { SketchPicker } from 'react-color'
-import AddClient from '../page/AddClient'
+
 
 class SketchExample extends React.Component {
   state = {

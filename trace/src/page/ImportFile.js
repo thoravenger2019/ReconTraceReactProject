@@ -90,12 +90,6 @@ const ImportFile = props => {
   const menuData = props.location.state;
   console.log(menuData);
 
-  function onChange(value) {
-    console.log(`selected ${value}`);
-  }
-  function handleChange(value) {
-    console.log(`selected ${value}`);
-  }
 
   const [form] = Form.useForm()
 
@@ -114,8 +108,24 @@ const ImportFile = props => {
         const response = await axios.post(`importFileNpciATMFiles/${clientid}`, formData);
         //const response = await axios.post(`importFileNpciATMFiles`,formData);
         // const response = await axios.post(`importPosSettlementSummaryReportFiles/${clientid}`,formData);
-        console.log(response);
+        console.log(response.data);
+        console.log(response.data);
+        const fileUploadStatus=response.data;
+        
+        if (filetype == 'ATM_ALL_NPCI' || filetype == 'ATM_ACQUIRER_NPCI')
+        {
+          const statuss = fileUploadStatus.map((item)=>item.NPCIFILESTATUS)
+                    alert(statuss);
+                   window.location.reload(false);
+
+        }
+        if(filetype == 'ATM_ALL_NPCI' || filetype == 'ATM_ISSUER_NPCI'){
+          const statuss = fileUploadStatus.map((item)=>item.NPCIFILESTATUS)
+          alert(statuss);
+          window.location.reload(false);
+        }
       }
+      
 
       if (filetype == 'CBS_ATM_ISSUER' || filetype=='CBS_ATM_ALL') {
 
@@ -128,7 +138,11 @@ const ImportFile = props => {
         const response = await axios.post(`importGlcbsFileData/${clientid}/${filetype}`, formData);
         //const response = await axios.post(`importFileNpciATMFiles`,formData);@PostMapping("importGlcbsFileData/{clientid}/{fileTypeName}")
         // const response = await axios.post(`importPosSettlementSummaryReportFiles/${clientid}`,formData);
-        console.log(response);
+        const fileUploadStatus=response.data;
+        console.log(fileUploadStatus);
+          const statuss = fileUploadStatus.map((item)=>item.GLCBSSTATUS)
+                    alert(statuss);
+                   // window.location.reload(false);
       }
 
       if(filetype=='SWITCH_ATM_ALL' ){
@@ -142,7 +156,11 @@ const ImportFile = props => {
         const response = await axios.post(`importSwitchFile/${clientid}/${filetype}`, formData);
         //const response = await axios.post(`importFileNpciATMFiles`,formData);@PostMapping("importGlcbsFileData/{clientid}/{fileTypeName}")
         // const response = await axios.post(`importPosSettlementSummaryReportFiles/${clientid}`,formData);
-        console.log(response);
+        console.log(response.data);
+        const fileUploadStatus=response.data;
+          const statuss = fileUploadStatus.map((item)=>item.SWITCHSTATUS)
+                    alert(statuss);
+                   // window.location.reload(false);
       }
       if(filetype=='EJ_ATM_ALL'){
 
@@ -155,10 +173,12 @@ const ImportFile = props => {
         const response = await axios.post(`importEJFiledata/${clientid}/${filetype}`, formData);
         //const response = await axios.post(`importFileNpciATMFiles`,formData);@PostMapping("importGlcbsFileData/{clientid}/{fileTypeName}")
         // const response = await axios.post(`importPosSettlementSummaryReportFiles/${clientid}`,formData);
-        console.log(response);
+        console.log(response.data);
+        const fileUploadStatus=response.data;
+        const statuss = fileUploadStatus.map((item)=>item.EJFILESTATUS)
+                    alert(statuss);
+                    //window.location.reload(false);
       }
-
-
     } catch (e) {
       console.log(e)
     }
@@ -166,20 +186,9 @@ const ImportFile = props => {
   const onChangeHandler = event => {
     setStateFile(event.target.files)
   }
-  const [componentSize, setComponentSize] = useState('small');
+  //const [componentSize, setComponentSize] = useState('small');
 
-  const onFormLayoutChange = ({ size }) => {
-    setComponentSize(size);
-  };
-  const tailLayout = {
-    wrapperCol: { offset: 10 },
-  };
-  const FormItem = Form.Item;
-
-  function onChange(checkedValues) {
-    console.log('checked = ', checkedValues);
-  }
-
+  
 
 
   return (
@@ -223,7 +232,7 @@ const ImportFile = props => {
                   <Col xs={2} sm={16} md={12} lg={8} xl={10}><b>
                     <Form.Item
                       name="file"
-                      rules={[{ required: true, message: 'Please input your Branch Name!' }]}>
+                      rules={[{ required: true, message: 'Please input your File..!' }]}>
 
                       {/* <Input type={'file'} name="file[]" size={"large"}  onChange={onChangeHandler}  multiple/> */}
                       <Input type={'file'} name="file" size={"large"} onChange={onChangeHandler} />

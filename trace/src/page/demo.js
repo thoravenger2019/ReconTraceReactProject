@@ -1,30 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom';
+
 import 'antd/dist/antd.css';
-import axios, { axiosGet } from '../utils/axios';
+import axios  from '../utils/axios';
 import MenuSideBar from './menuSideBar';
 import {
   Form,
   Input,
-  Button,
   Select,
-  Card,
-  Row,
-  Col,
-  Checkbox,
   Layout,
   Avatar,
-  TimePicker,
   Table,
   Space,
 } from 'antd';
-import Password from 'antd/lib/input/Password';
-import { LayoutContext } from 'antd/lib/layout/layout';
 import Title from 'antd/lib/typography/Title';
-import moment from 'moment';
 import Grid from "@material-ui/core/Grid";
-const { Header, Footer, Sider, Content } = Layout;
-const FormItem = Form.Item;
+const { Header,Content } = Layout
 const { Option } = Select;
 
 const Demo = props => {

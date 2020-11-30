@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'antd/dist/antd.css';
 import { Button } from 'react-bootstrap';
-import axios, { axiosGet } from '../utils/axios';
+import axios from '../utils/axios';
 import {
   Form,
   Input,
@@ -21,7 +21,7 @@ import {
   EditOutlined,
   DeleteOutlined,
 } from '@ant-design/icons';
-const { Header, Footer, Sider, Content } = Layout;
+const { Header,  Content } = Layout;
 const UserDetails = (props) => {
 
   const [roledata, setRoleData] = useState([])
@@ -99,7 +99,7 @@ const UserDetails = (props) => {
 
   const getUser = async () => {
     try {
-      const validateFields = await form.validateFields()
+     // const validateFields = await form.validateFields()
       const values = form.getFieldsValue();
       console.log(values)
       const response = await axios.get(`GetUserDetails/${values.clientID}/${values.branchName}/${values.roleType}`);

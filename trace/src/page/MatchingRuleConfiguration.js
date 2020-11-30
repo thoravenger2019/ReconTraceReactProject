@@ -1,11 +1,9 @@
 import React, { useState,useEffect } from 'react';
-import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
-import axios, { axiosGet } from '../utils/axios';
+import axios from '../utils/axios';
 import MenuSideBar from './menuSideBar';
 import {
   Form,
-  Input,
   Button,
   Select,
   Card,
@@ -15,10 +13,8 @@ import {
   Layout,
   Avatar,
 } from 'antd';
-import Password from 'antd/lib/input/Password';
-import { LayoutContext } from 'antd/lib/layout/layout';
 import Title from 'antd/lib/typography/Title';
-const {Header, Footer ,Sider,Content}=Layout;
+const {Header, Content}=Layout;
 const { Option } = Select;
 
 const MatchingRuleConfiguration = props => {
@@ -146,6 +142,7 @@ const addMatchingRuleDetails = async () => {
         
 
        window.location.reload(false);
+       
 
         //props.history.push("/AddUser",response.data)
     } catch (e) {
@@ -209,9 +206,9 @@ const addMatchingRuleDetails = async () => {
 // }
 
   
-  function onChange(checkedValues) {
-    console.log('checked = ', checkedValues);
-  }
+  // function onChange(checkedValues) {
+  //   console.log('checked = ', checkedValues);
+  // }
   function onChangeClientName(value) {
     console.log(`selected ${value}`);
     setClientID(value)
@@ -245,7 +242,7 @@ const addMatchingRuleDetails = async () => {
     </Row>
     <Row>
        <Col span={24}>
-         <Form.Item label="Channel Type" name="ChannelType" >
+     <Form.Item label="Channel Type" name="ChannelType" >
           <Select defaultValue="--select--" style={{ width: 700 }} onChange={onChangeChanneltName}>
                               {channeldata}
            </Select>                  

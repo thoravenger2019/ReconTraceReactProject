@@ -1,6 +1,5 @@
 import React from 'react';
-import UserDetails from './UserDetails';
-import { NavLink, HashRouter,Route, Router, Switch } from "react-router-dom";
+import { NavLink} from "react-router-dom";
 import { Layout, Menu, Avatar } from 'antd';
 import {
     DesktopOutlined,
@@ -14,7 +13,7 @@ import SubMenu from 'antd/lib/menu/SubMenu';
 import MenuSideBar from './menuSideBar';
 import Title from 'antd/lib/typography/Title';
 
-const {Header, Footer ,Sider,Content}=Layout;
+const {Header, Content}=Layout;
 
 
 

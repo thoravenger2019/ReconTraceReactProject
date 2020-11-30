@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
 import { Table, Input, Button, Popconfirm, Form,Select } from 'antd';
-import axios, { axiosGet } from '../utils/axios';
-const { Option } = Select;
+import axios from '../utils/axios';
+
 const EditableContext = React.createContext();
 
 const EditableRow = ({ index, ...props }) => {
@@ -25,9 +25,7 @@ const EditableCell = ({
   ...restProps
 }) => {
   const [editing, setEditing] = useState(false);
-  const [vendorData, setVendorData] = useState(true);
-  const [loader, setLoader] = useState(true)
-
+  
   const inputRef = useRef();
   const form = useContext(EditableContext);
   useEffect(() => {

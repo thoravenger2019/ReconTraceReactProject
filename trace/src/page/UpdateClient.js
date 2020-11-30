@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
-import axios, { axiosGet } from '../utils/axios';
+import axios from '../utils/axios';
 import MenuSideBar from './menuSideBar';
 import {
     Form,
@@ -18,19 +17,16 @@ import {
     Table,
     Space,
 } from 'antd';
-import InputColor from 'react-input-color';
 import Password from 'antd/lib/input/Password';
-import { LayoutContext } from 'antd/lib/layout/layout';
+
 import Title from 'antd/lib/typography/Title';
 import {
     PlusCircleOutlined,
     DeleteOutlined,
 } from '@ant-design/icons';
-import SketchExample,{handleChange}  from '../page/SketchExample';
 
-import { SketchPicker } from 'react-color';
-const { Header, Footer, Sider, Content } = Layout;
-const FormItem = Form.Item;
+const { Header,Content } = Layout;
+
 const { Option } = Select;
 const { TextArea } = Input;
 
@@ -42,13 +38,13 @@ const UpdateClient = props => {
     const [clientcurrency, setclientcurrency] = useState([])
     const [countrydata, setCountryData] = useState([])
     const [loader, setLoader] = useState(true)
-    const [color, setColor] = React.useState({});
+    //const [color, setColor] = React.useState({});
     const [domaindata, setDomainData] = useState([])
     const [clientdata, setClientData] = useState([])
     const [moduledata, setModuleData] = useState([])
     const [selectedFileData, setStateFile] = useState([])
     const [clientCodeData,setClientCode]=useState([])
-    const [clientNameNew, setInputClientNameNew] = useState('')
+  //  const [clientNameNew, setInputClientNameNew] = useState('')
     const [modelId,setModelID]=useState({})
     const [channelModeGetData,setChannelModeTableData]=useState()
     const [ChannelID,setChannelID]=useState()
@@ -185,9 +181,9 @@ const UpdateClient = props => {
     function onChange(value) {
         console.log(`selected ${value}`);
     }
-    function handleChange(value) {
-        console.log(`selected ${value}`);
-    }
+    // function handleChange(value) {
+    //     console.log(`selected ${value}`);
+    // }
 
     const [form] = Form.useForm()
    /* const onChangeClientName = (e) => {
@@ -198,7 +194,7 @@ const UpdateClient = props => {
 
     const onClientUpdate = async () => {
         try {
-           const validateFields = await form.validateFields();    
+           //const validateFields = await form.validateFields();    
             const values = form.getFieldsValue();
             let currentFile=selectedFileData[0];
             const formData = new FormData();            
@@ -229,22 +225,22 @@ const UpdateClient = props => {
         }
     }
 
-    const [componentSize, setComponentSize] = useState('small');
+    // const [componentSize, setComponentSize] = useState('small');
 
-    const onFormLayoutChange = ({ size }) => {
-        setComponentSize(size);
-    };
-    const tailLayout = {
-        wrapperCol: { offset: 10 },
-    };
-    const FormItem = Form.Item;
+    // const onFormLayoutChange = ({ size }) => {
+    //     setComponentSize(size);
+    // };
+    // const tailLayout = {
+    //     wrapperCol: { offset: 10 },
+    // };
+    // const FormItem = Form.Item;
 
-    function onChange(checkedValues) {
-        console.log('checked = ', checkedValues);
-        /*   setCurrencyID(checkedValues);
-           onDisplayClientcurrency();
-           console.log("hiiiii")*/
-    }
+    // function onChange(checkedValues) {
+    //     console.log('checked = ', checkedValues);
+    //     /*   setCurrencyID(checkedValues);
+    //        onDisplayClientcurrency();
+    //        console.log("hiiiii")*/
+    // }
     function onChange(checkedValues) {
         console.log('checked = ', checkedValues);
         /*   setCurrencyID(checkedValues);
@@ -328,9 +324,9 @@ const UpdateClient = props => {
         setStateFile(event.target.files)
        
     }
-    const onColor = async() =>{
-        const abc=props.colorHex
-    }
+    // const onColor = async() =>{
+    //     const abc=props.colorHex
+    // }
             return (
                 <Layout>
                     <Header style={{ padding: "20px" }}>

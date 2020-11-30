@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import 'antd/dist/antd.less'
 import 'antd/dist/antd.css';
-import axios, { axiosGet } from '../utils/axios';
-import Axios from "axios";
+import axios from '../utils/axios';
 import MenuSideBar from './menuSideBar';
-import { NavLink } from "react-router-dom";
-import { Spin, Avatar, Skeleton,Select } from 'antd';
+import {  Avatar, Skeleton,Select } from 'antd';
 import '../App';
 import {
   Form,
@@ -24,17 +22,15 @@ import {
 } from '@ant-design/icons';
 
 const { Option } = Select;
-const { Header, Footer, Sider, Content } = Layout;
+const { Header, Content } = Layout;
 
-let TERA;
 const RoleDetails = props => {
 
   const [form] = Form.useForm()
   const [data, setData] = useState([])
   const [loader, setLoader] = useState(true)
   const [clientdata, setClientData] = useState([])
-  const [clientID,setClientId]=useState([])
-
+ 
   useEffect(() => {
     ///onDisplayRole();
     onDisplayClientNameList();

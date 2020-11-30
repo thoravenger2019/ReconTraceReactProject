@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
-import axios, { axiosGet } from '../utils/axios';
+import axios from '../utils/axios';
 import MenuSideBar from './menuSideBar';
-import moment from 'moment';
 
 import {
   Form,
@@ -12,16 +10,16 @@ import {
   Card,
   Row,
   Col,
-  Checkbox,
   Layout,
   Avatar,
-  Input,
   DatePicker,
+  Input,
+  spin,
+  Spin,
+
 } from 'antd';
-import Password from 'antd/lib/input/Password';
 import Title from 'antd/lib/typography/Title';
-const { Header, Footer, Sider, Content } = Layout;
-const FormItem = Form.Item;
+const { Header, Content } = Layout;
 const { Option } = Select;
 
 const RunRecon = props => {
@@ -33,6 +31,7 @@ const RunRecon = props => {
   const [clientData,setClientData]=useState([])
   const [channelData,setChannelData]=useState([])
   const [modeData,setModeData]=useState([])
+  const [spindata,setSpinData]=useState(false)
   const [selectedFileData, setStateFile] = useState(undefined)
   useEffect(() => {
     //onDisplayImplortFile();
@@ -124,18 +123,21 @@ const ongetModeType = async (value) => {
 };
 
 
-  const onDisplayImplortFile = async () => {
+  const onRunRecon = async () => {
     try {
-      
-      const importFileResponse = await axios.get(`getUploadFiletype`);
+      setSpinData(true)
+      const values = form.getFieldsValue();
+      console.log(values)
+      const importFileResponse = await axios.get(`runreconall/${clientid}/${values.fromdate}/${values.todate}/${values.channelid}/${values.modeid}`);
       console.log(importFileResponse.data)
+      setSpinData(false);
       setLoader(false);
 
-      const fileN = importFileResponse.data;
-      console.log(fileN);
+      // const fileN = importFileResponse.data;
+      // console.log(fileN);
 
-      const listFile = fileN.map((item, index) => <Option value={item.id} key={index}>{item.fileType}</Option>)
-      setData(listFile);
+      // const listFile = fileN.map((item, index) => <Option value={item.id} key={index}>{item.fileType}</Option>)
+      // setData(listFile);
 
       //console.log(dataAll);
 
@@ -147,12 +149,12 @@ const ongetModeType = async (value) => {
   const menuData = props.location.state;
   console.log(menuData);
 
-  function onChange(value) {
-    console.log(`selected ${value}`);
-  }
-  function handleChange(value) {
-    console.log(`selected ${value}`);
-  }
+  // function onChange(value) {
+  //   console.log(`selected ${value}`);
+  // }
+  // function handleChange(value) {
+  //   console.log(`selected ${value}`);
+  // }
 
   const [form] = Form.useForm()
 
@@ -180,27 +182,27 @@ const ongetModeType = async (value) => {
       console.log(e)
     }
   }
-  const { RangePicker } = DatePicker;
+ // const { RangePicker } = DatePicker;
 
   const dateFormat = 'DD/MM/YYYY';
-  const monthFormat = 'MM/YYYY';
+ // const monthFormat = 'MM/YYYY';
 
-  const onChangeHandler = event => {     
-    setStateFile(event.target.files) 
-}
-  const [componentSize, setComponentSize] = useState('small');
+//   const onChangeHandler = event => {     
+//     setStateFile(event.target.files) 
+// }
+//   const [componentSize, setComponentSize] = useState('small');
 
-  const onFormLayoutChange = ({ size }) => {
-    setComponentSize(size);
-  };
-  const tailLayout = {
-    wrapperCol: { offset: 10 },
-  };
-  const FormItem = Form.Item;
+//   const onFormLayoutChange = ({ size }) => {
+//     setComponentSize(size);
+//   };
+//   const tailLayout = {
+//     wrapperCol: { offset: 10 },
+//   };
+//   const FormItem = Form.Item;
 
-  function onChange(checkedValues) {
-    console.log('checked = ', checkedValues);
-  }
+//   function onChange(checkedValues) {
+//     console.log('checked = ', checkedValues);
+//   }
 
   return (
     <Layout>
@@ -224,7 +226,7 @@ const ongetModeType = async (value) => {
 
                     </Col>
                     <Col span={8}>                      
-                      <Form.Item label="Channel Type" name="ChannelType" >
+                      <Form.Item label="Channel Type" name="channelid" >
                         <Select defaultValue="--select--" style={{ width: 200 }} onChange={onChangeChannel}>
                               {channelData}
                         </Select>                  
@@ -232,7 +234,7 @@ const ongetModeType = async (value) => {
 
                     </Col>
                     <Col span={8}>
-                      <Form.Item label="Mode Type" name="ModeType" >
+                      <Form.Item label="Mode Type" name="modeid" >
                           <Select defaultValue="--select--" style={{ width: 200 }} onChange={onChangeMode}>
                                 {modeData}
                           </Select>                  
@@ -241,16 +243,26 @@ const ongetModeType = async (value) => {
                 </Row>
                 <Row>
                   <Col span={12}>
-                  <DatePicker  format={dateFormat} style={{width:320 }} />
+                  {/* <DatePicker  format={dateFormat} style={{width:320 }} /> */}
+                  <Form.Item label="From Date" name="fromdate" >
+            {/* <DatePicker picker={"date"}  format={dateFormat}disabledTime={disabledDateTime}  style={{width:150 }} />  */}
+            <Input type="date"/>
+               
+            </Form.Item>
                   </Col>
                   <Col span={12}>
-                  <DatePicker format={dateFormat} style={{width: 320}}  />
+                  <Form.Item label="To Date" name="todate" >
+            {/* <DatePicker picker={"date"}  format={dateFormat} disabledTime={disabledDateTime} style={{width:150 }} /> */}
+            <Input type="date"/>
+            </Form.Item>
                   </Col>
                 </Row>               
                 <Row>  
                   <Form.Item label=" " name="">             
-                    <Button type={"primary"} size={"large"} style={{width:'100px'}}>Run Recon</Button>      
-                  </Form.Item>           
+                    <Button type={"primary"} size={"large"} style={{width:'100px'}} onClick={onRunRecon}>Run Recon</Button>   
+                    {spindata?(<Spin style={{ margin: '0 18px', color: 'black' }} size="large" />):("") } 
+                  </Form.Item>    
+                        
                 </Row>
               </Form>
             </Card>

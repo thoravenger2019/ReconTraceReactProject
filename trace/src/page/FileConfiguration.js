@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom';
+import React, { useContext,useState, useEffect,useRef } from 'react';
 import 'antd/dist/antd.css';
-import axios, { axiosGet } from '../utils/axios';
+import axios from '../utils/axios';
 import MenuSideBar from './menuSideBar';
 import {
   Form,
@@ -11,27 +10,17 @@ import {
   Card,
   Row,
   Col,
-  Checkbox,
   Layout,
   Avatar,
-  TimePicker,
   Table,
   Space,
-  InputNumber,
   Popconfirm,
 } from 'antd';
-import Password from 'antd/lib/input/Password';
-import { LayoutContext } from 'antd/lib/layout/layout';
 import Title from 'antd/lib/typography/Title';
-import moment from 'moment';
 import $ from 'jquery';
 
-const { Header, Footer, Sider, Content } = Layout;
-const FormItem = Form.Item;
+const { Header,Content } = Layout;
 const { Option } = Select;
-
-
-
 
 const FileConfiguration = props => {
   // console.log(props)
@@ -58,13 +47,9 @@ const FileConfiguration = props => {
   const [upFieldLen, setFieldLength] = useState([])
   const [upFieldStartPos, setStartPosition] = useState([])
   const [updatedTableData, setUpdatedTableData] = useState([])
-  const [xmlData, setXmlFileNPCIAcq] = useState([])
-  const [xmlReadIn, setInputXMLRead] = useState([])
   const [septype, setSepType] = useState([])
   const [valueTime, setValue] = useState([])
-  const [xmlCBSTable, setXmlCBSTable] = useState([])
-
-
+  
   const [fileloader, setFilePlaintextLoader] = useState(false)
   const [filetype, setFileLoader] = useState(false)
   const [channelloader, setChannelLoader] = useState(false)
@@ -77,97 +62,163 @@ const FileConfiguration = props => {
   const [switchTable,setSwitchTable]=useState(false)
   const [ejtable,setEJTable]=useState(false)
 
-
   const [editingKey, setEditingKey] = useState('');
   const isEditing = record => record.key === editingKey;
+//----------------------------------------------TABLE TEST-----------------------------------------------------------------
+const EditableContext = React.createContext();
 
+const EditableRow = ({ index, ...props }) => {
+  const [form] = Form.useForm();
+  return (
+    <Form form={form} component={false}>
+      <EditableContext.Provider value={form}>
+        <tr {...props} />
+      </EditableContext.Provider>
+    </Form>
+  );
+};
+
+const EditableCell = ({
+  title,
+  editable,
+  children,
+  dataIndex,
+  record,
+  //handleSave,
+  ...restProps
+}) => {
+  const [editing, setEditing] = useState(false);
+  const inputRef = useRef();
+  const form = useContext(EditableContext);
+  useEffect(() => {
+    if (editing) {
+      inputRef.current.focus();
+    }
+  }, [editing]);
+
+  const toggleEdit = () => {
+    setEditing(!editing);
+    form.setFieldsValue({
+      [dataIndex]: record[dataIndex],
+    });
+  };
+
+  const handleSave =  (row) => {
+    // const newData = [...this.state.dataSource];
+    // const index = newData.findIndex((item) => row.key === item.key);
+    // const item = newData[index];
+    // newData.splice(index, 1, { ...item, ...row });
+   
+
+    //const row = await form.validateFields();
+        const newData = [...xmltable];
+        const index = newData.findIndex((item) => row.key === item.key);
+  
+        if (index > -1) {
+          const item = newData[index];
+          newData.splice(index, 1, { ...item, ...row });
+          setXmlTable(newData);
+          setEditingKey('');
+        } else {
+          newData.push(row);
+          setXmlTable(newData);
+          setEditingKey('');
+        }
+  };
+
+  const save = async (e) => {
+    try {
+      const values = await form.validateFields();
+      toggleEdit();
+      handleSave({ ...record, ...values })
+      //debugger;
+    } catch (errInfo) {
+      console.log('Save failed:', errInfo);
+    }
+  };
+
+  
+  let childNode = children;
+
+  if (editable) {
+    childNode = editing ? (
+      <Form.Item
+        style={{
+          margin: 0,
+        }}
+        name={dataIndex}
+        rules={[
+          {
+            required: true,
+            message: `${title} is required.`,
+          },
+        ]}
+      >
+        <Input ref={inputRef} onPressEnter={save} onBlur={save} />
+      </Form.Item>
+    ) : (
+      <div
+        className="editable-cell-value-wrap"
+        style={{
+          paddingRight: 24,
+        }}
+        onClick={toggleEdit}
+      >
+        {children}
+      </div>
+    );
+  }
+  return <td {...restProps}>{childNode}</td>;
+};
+
+const columns = [{
+  title: 'Field Name',
+  dataIndex: 'FieldName',
+  render: text => <a>{text}</a>,
+},
+{
+  title: 'Start Position',
+  dataIndex: 'StartPosition',
+  editable: true,
+  render: (text, record) => (
+    <Space size="middle">
+      {record.StartPosition}
+    </Space>
+  ),
+},
+{
+  title: 'Field Length',
+  dataIndex: 'FieldLength',
+  key: 'FieldLength',
+  editable: true,
+  render: (text, record) => (
+    <Space size="middle">
+      {record.FieldLength}
+
+    </Space>
+  ),
+},
+
+];
+    const columnsTest = columns.map((col) => {
+      if (!col.editable) {
+        return col;
+      }
+  
+      return {
+        ...col,
+        onCell: (record) => ({
+          record,
+          editable: col.editable,
+          dataIndex: col.dataIndex,
+          title: col.title,
+    //      handleSave: this.handleSave,
+        }),
+      };
+    });
+
+//-------------------------------------------------------------------------------------------------------------------------
 //edit table function for npci table
-  const EditableCell = ({
-    editing,
-    dataIndex,
-    title,
-    inputType,
-    record,
-    index,
-    children,
-    ...restProps
-  }) => {
-    const inputNode = dataIndex === 'StartPosition' ? <Input value={upFieldStartPos} /> : <Input value={upFieldLen} />;
-    return (
-      <td {...restProps}>
-        {editing ? (
-          <Form.Item
-            name={dataIndex}
-            style={{
-              margin: 0,
-            }}
-            rules={[
-              {
-                required: true,
-                message: `Please Input ${title}!`,
-              },
-            ]}
-          >
-            {inputNode}
-          </Form.Item>
-        ) : (
-            children
-          )}
-      </td>
-    );
-  };
-  const edit = (record) => {
-    form.setFieldsValue({
-      StartPosition: '',
-      FieldLength: '',
-      ...record,
-    });
-    setEditingKey(record.key);
-  };
-
-  //EDIT CODE FOR CBS TABLE
-  const EditableCellCBS = ({
-    editing,
-    dataIndex,
-    title,
-    inputType,
-    record,
-    index,
-    children,
-    ...restProps
-  }) => {
-    const inputNode = dataIndex === 'StartPositionCBS' ? <Input /> : <Input />;
-    return (
-      <td {...restProps}>
-        {editing ? (
-          <Form.Item
-            name={dataIndex}
-            style={{
-              margin: 0,
-            }}
-            rules={[
-              {
-                required: true,
-                message: `Please Input ${title}!`,
-              },
-            ]}
-          >
-            {inputNode}
-          </Form.Item>
-        ) : (
-            children
-          )}
-      </td>
-    );
-  };
-  const editCBS = (record) => {
-    form.setFieldsValue({
-      StartPositionCBS: '',
-      ...record,
-    });
-    setEditingKey(record.key);
-  };
-
 
   //EDIT CODE FOR EJ TABLE
   const EditableCellEJ = ({
@@ -314,71 +365,7 @@ const editSwitch = (record) => {
 
   }];
 
-  const columns = [{
-    title: 'Field Name',
-    dataIndex: 'FieldName',
-    render: text => <a>{text}</a>,
-  },
-  {
-    title: 'Start Position',
-    dataIndex: 'StartPosition',
-    editable: true,
-    render: (text, record) => (
-      <Space size="middle">
-        {record.StartPosition}
-      </Space>
-    ),
-  },
-  {
-    title: 'Field Length',
-    dataIndex: 'FieldLength',
-    key: 'FieldLength',
-    editable: true,
-    render: (text, record) => (
-      <Space size="middle">
-        {record.FieldLength}
-
-      </Space>
-    ),
-  },
-  {
-    title: 'operation',
-    dataIndex: 'operation',
-    render: (_, record) => {
-      const editable = isEditing(record);
-      return editable ? (
-        <span>
-        <Button type={"primary"}  onClick={() => save(record.key)} >Save</Button>
-
-          <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-              <Button type={"danger"}>Cancel</Button>
-          </Popconfirm>
-        </span>
-      ) : (
-          <a onClick={() => edit(record)}>
-            Edit
-          </a>
-        );
-    },
-  },
-  ];
-  const mergedColumns = columns.map((col) => {
-    if (!col.editable) {
-      return col;
-    }
-
-    return {
-      ...col,
-      onCell: (record) => ({
-        record,
-        inputType: col.dataIndex === 'StartPosition' ? 'text' : 'text',
-        dataIndex: col.dataIndex,
-        title: col.title,
-        editing: isEditing(record),
-      }),
-    };
-  });
-
+  
   const columnsCBS = [{
     title: 'Field Name',
     dataIndex: 'FieldNameCBS',
@@ -394,27 +381,7 @@ const editSwitch = (record) => {
       </Space>
     ),
   },
-  {
-    title: 'operation',
-    dataIndex: 'operation',
-    render: (_, record) => {
-      const editable = isEditing(record);
-      return editable ? (
-        <span>
-        <Button type={"primary"}  onClick={() => save(record.key)} >Save</Button>
-
-          <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-              <Button type={"danger"}>Cancel</Button>
-          </Popconfirm>
-        </span>
-
-      ) : (
-          <a onClick={() => editCBS(record)}>
-            Edit
-          </a>
-        );
-    },
-  },
+  
   ];
   const mergedColumnsCBS = columnsCBS.map((col) => {
     if (!col.editable) {
@@ -425,14 +392,13 @@ const editSwitch = (record) => {
       ...col,
       onCell: (record) => ({
         record,
-        inputType: col.dataIndex === 'Position' ? 'text' : 'text',
+        editable: col.editable,
         dataIndex: col.dataIndex,
         title: col.title,
-        editing: isEditing(record),
+  //      handleSave: this.handleSave,
       }),
     };
   });
-
   const columnsEJ = [{
     title: 'Field Name',
     dataIndex: 'FieldNameEJ',
@@ -448,26 +414,6 @@ const editSwitch = (record) => {
       </Space>
     ),
   },
-  {
-    title: 'operation',
-    dataIndex: 'operation',
-    render: (_, record) => {
-      const editable = isEditing(record);
-      return editable ? (
-        <span>
-        <Button type={"primary"}  onClick={() => save(record.key)} >Save</Button>
-
-          <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-              <Button type={"danger"}>Cancel</Button>
-          </Popconfirm>
-        </span>
-      ) : (
-          <a onClick={() => editEJ(record)}>
-            Edit
-          </a>
-        );
-    },
-  },
   ];
   const mergedColumnsEJ = columnsEJ.map((col) => {
     if (!col.editable) {
@@ -478,10 +424,10 @@ const editSwitch = (record) => {
       ...col,
       onCell: (record) => ({
         record,
-        inputType: col.dataIndex === 'Position' ? 'text' : 'text',
+        editable: col.editable,
         dataIndex: col.dataIndex,
         title: col.title,
-        editing: isEditing(record),
+  //      handleSave: this.handleSave,
       }),
     };
   });
@@ -501,26 +447,7 @@ const editSwitch = (record) => {
       </Space>
     ),
   },
-  {
-    title: 'operation',
-    dataIndex: 'operation',
-    render: (_, record) => {
-      const editable = isEditing(record);
-      return editable ? (
-        <span>
-        <Button type={"primary"}  onClick={() => save(record.key)} >Save</Button>
-
-          <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-              <Button type={"danger"}>Cancel</Button>
-          </Popconfirm>
-        </span>
-      ) : (
-          <a onClick={() => editSwitch(record)}>
-            Edit
-          </a>
-        );
-    },
-  },
+  
   ];
   const mergedColumnsSwitch = columnsSwitch.map((col) => {
     if (!col.editable) {
@@ -531,10 +458,10 @@ const editSwitch = (record) => {
       ...col,
       onCell: (record) => ({
         record,
-        inputType: col.dataIndex === 'Position' ? 'text' : 'text',
+        editable: col.editable,
         dataIndex: col.dataIndex,
         title: col.title,
-        editing: isEditing(record),
+  //      handleSave: this.handleSave,
       }),
     };
   });
@@ -694,10 +621,10 @@ const editSwitch = (record) => {
 
   // };
 
-  const onXmlRead = event => {
-    alert(event.target.time);
-    //setInputXMLRead(event.target.time);
-  }
+  // const onXmlRead = event => {
+  //   alert(event.target.time);
+  //   //setInputXMLRead(event.target.time);
+  // }
 
 
   function onChangeClientName(value) {
@@ -758,10 +685,10 @@ const editSwitch = (record) => {
     getFileFormatHistory(P_VENDORTYPE, P_CLIENTID, P_CHANNELID, P_MODEID, checkedValues);
     setClientInfoCard(true);
   }
-  function onChange(checkedValues) {
-    console.log('checked = ', checkedValues);
-  }
-  function onChangeExt(checkedValues) {
+  // function onChange(checkedValues) {
+  //   console.log('checked = ', checkedValues);
+  // }
+   function onChangeExt(checkedValues) {
     console.log('checked = ', checkedValues);
     setFileExt(checkedValues)
   }
@@ -1059,7 +986,6 @@ const editSwitch = (record) => {
     posValue.push(startPosNodeValueNodeTest[i]);
     alert(startPosNodeValueNodeTest);
 
-   
     var builder = require('xmlbuilder');
 
     var root = builder.create('FileFormat');
@@ -1476,11 +1402,11 @@ const editSwitch = (record) => {
                               components={{
                                 body: {
                                   cell: EditableCell,
-
+                                  row: EditableRow,
                                 },
                               }}
                               style={{ width: 800 }}
-                              columns={mergedColumns} dataSource={xmltable}
+                              columns={columnsTest} dataSource={xmltable}
                               pagination={false}
                               rowClassName="editable-row"
                               scroll={{ y: 800 }}
@@ -1491,7 +1417,8 @@ const editSwitch = (record) => {
                             <Table
                               components={{
                                 body: {
-                                  cell: EditableCellCBS,
+                                  cell: EditableCell,
+                                  row: EditableRow,
                                 },
                               }}
                               style={{ width: 800 }}
@@ -1505,7 +1432,8 @@ const editSwitch = (record) => {
                             <Table
                               components={{
                                 body: {
-                                  cell: EditableCellSwitch,
+                                  cell: EditableCell,
+                                  row: EditableRow,
                                 },
                               }}
                               style={{ width: 800 }}
@@ -1520,7 +1448,8 @@ const editSwitch = (record) => {
                             <Table
                               components={{
                                 body: {
-                                  cell: EditableCellEJ,
+                                  cell: EditableCell,
+                                  row: EditableRow,
                                 },
                               }}
                               style={{ width: 800 }}
