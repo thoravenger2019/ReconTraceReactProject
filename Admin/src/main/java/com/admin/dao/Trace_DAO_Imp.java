@@ -44,6 +44,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
@@ -5479,7 +5480,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 				Row row1 = sheet.getRow(0);
 				int tempcolindex = -1;
 //			String tempstr = null;
-
 				String ATMAccountNo = "";
 				String Amount1 = "";
 				String Amount2 = "";
@@ -5861,10 +5861,20 @@ public class Trace_DAO_Imp implements Trace_DAO {
 								TxnsTime = null;
 							} else {
 							System.out.println("Integer.parseInt(jsonObj.getJSONArray(\"TxnsTime\").getString(0)) - 1)" + (Integer.parseInt(jsonObj.getJSONArray("TxnsTime").getString(0)) - 1));
-								TxnsTime = String.valueOf(row
+							Cell cell=row.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsTime").getString(0)) - 1);
+							if(DateUtil.isCellDateFormatted(cell))
+							{
+								SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss");
+								 String tempTxnsTime=timeFormat.format(cell.getDateCellValue());
+								 System.out.println("date"+tempTxnsTime);
+								 TxnsTime=tempTxnsTime;
+							}
+							else {
+							TxnsTime = String.valueOf(row
 										.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsTime").getString(0)) - 1));
-							
+							}
 								TxnsTime = TxnsTime.replace("AM", "").replace("PM", "");
+							
 							}
 						}
 						if (jsonObj.getJSONArray("ReferenceNumber").getString(0).equals("0")) {
@@ -9008,10 +9018,10 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			Object[] fields = (Object[]) record;
 			JSONObject obj = new JSONObject();
 //			obj.put("TXNDATE", fields[0]);
-			Date d = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(fields[0].toString());
-			SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");
-			String tempDate = format1.format(d);
-			obj.put("TXNDATE", tempDate);
+//			Date d = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(fields[0].toString());
+//			SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");
+//			String tempDate = format1.format(d);
+			obj.put("TXNDATE", fields[0]);
 			obj.put("TERMINALID", fields[1]);
 			obj.put("GLONUS", fields[2]);
 			obj.put("GLACQUIRER", fields[3]);
@@ -9078,7 +9088,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
 		for (Object record : result) {
 			JSONObject obj = new JSONObject();
-			obj.put("strMasg", result.toString());
+			obj.put("strMasg", result.toString().replaceAll("\\p{Punct}", ""));
 			JSONObjects.add(obj);
 		}
 		return JSONObjects;
