@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -160,18 +161,6 @@ public class Controller {
 
 		return hm;
 	}
-
-//	@GetMapping("/{usAddUserername}/{clientID}/{branchID}/{roleID}")
-//	public Map<String, String> addUser(@PathVariable("username") String username,
-//			@PathVariable("clientID") String clientID, @PathVariable("branchID") String branchID,
-//			@PathVariable("roleID") String roleID) {
-//		Map<String, String> hm = new HashMap<String, String>();
-//		String userList = traceService.getUserDetails(username, clientID, branchID, roleID);
-//		hm.put("roleNames", userList);
-//
-//		return hm;
-//
-//	}
 
 	@GetMapping("getUploadFiletype")
 	public List<JSONObject> getUploadFiletype() {
@@ -915,16 +904,44 @@ public class Controller {
 
 	@PostMapping("importFileNpciATMFiles/{clientid}")
 	public List<JSONObject> importFileNpciATMFiles(@PathVariable("clientid") String clientid,
-			@RequestParam("npci") MultipartFile npci) throws Exception {
-		String createdby = "suyog";
-//		String clientid="1";
-		List<JSONObject> importFileNpciATMFiles = traceService.importFileNpciATMFiles(npci, clientid, createdby);
-		return importFileNpciATMFiles;
+			@RequestParam("npci") MultipartFile[] npci) throws Exception {
+		String createdby = username.getUsername();
+		int[] importFileNpciATMFiles=null;
+		List<JSONObject> importFileNpciATMFilesReport=new ArrayList<JSONObject>();
+		JSONObject obj1 = new JSONObject();
+		int fu=0,fi=0,c=0,tc=0;
+		System.out.println("npcilength"+npci.length);
+		for(int i=0;i<npci.length;i++)
+		{
+			importFileNpciATMFiles = traceService.importFileNpciATMFiles(npci[i], clientid, createdby);	
+			if(importFileNpciATMFiles[1]==1)
+			{
+				fu++;
+			}
+			else if(importFileNpciATMFiles[2]==2)
+			{
+				fi++;
+			}
+			if(importFileNpciATMFiles[0] != -1)
+			{
+				c=c+importFileNpciATMFiles[0];
+			}
+			if(importFileNpciATMFiles[2] != -1)
+			{
+				tc=tc+importFileNpciATMFiles[2];
+			}
+		}
+		obj1.put("NUMBER OF UPLOADED ROWS" , c);
+		obj1.put("NUMBER OF FAILD ROWS",tc-c);
+		obj1.put("NUMBER OF UPLOADED FILES" , fu);
+		obj1.put("NUMBER OF INTERRUPTED FILES",fi);
+		importFileNpciATMFilesReport.add(obj1);
+	  return importFileNpciATMFilesReport;
 	}
 
 	@PostMapping("importFileIMPSFiles")
 	public List<JSONObject> importFileIMPSFiles(@RequestParam("imps") MultipartFile imps) {
-		String createdby = "suyog";
+		String createdby = username.getUsername();
 		String clientid = "1";
 		List<JSONObject> importFileIMPSFiles = traceService.importFileIMPSFiles(imps, clientid, createdby);
 		return importFileIMPSFiles;
@@ -1209,18 +1226,16 @@ public class Controller {
 			@PathVariable("channelid") String channelid, @PathVariable("modeid") String modeid,
 			@PathVariable("terminalid") String terminalid, @PathVariable("fromdatetxns") String fromdatetxns,
 			@PathVariable("todatetxns") String todatetxns, @PathVariable("txntype") String txntype) {
-		
-		
-		System.out.println("terminalid:==="+terminalid);
-		
-		if(terminalid.equalsIgnoreCase("undefined"))
-		{
-			terminalid="0";
+
+		System.out.println("terminalid:===" + terminalid);
+
+		if (terminalid.equalsIgnoreCase("undefined")) {
+			terminalid = "0";
 		}
-		
+
 		List<JSONObject> getunmatchedtxnreport = traceService.getunmatchedtxnreport(clientid, channelid, modeid,
 				terminalid, fromdatetxns, todatetxns, txntype);
-		System.out.println("getunmatchedtxnreport::"+getunmatchedtxnreport.toString());
+		System.out.println("getunmatchedtxnreport::" + getunmatchedtxnreport.toString());
 		return getunmatchedtxnreport;
 	}
 
@@ -1229,13 +1244,12 @@ public class Controller {
 			@PathVariable("channelid") String channelid, @PathVariable("modeid") String modeid,
 			@PathVariable("terminalid") String terminalid, @PathVariable("fromdatetxns") String fromdatetxns,
 			@PathVariable("todatetxns") String todatetxns, @PathVariable("txntype") String txntype) {
-		if(terminalid.equalsIgnoreCase("undefined"))
-		{
-			terminalid="0";
+		if (terminalid.equalsIgnoreCase("undefined")) {
+			terminalid = "0";
 		}
 		List<JSONObject> getsuccessfultxnreport = traceService.getsuccessfultxnreport(clientid, channelid, modeid,
 				terminalid, fromdatetxns, todatetxns, txntype);
-		System.out.println("getsuccessfultxnreport::"+getsuccessfultxnreport.toString());
+		System.out.println("getsuccessfultxnreport::" + getsuccessfultxnreport.toString());
 		return getsuccessfultxnreport;
 	}
 
@@ -1244,9 +1258,8 @@ public class Controller {
 			@PathVariable("channelid") String channelid, @PathVariable("modeid") String modeid,
 			@PathVariable("terminalid") String terminalid, @PathVariable("fromdatetxns") String fromdatetxns,
 			@PathVariable("todatetxns") String todatetxns, @PathVariable("txntype") String txntype) {
-		if(terminalid.equalsIgnoreCase("undefined"))
-		{
-			terminalid="0";
+		if (terminalid.equalsIgnoreCase("undefined")) {
+			terminalid = "0";
 		}
 		List<JSONObject> getreversaltxnreport = traceService.getreversaltxnreport(clientid, channelid, modeid,
 				terminalid, fromdatetxns, todatetxns, txntype);

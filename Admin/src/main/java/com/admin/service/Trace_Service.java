@@ -117,7 +117,7 @@ public interface Trace_Service {
 
 	// public List<JSONObject> importFile(MultipartFile file, String clientid,
 	// String createdby);
-	public List<JSONObject> importFileNpciATMFiles(MultipartFile file, String clientid, String createdby)
+	public int[] importFileNpciATMFiles(MultipartFile file, String clientid, String createdby)
 			throws IOException, EncryptedDocumentException, InvalidFormatException, Exception;
 
 	public List<JSONObject> getFileFormatHistory(String p_VendorType, String p_ClientID, String p_ChannelID,

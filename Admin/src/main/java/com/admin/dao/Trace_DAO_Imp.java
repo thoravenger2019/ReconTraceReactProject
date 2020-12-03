@@ -3430,7 +3430,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 				startIndex = GetIndex(content, i, "TRANSACTION START");
 				endIndex = GetIndex(content, i, "TRANSACTION END");
-				
+
 				if (startIndex > -1) {
 					a = startIndex;
 				}
@@ -4250,16 +4250,13 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			NodeList nodeList = doc.getDocumentElement().getChildNodes();
 			System.out.println("nodelistLength" + nodeList.getLength());
 			String RowName = nodeList.item(0).getNodeName();
-			int actualRowPosition=-1;
-			if(RowName.equalsIgnoreCase("ActualRowPostion"))
-			{
+			int actualRowPosition = -1;
+			if (RowName.equalsIgnoreCase("ActualRowPostion")) {
 				Node startPosNode = nodeList.item(0);
 				NodeList startPosNodeValue = startPosNode.getChildNodes();
 				actualRowPosition = Integer.parseInt(startPosNodeValue.item(0).getNodeValue());
-			}
-			else
-			{
-				actualRowPosition=0;
+			} else {
+				actualRowPosition = 0;
 			}
 			for (int i = 1; i < nodeList.getLength(); i++) {
 				String nodeName = nodeList.item(i).getNodeName();
@@ -5860,21 +5857,23 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									Integer.parseInt(jsonObj.getJSONArray("TxnsTime").getString(0)) - 1) == null) {
 								TxnsTime = null;
 							} else {
-							System.out.println("Integer.parseInt(jsonObj.getJSONArray(\"TxnsTime\").getString(0)) - 1)" + (Integer.parseInt(jsonObj.getJSONArray("TxnsTime").getString(0)) - 1));
-							Cell cell=row.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsTime").getString(0)) - 1);
-							if(DateUtil.isCellDateFormatted(cell))
-							{
-								SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss");
-								 String tempTxnsTime=timeFormat.format(cell.getDateCellValue());
-								 System.out.println("date"+tempTxnsTime);
-								 TxnsTime=tempTxnsTime;
-							}
-							else {
-							TxnsTime = String.valueOf(row
-										.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsTime").getString(0)) - 1));
-							}
+								System.out.println(
+										"Integer.parseInt(jsonObj.getJSONArray(\"TxnsTime\").getString(0)) - 1)"
+												+ (Integer.parseInt(jsonObj.getJSONArray("TxnsTime").getString(0))
+														- 1));
+								Cell cell = row
+										.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsTime").getString(0)) - 1);
+								if (DateUtil.isCellDateFormatted(cell)) {
+									SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss");
+									String tempTxnsTime = timeFormat.format(cell.getDateCellValue());
+									System.out.println("date" + tempTxnsTime);
+									TxnsTime = tempTxnsTime;
+								} else {
+									TxnsTime = String.valueOf(row.getCell(
+											Integer.parseInt(jsonObj.getJSONArray("TxnsTime").getString(0)) - 1));
+								}
 								TxnsTime = TxnsTime.replace("AM", "").replace("PM", "");
-							
+
 							}
 						}
 						if (jsonObj.getJSONArray("ReferenceNumber").getString(0).equals("0")) {

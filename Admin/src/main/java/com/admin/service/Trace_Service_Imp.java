@@ -527,15 +527,17 @@ public class Trace_Service_Imp implements Trace_Service {
 	}
 
 	@Override
-	public List<JSONObject> importFileNpciATMFiles(MultipartFile file, String clientid, String createdby) {
+	public int[] importFileNpciATMFiles(MultipartFile file, String clientid, String createdby) {
 		List<String> content = null;
 		String fileName = file.getOriginalFilename();
 		String ext = FilenameUtils.getExtension(file.getOriginalFilename());
-
+		System.out.println("filename" + fileName);
+		
 		if (fileName.contains("ACQ")) {
+			int[] arr = new int[3];
+			int count = 0,totalContent=0;
 			List<JSONObject> importFileNpciATMFilesACQ = new ArrayList<JSONObject>();
 			JSONObject obj1 = new JSONObject();
-
 			try {
 				String participant_ID = null, transaction_Type = null, from_Account_Type = null, to_Account_Type = null,
 						RRN = null, response_Code = null, card_number = null, member_Number = null,
@@ -575,9 +577,11 @@ public class Trace_Service_Imp implements Trace_Service {
 
 				JSONObject obj = new JSONObject();
 
-				int count = 0, batchSize = 30000;
+				int batchSize = 30000;
 				long start = System.currentTimeMillis();
+				int[] countBatch = null;
 				Boolean fileUploadingStatus = false;
+				totalContent=content.size();
 				for (int i = 0; i < content.size(); i++) {
 					String parseExce = null;
 					contentData = content.get(i);
@@ -779,39 +783,34 @@ public class Trace_Service_Imp implements Trace_Service {
 					if (card_number != null) {
 						ecard_number = card_number;
 					}
-					if(transaction_Amount != null)
-					{
-						Double transaction_Amount_double=Double.parseDouble(transaction_Amount);
-						transaction_Amount=String.valueOf(transaction_Amount_double);
+					if (transaction_Amount != null) {
+						Double transaction_Amount_double = Double.parseDouble(transaction_Amount);
+						transaction_Amount = String.valueOf(transaction_Amount_double);
 					}
-					
-					if(actual_Transaction_Amount !=null)
-					{
-						Double actual_Transaction_Amount_double=Double.parseDouble(actual_Transaction_Amount);
-						actual_Transaction_Amount=String.valueOf(actual_Transaction_Amount_double);
+
+					if (actual_Transaction_Amount != null) {
+						Double actual_Transaction_Amount_double = Double.parseDouble(actual_Transaction_Amount);
+						actual_Transaction_Amount = String.valueOf(actual_Transaction_Amount_double);
 					}
-					
-					if(transaction_Acitivity_fee !=null)
-					{
-						Double transaction_Acitivity_fee_double=Double.parseDouble(transaction_Acitivity_fee);
-						transaction_Acitivity_fee=String.valueOf(transaction_Acitivity_fee_double);
+
+					if (transaction_Acitivity_fee != null) {
+						Double transaction_Acitivity_fee_double = Double.parseDouble(transaction_Acitivity_fee);
+						transaction_Acitivity_fee = String.valueOf(transaction_Acitivity_fee_double);
 					}
-					
-					if(acquirer_settlement_Amount !=null)
-					{
-						Double acquirer_settlement_Amount_double=Double.parseDouble(acquirer_settlement_Amount);
-						acquirer_settlement_Amount=String.valueOf(acquirer_settlement_Amount_double);
+
+					if (acquirer_settlement_Amount != null) {
+						Double acquirer_settlement_Amount_double = Double.parseDouble(acquirer_settlement_Amount);
+						acquirer_settlement_Amount = String.valueOf(acquirer_settlement_Amount_double);
 					}
-					
-					if(acquirer_Settlement_Fee !=null)
-					{
-						Double acquirer_Settlement_Fee_double=Double.parseDouble(acquirer_Settlement_Fee);
-						acquirer_Settlement_Fee=String.valueOf(acquirer_Settlement_Fee_double);
+
+					if (acquirer_Settlement_Fee != null) {
+						Double acquirer_Settlement_Fee_double = Double.parseDouble(acquirer_Settlement_Fee);
+						acquirer_Settlement_Fee = String.valueOf(acquirer_Settlement_Fee_double);
 					}
-					if(acquirer_settlement_processing_fee !=null)
-					{
-						Double acquirer_settlement_processing_fee_double=Double.parseDouble(acquirer_settlement_processing_fee);
-						acquirer_settlement_processing_fee=String.valueOf(acquirer_settlement_processing_fee_double);
+					if (acquirer_settlement_processing_fee != null) {
+						Double acquirer_settlement_processing_fee_double = Double
+								.parseDouble(acquirer_settlement_processing_fee);
+						acquirer_settlement_processing_fee = String.valueOf(acquirer_settlement_processing_fee_double);
 					}
 					stmt.setString(1, clientid);
 					stmt.setString(2, participant_ID);
@@ -856,42 +855,47 @@ public class Trace_Service_Imp implements Trace_Service {
 
 					stmt.addBatch();
 					count++;
-					System.out.println("count: " + count);
-					if (count % batchSize == 0 || count == content.size()) {
-						int[] countBatch = stmt.executeBatch();
-						long end = System.currentTimeMillis();
-						System.out.println("TIME:  " + (end - start));
-						fileUploadingStatus = true;
-						System.out.println("countBatch:    " + countBatch);
-						System.out.println("countBatchLength:    " + countBatch.length);
-					}
+					countBatch = stmt.executeBatch();
+					System.out.println("count" + count);
+					
+//					System.out.println("count: " + count);
+//					if (count % batchSize == 0 || count == content.size()) {
+//						countBatch = stmt.executeBatch();
+//						long end = System.currentTimeMillis();
+//						System.out.println("TIME:  " + (end - start));
+					fileUploadingStatus = true;
+//						System.out.println("countBatch:    " + countBatch);
+//						System.out.println("countBatchLength:    " + countBatch.length);
+//					}
 				}
 				stmt.close();
 				con.close();
 				if (fileUploadingStatus == true) {
-//					LOGGER.info("NPCI_ATM_ACQ_FILE_UPLOADED");
-					obj1.put("NPCIFILESTATUS", "NPCI_ATM_ACQ_FILE_UPLOADED");
-					importFileNpciATMFilesACQ.add(obj1);
-					return importFileNpciATMFilesACQ;
+					System.out.println("suyog");
+					arr[0]=count;
+					arr[1]=1;
+					arr[2]=totalContent;
+					return arr;
 				} else {
-//					LOGGER.info("NPCI_ATM_ACQ_FILE_UPLOADED_INTRRRUPTED");
-					obj1.put("NPCIFILESTATUS", "NPCI_ATM_ACQ_FILE_UPLOADED_INTRRRUPTED");
-					importFileNpciATMFilesACQ.add(obj1);
-					return importFileNpciATMFilesACQ;
+					arr[0]=count;
+					arr[1]=2;
+					arr[2]=totalContent;
+					return arr;
 				}
 			} catch (SQLException s) {
-//				LOGGER.error(e.toString());
-				obj1.put("NPCIFILESTATUS", s.toString());
-				importFileNpciATMFilesACQ.add(obj1);
-				return importFileNpciATMFilesACQ;
+				arr[0]=count;
+				arr[1]=2;
+				arr[2]=totalContent;
+				return arr;
 			} catch (Exception e) {
-//				LOGGER.error(e.toString());
-				obj1.put("NPCIFILESTATUS", e.toString());
-				importFileNpciATMFilesACQ.add(obj1);
-				return importFileNpciATMFilesACQ;
+				arr[0]=count;
+				arr[1]=2;
+				arr[2]=totalContent;
+				return arr;
 			}
 		} else if (fileName.contains("ISS")) {
-
+			int[] arr = new int[3];
+			int count = 0,totalContent=0;
 			String participant_ID = null;
 			String transaction_Type = null;
 			String from_Account_Type = null;
@@ -954,7 +958,7 @@ public class Trace_Service_Imp implements Trace_Service {
 
 				JSONObject obj = new JSONObject();
 				String contentData = "";
-				int count = 0, batchSize = 30000;
+				int batchSize = 30000;
 				String ForceMatch = file.getOriginalFilename();
 				String cycle = ForceMatch.substring(15, 17);
 				String fileDate = ForceMatch.substring(8, 14).trim();
@@ -1156,56 +1160,46 @@ public class Trace_Service_Imp implements Trace_Service {
 					if (card_number != null) {
 						ecard_number = card_number;
 					}
-					
-					if(txnAmount !=null)
-					{
-						Double txnAmount_double=Double.parseDouble(txnAmount);
-						txnAmount=String.valueOf(txnAmount_double);
+
+					if (txnAmount != null) {
+						Double txnAmount_double = Double.parseDouble(txnAmount);
+						txnAmount = String.valueOf(txnAmount_double);
 					}
-					if(actualTransAmount !=null)
-					{
-						Double actualTransAmount_double=Double.parseDouble(actualTransAmount);
-						actualTransAmount=String.valueOf(actualTransAmount_double);
+					if (actualTransAmount != null) {
+						Double actualTransAmount_double = Double.parseDouble(actualTransAmount);
+						actualTransAmount = String.valueOf(actualTransAmount_double);
 					}
-					if(tranActivityFee !=null)
-					{
-						Double tranActivityFee_double=Double.parseDouble(tranActivityFee);
-						tranActivityFee=String.valueOf(tranActivityFee_double);
+					if (tranActivityFee != null) {
+						Double tranActivityFee_double = Double.parseDouble(tranActivityFee);
+						tranActivityFee = String.valueOf(tranActivityFee_double);
 					}
-					if(issuerSetAmount !=null)
-					{
-						Double issuerSetAmount_double=Double.parseDouble(issuerSetAmount);
-						issuerSetAmount=String.valueOf(issuerSetAmount_double);
+					if (issuerSetAmount != null) {
+						Double issuerSetAmount_double = Double.parseDouble(issuerSetAmount);
+						issuerSetAmount = String.valueOf(issuerSetAmount_double);
 					}
-					if(issuerSetFee !=null)
-					{
-						Double issuerSetFee_double=Double.parseDouble(issuerSetFee);
-						issuerSetFee=String.valueOf(issuerSetFee_double);
+					if (issuerSetFee != null) {
+						Double issuerSetFee_double = Double.parseDouble(issuerSetFee);
+						issuerSetFee = String.valueOf(issuerSetFee_double);
 					}
-					if(issuerSetProcFee !=null)
-					{
-						Double issuerSetProcFee_double=Double.parseDouble(issuerSetProcFee);
-						issuerSetProcFee=String.valueOf(issuerSetProcFee_double);
+					if (issuerSetProcFee != null) {
+						Double issuerSetProcFee_double = Double.parseDouble(issuerSetProcFee);
+						issuerSetProcFee = String.valueOf(issuerSetProcFee_double);
 					}
-					if(cardHolderBillAmount !=null)
-					{
-						Double cardHolderBillAmount_double=Double.parseDouble(cardHolderBillAmount);
-						cardHolderBillAmount=String.valueOf(cardHolderBillAmount_double);
+					if (cardHolderBillAmount != null) {
+						Double cardHolderBillAmount_double = Double.parseDouble(cardHolderBillAmount);
+						cardHolderBillAmount = String.valueOf(cardHolderBillAmount_double);
 					}
-					if(cardHolderBillActFee !=null)
-					{
-						Double cardHolderBillActFee_double=Double.parseDouble(cardHolderBillActFee);
-						cardHolderBillActFee=String.valueOf(cardHolderBillActFee_double);
+					if (cardHolderBillActFee != null) {
+						Double cardHolderBillActFee_double = Double.parseDouble(cardHolderBillActFee);
+						cardHolderBillActFee = String.valueOf(cardHolderBillActFee_double);
 					}
-					if(cardHolderBillProcFee !=null)
-					{
-						Double cardHolderBillProcFee_double=Double.parseDouble(cardHolderBillProcFee);
-						cardHolderBillProcFee=String.valueOf(cardHolderBillProcFee_double);
+					if (cardHolderBillProcFee != null) {
+						Double cardHolderBillProcFee_double = Double.parseDouble(cardHolderBillProcFee);
+						cardHolderBillProcFee = String.valueOf(cardHolderBillProcFee_double);
 					}
-					if(cardHolderBillServiceFee !=null)
-					{
-						Double cardHolderBillServiceFee_double=Double.parseDouble(cardHolderBillServiceFee);
-						cardHolderBillServiceFee=String.valueOf(cardHolderBillServiceFee_double);
+					if (cardHolderBillServiceFee != null) {
+						Double cardHolderBillServiceFee_double = Double.parseDouble(cardHolderBillServiceFee);
+						cardHolderBillServiceFee = String.valueOf(cardHolderBillServiceFee_double);
 					}
 					stmt.setString(1, clientid);
 					stmt.setString(2, participant_ID);
@@ -1259,32 +1253,38 @@ public class Trace_Service_Imp implements Trace_Service {
 					stmt.setString(50, createdby);
 					stmt.addBatch();
 					count++;
+					stmt.executeBatch();
 					System.out.println("count: " + count);
-					if (count % batchSize == 0 || count == content.size()) {
-						stmt.executeBatch();
-						long end = System.currentTimeMillis();
-						System.out.println("TIME:  " + (end - start));
+//					if (count % batchSize == 0 || count == content.size()) {
+//						stmt.executeBatch();
+//						long end = System.currentTimeMillis();
+//						System.out.println("TIME:  " + (end - start));
 						fileUploadingStatus = true;
-					}
+//					}
 				}
 
 				stmt.close();
 				con.close();
 				if (fileUploadingStatus == true) {
-					obj1.put("NPCIFILESTATUS", "NPCI_ATM_ISS_FILE_UPLOADED");
-					importFileNpciATMFilesISS.add(obj1);
-					return importFileNpciATMFilesISS;
+					arr[0]=count;
+					arr[1]=1;
+					arr[2]=totalContent;
+					return arr;
 				} else {
-					obj1.put("NPCIFILESTATUS", "NPCI_ATM_ISS_FILE_INTRRRUPTED");
-					importFileNpciATMFilesISS.add(obj1);
-					return importFileNpciATMFilesISS;
+					arr[0]=count;
+					arr[1]=2;
+					arr[2]=totalContent;
+					return arr;
 				}
 			} catch (Exception e) {
-				obj1.put("NPCIFILESTATUS", e.toString());
-				importFileNpciATMFilesISS.add(obj1);
-				return importFileNpciATMFilesISS;
+				arr[0]=count;
+				arr[1]=2;
+				arr[2]=totalContent;
+				return arr;
 			}
 		} else if (ext.equalsIgnoreCase("xls")) {
+			int[] arr = new int[3];
+			int count = 0,totalContent=0;
 			Workbook tempWorkBook = null;
 			List<JSONObject> importFileNTSSET = new ArrayList<JSONObject>();
 			JSONObject obj1 = new JSONObject();
@@ -1292,9 +1292,10 @@ public class Trace_Service_Imp implements Trace_Service {
 			try {
 				tempWorkBook = new HSSFWorkbook(file.getInputStream());
 			} catch (IOException e) {
-				obj1.put("NPCIFILESTATUS", e.toString());
-				importFileNTSSET.add(obj1);
-				return importFileNTSSET;
+				arr[0]=count;
+				arr[1]=2;
+				arr[2]=totalContent;
+				return arr;
 			}
 			Sheet sheet = tempWorkBook.getSheetAt(0);
 			DataFormatter formatter = new DataFormatter();
@@ -1338,13 +1339,15 @@ public class Trace_Service_Imp implements Trace_Service {
 
 			}
 			if (fileUploadingStatus == true) {
-				obj1.put("NPCIFILESTATUS", "NPCI_ATM_NET_SET_FILE_UPLOADED");
-				importFileNTSSET.add(obj1);
-				return importFileNTSSET;
+				arr[0]=count;
+				arr[1]=1;
+				arr[2]=totalContent;
+				return arr;
 			} else {
-				obj1.put("NPCIFILESTATUS", "NPCI_ATM_NET_SET_FILE_INTRRRUPTED");
-				importFileNTSSET.add(obj1);
-				return importFileNTSSET;
+				arr[0]=count;
+				arr[1]=2;
+				arr[2]=totalContent;
+				return arr;
 			}
 		}
 
