@@ -1286,7 +1286,6 @@ public class Trace_Service_Imp implements Trace_Service {
 			int[] arr = new int[3];
 			int count = 0,totalContent=0;
 			Workbook tempWorkBook = null;
-			List<JSONObject> importFileNTSSET = new ArrayList<JSONObject>();
 			JSONObject obj1 = new JSONObject();
 			Boolean fileUploadingStatus = false, fileUploadingStatus1 = false;
 			try {

@@ -918,7 +918,7 @@ public class Controller {
 			{
 				fu++;
 			}
-			else if(importFileNpciATMFiles[2]==2)
+			else if(importFileNpciATMFiles[1]==2)
 			{
 				fi++;
 			}
