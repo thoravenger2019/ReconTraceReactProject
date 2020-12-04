@@ -186,11 +186,10 @@ public interface Trace_DAO {
 	public List<JSONObject> importEJFileData(MultipartFile ej, String clientid, String createdby, String fileTypeName)
 			throws ParseException;
 
-	public List<JSONObject> importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby,
+	public int[] importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby,
 			String fileTypeName);
 
-	public List<JSONObject> importSwitchFile(MultipartFile sw, String clientid, String createdby, String fileTypeName)
-			throws IOException, SQLException, ParserConfigurationException, SAXException;
+	public int[] importSwitchFile(MultipartFile sw, String clientid, String createdby, String fileTypeName);
 
 	List<JSONObject> importFile(String participant_ID, String transaction_Type, String from_Account_Type,
 			String to_Account_Type, String transaction_Serial_Number, String response_Code, String pan_Number,

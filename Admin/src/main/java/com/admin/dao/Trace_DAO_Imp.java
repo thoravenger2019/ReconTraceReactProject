@@ -4224,10 +4224,12 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	}
 
 	@Override
-	public List<JSONObject> importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby,
+	public int[] importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby,
 			String fileTypeName) {
 		List<JSONObject> importglcbsfileStatus = new ArrayList<JSONObject>();
 		JSONObject obj1 = new JSONObject();
+		int[] arr = new int[3];
+		int count = 0,totalContent=0;
 		try {
 			String extFile = FilenameUtils.getExtension(glCbs.getOriginalFilename());
 			Connection con = datasource.getConnection();
@@ -4326,14 +4328,14 @@ public class Trace_DAO_Imp implements Trace_DAO {
 				String TxnsPerticulars = null;
 				Iterator<Row> itr = sheet.iterator();
 				XSSFRow temprow = null;
-				int incr = 0, batchSize = 30000;
+				int incr = actualRowPosition, batchSize = 30000;
 				long start = System.currentTimeMillis();
 				while (itr.hasNext()) {
 					glcbsStatus = false;
 
 					Row row = itr.next();
 					temprow = sheet.getRow(row.getRowNum());
-					if (row.getRowNum() < 1) {
+					if (row.getRowNum() < actualRowPosition) {
 						continue;
 					} else {
 						if (jsonObj.getJSONArray("ATMAccountNo").getString(0).equals("0")) {
@@ -5452,24 +5454,27 @@ public class Trace_DAO_Imp implements Trace_DAO {
 					stmt.addBatch();
 					incr++;
 					System.out.println("incr:" + incr + "    " + "ROWS == " + sheet.getPhysicalNumberOfRows());
-					if (incr % batchSize == 0 || incr == (sheet.getPhysicalNumberOfRows()) - 1) {
-						stmt.executeBatch();
-						long end = System.currentTimeMillis();
-						System.out.println("TIME:  " + (end - start));
+					stmt.executeBatch();
+//					if (incr % batchSize == 0 || incr == (sheet.getPhysicalNumberOfRows()) - 1) {
+//						stmt.executeBatch();
+//						long end = System.currentTimeMillis();
+//						System.out.println("TIME:  " + (end - start));
 						glcbsStatus = true;
-					}
+//					}
 
 				}
 				stmt.close();
 				con.close();
 				if (glcbsStatus == true) {
-					obj1.put("GLCBSSTATUS", "GL_CBS_CSV_FILE_UPLOADED");
-					importglcbsfileStatus.add(obj1);
-					return importglcbsfileStatus;
+					arr[0]=incr;
+					arr[1]=1;
+					arr[2]=sheet.getPhysicalNumberOfRows();
+					return arr;
 				} else {
-					obj1.put("GLCBSSTATUS", "GL_CBS_CSV_FILE_INTRRRUPTED");
-					importglcbsfileStatus.add(obj1);
-					return importglcbsfileStatus;
+					arr[0]=incr;
+					arr[1]=2;
+					arr[2]=sheet.getPhysicalNumberOfRows();
+					return arr;
 				}
 			} else if (ext.equalsIgnoreCase("xls")) {
 				HSSFSheet sheet = wb1.getSheetAt(0);
@@ -5517,7 +5522,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 				String TxnsPerticulars = null;
 				Iterator<Row> itr = sheet.iterator();
 				HSSFRow temprow = null;
-				int incr = 0, batchSize = 30000;
+				int incr = actualRowPosition, batchSize = 30000;
 				long start = System.currentTimeMillis();
 				while (itr.hasNext()) {
 					glcbsStatus = false;
@@ -6631,8 +6636,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 					System.out.println("incr:" + incr + "    " + "ROWS == " + sheet.getPhysicalNumberOfRows());
 //					if (incr % batchSize == 0 || incr == (sheet.getPhysicalNumberOfRows()) - 1) {
 					stmt.executeBatch();
-					long end = System.currentTimeMillis();
-					System.out.println("TIME:  " + (end - start));
+//					long end = System.currentTimeMillis();
+//					System.out.println("TIME:  " + (end - start));
 					glcbsStatus = true;
 //					}
 
@@ -6640,32 +6645,40 @@ public class Trace_DAO_Imp implements Trace_DAO {
 				stmt.close();
 				con.close();
 				if (glcbsStatus == true) {
-					obj1.put("GLCBSSTATUS", "GL_CBS_EXCEL_FILE_UPLOADED");
-					importglcbsfileStatus.add(obj1);
-					return importglcbsfileStatus;
+//					obj1.put("GLCBSSTATUS", "GL_CBS_EXCEL_FILE_UPLOADED");
+//					importglcbsfileStatus.add(obj1);
+//					return importglcbsfileStatus;
+					arr[0]=incr;
+					arr[1]=1;
+					arr[2]=sheet.getPhysicalNumberOfRows();
+					return arr;
 				} else {
-					obj1.put("GLCBSSTATUS", "GL_CBS_EXCEL_FILE_INTRRRUPTED");
-					importglcbsfileStatus.add(obj1);
-					return importglcbsfileStatus;
+					arr[0]=incr;
+					arr[1]=2;
+					arr[2]=sheet.getPhysicalNumberOfRows();
+					return arr;
 				}
 			}
 
 		} catch (Exception e) {
-			obj1.put("GLCBSSTATUS", e.toString());
-			importglcbsfileStatus.add(obj1);
-			return importglcbsfileStatus;
+			arr[0]=0;
+			arr[1]=2;
+			arr[2]=0;
+			return arr;
 		}
-		obj1.put("GLCBSSTATUS", "FILE_TERMINATED_TRY_AGAIN");
-		importglcbsfileStatus.add(obj1);
-		return importglcbsfileStatus;
+		arr[0]=0;
+		arr[1]=2;
+		arr[2]=0;
+		return arr;
 	}
 
 	@Override
-	public List<JSONObject> importSwitchFile(MultipartFile sw, String clientid, String createdby, String fileTypeName) {
+	public int[] importSwitchFile(MultipartFile sw, String clientid, String createdby, String fileTypeName) {
 		List<JSONObject> importFileSWITCHStatus = new ArrayList<JSONObject>();
 		JSONObject obj1 = new JSONObject();
+		int[] arr = new int[3];
+		int count = 0,totalContent=0;
 		try {
-			int count = 0;
 			String extFile = FilenameUtils.getExtension(sw.getOriginalFilename());
 			int w = 0;
 			Connection con = datasource.getConnection();
@@ -6686,8 +6699,17 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			doc.getDocumentElement().normalize();
 			NodeList nodeList = doc.getDocumentElement().getChildNodes();
 			System.out.println("nodelistLength" + nodeList.getLength());
+			String RowName = nodeList.item(0).getNodeName();
+			int actualRowPosition = -1;
+			if (RowName.equalsIgnoreCase("ActualRowPostion")) {
+				Node startPosNode = nodeList.item(0);
+				NodeList startPosNodeValue = startPosNode.getChildNodes();
+				actualRowPosition = Integer.parseInt(startPosNodeValue.item(0).getNodeValue());
+			} else {
+				actualRowPosition = 0;
+			}
 			Boolean switchStatus = false;
-			for (int i = 0; i < nodeList.getLength(); i++) {
+			for (int i = 1; i < nodeList.getLength(); i++) {
 				switchStatus = false;
 				String nodeName = nodeList.item(i).getNodeName();
 				Node startPosNode = nodeList.item(i);
@@ -6748,15 +6770,14 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			String TxnsPerticulars = null;
 			Iterator<Row> itr = sheet.iterator();
 			HSSFRow temprow = null;
-			int incr = 0, batchSize = 30000;
+			int incr=actualRowPosition, batchSize = 30000;
 			long start = System.currentTimeMillis();
 			while (itr.hasNext()) {
 
 				Row row = itr.next();
 				temprow = sheet.getRow(row.getRowNum());
 
-				if (row.getRowNum() < 3) {
-					incr++;
+				if (row.getRowNum() < actualRowPosition) {
 					continue;
 				} else {
 					if (jsonObj.getJSONArray("ATMAccountNo").getString(0).equals("0")) {
@@ -7878,28 +7899,37 @@ public class Trace_DAO_Imp implements Trace_DAO {
 //				if (incr % batchSize == 0 || diff < 10) {
 
 				stmt.executeBatch();
-				w++;
-				long end = System.currentTimeMillis();
-				System.out.println("EXECUTE TIME:  " + (end - start) + "   " + w);
+//				w++;
+//				long end = System.currentTimeMillis();
+//				System.out.println("EXECUTE TIME:  " + (end - start) + "   " + w);
 				switchStatus = true;
 //				}
 				incr++;
 			}
 			int justCheck = 0;
 			if (switchStatus == true) {
-				obj1.put("SWITCHSTATUS", "SWITCH_FILE_UPLOADED");
-				importFileSWITCHStatus.add(obj1);
-				return importFileSWITCHStatus;
+				
+				arr[0]=incr;
+				arr[1]=1;
+				arr[2]=sheet.getPhysicalNumberOfRows();
+//				obj1.put("SWITCHSTATUS", "SWITCH_FILE_UPLOADED");
+//				importFileSWITCHStatus.add(obj1);
+				return arr;
 			} else {
-				obj1.put("SWITCHSTATUS", "SWITCH_FILE_INTRRRUPTED");
-				importFileSWITCHStatus.add(obj1);
-				return importFileSWITCHStatus;
+				arr[0]=incr;
+				arr[1]=2;
+				arr[2]=sheet.getPhysicalNumberOfRows();
 			}
 		} catch (Exception e) {
-			obj1.put("SWITCHSTATUS", e.toString());
-			importFileSWITCHStatus.add(obj1);
-			return importFileSWITCHStatus;
+			arr[0]=0;
+			arr[1]=2;
+			arr[2]=0;
+			return arr;
 		}
+		arr[0]=0;
+		arr[1]=2;
+		arr[2]=0;
+		return arr;
 	}
 
 	private List<JSONObject> getcbsswitchejIdentificationfileformatxml(String clientid, String fileTypeName,

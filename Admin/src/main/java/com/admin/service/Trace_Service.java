@@ -133,11 +133,10 @@ public interface Trace_Service {
 	public List<JSONObject> importEJFileData(MultipartFile ej, String clientid, String createdby, String fileTypeName)
 			throws ParseException;
 
-	public List<JSONObject> importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby,
+	public int[] importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby,
 			String fileTypeName);
 
-	public List<JSONObject> importSwitchFile(MultipartFile sw, String clientid, String createdby, String fileTypeName)
-			throws IOException, SQLException, ParserConfigurationException, SAXException;
+	public int[] importSwitchFile(MultipartFile sw, String clientid, String createdby, String fileTypeName);
 
 //	public List<JSONObject> getchannelmodeinfo(String clientid,);
 

@@ -906,37 +906,36 @@ public class Controller {
 	public List<JSONObject> importFileNpciATMFiles(@PathVariable("clientid") String clientid,
 			@RequestParam("npci") MultipartFile[] npci) throws Exception {
 		String createdby = username.getUsername();
-		int[] importFileNpciATMFiles=null;
-		List<JSONObject> importFileNpciATMFilesReport=new ArrayList<JSONObject>();
+		int[] importFileNpciATMFiles = null;
+		List<JSONObject> importFileNpciATMFilesReport = new ArrayList<JSONObject>();
 		JSONObject obj1 = new JSONObject();
-		int fu=0,fi=0,c=0,tc=0;
-		System.out.println("npcilength"+npci.length);
-		for(int i=0;i<npci.length;i++)
-		{
-			importFileNpciATMFiles = traceService.importFileNpciATMFiles(npci[i], clientid, createdby);	
-			if(importFileNpciATMFiles[1]==1)
-			{
+		int fu = 0, fi = 0, c = 0, tc = 0, rc = 0;
+		System.out.println("npcilength" + npci.length);
+		for (int i = 0; i < npci.length; i++) {
+			importFileNpciATMFiles = traceService.importFileNpciATMFiles(npci[i], clientid, createdby);
+			if (importFileNpciATMFiles[1] == 1) {
 				fu++;
-			}
-			else if(importFileNpciATMFiles[1]==2)
-			{
+			} else if (importFileNpciATMFiles[1] == 2) {
 				fi++;
 			}
-			if(importFileNpciATMFiles[0] != -1)
-			{
-				c=c+importFileNpciATMFiles[0];
+			if (importFileNpciATMFiles[0] != -1) {
+				c = c + importFileNpciATMFiles[0];
 			}
-			if(importFileNpciATMFiles[2] != -1)
-			{
-				tc=tc+importFileNpciATMFiles[2];
+			if (importFileNpciATMFiles[2] != -1) {
+				tc = tc + importFileNpciATMFiles[2];
 			}
 		}
-		obj1.put("NUMBER OF UPLOADED ROWS" , c);
-		obj1.put("NUMBER OF FAILD ROWS",tc-c);
-		obj1.put("NUMBER OF UPLOADED FILES" , fu);
-		obj1.put("NUMBER OF INTERRUPTED FILES",fi);
+		System.out.println("tc" + tc);
+		if (c != tc) {
+			rc = tc - c;
+		}
+
+		obj1.put("NUMBER OF UPLOADED ROWS", c);
+		obj1.put("NUMBER OF FAILD ROWS", rc);
+		obj1.put("NUMBER OF UPLOADED FILES", fu);
+		obj1.put("NUMBER OF INTERRUPTED FILES", fi);
 		importFileNpciATMFilesReport.add(obj1);
-	  return importFileNpciATMFilesReport;
+		return importFileNpciATMFilesReport;
 	}
 
 	@PostMapping("importFileIMPSFiles")
@@ -968,25 +967,77 @@ public class Controller {
 
 	@PostMapping("importGlcbsFileData/{clientid}/{fileTypeName}")
 	public List<JSONObject> importGlcbsFileData(@PathVariable("clientid") String clientid,
-			@PathVariable("fileTypeName") String fileTypeName, @RequestParam("glCbs") MultipartFile glCbs) {
+			@PathVariable("fileTypeName") String fileTypeName, @RequestParam("glCbs") MultipartFile[] glCbs) {
 		String createdby = username.getUsername();
-//		String clientid = "1";
-//		String fileTypeName = "ATM_ISSUER_NPCI";
-		List<JSONObject> importGlcbsFileData = traceService.importGlcbsFileData(glCbs, clientid, createdby,
-				fileTypeName);
-		return importGlcbsFileData;
+		int[] importGlcbsFileData = null;
+		List<JSONObject> importFileGLFilesReport = new ArrayList<JSONObject>();
+		JSONObject obj1 = new JSONObject();
+		int fu = 0, fi = 0, c = 0, tc = 0, rc = 0;
+		System.out.println("npcilength" + glCbs.length);
+		for (int i = 0; i < glCbs.length; i++) {
+			importGlcbsFileData = traceService.importGlcbsFileData(glCbs[i], clientid, createdby, fileTypeName);
+			if (importGlcbsFileData[1] == 1) {
+				fu++;
+			} else if (importGlcbsFileData[1] == 2) {
+				fi++;
+			}
+			if (importGlcbsFileData[0] != -1) {
+				c = c + importGlcbsFileData[0];
+			}
+			if (importGlcbsFileData[2] != -1) {
+				tc = tc + importGlcbsFileData[2];
+			}
+		}
+		System.out.println("tc" + tc);
+		if (c != tc) {
+			rc = tc - c;
+		}
+
+		obj1.put("NUMBER OF UPLOADED ROWS", c);
+		obj1.put("NUMBER OF FAILD ROWS", rc);
+		obj1.put("NUMBER OF UPLOADED FILES", fu);
+		obj1.put("NUMBER OF INTERRUPTED FILES", fi);
+		importFileGLFilesReport.add(obj1);
+
+		return importFileGLFilesReport;
 	}
 
 	@PostMapping("importSwitchFile/{clientid}/{fileTypeName}")
 	public List<JSONObject> importSwitchFile(@PathVariable("clientid") String clientid,
-			@PathVariable("fileTypeName") String fileTypeName, @RequestParam("sw") MultipartFile sw)
-			throws IOException, SQLException, ParserConfigurationException, SAXException {
-
+			@PathVariable("fileTypeName") String fileTypeName, @RequestParam("sw") MultipartFile[] sw) {
 		String createdby = username.getUsername();
 
-		List<JSONObject> importSwitchFile = traceService.importSwitchFile(sw, clientid, createdby, fileTypeName);
-		System.out.println("importSwitchFile     " + importSwitchFile.toString());
-		return importSwitchFile;
+		int[] importSwitchFile = null;
+		List<JSONObject> importFileSWFilesReport = new ArrayList<JSONObject>();
+		JSONObject obj1 = new JSONObject();
+		int fu = 0, fi = 0, c = 0, tc = 0, rc = 0;
+		System.out.println("npcilength" + sw.length);
+		for (int i = 0; i < sw.length; i++) {
+			importSwitchFile = traceService.importSwitchFile(sw[i], clientid, createdby, fileTypeName);
+			if (importSwitchFile[1] == 1) {
+				fu++;
+			} else if (importSwitchFile[1] == 2) {
+				fi++;
+			}
+			if (importSwitchFile[0] != -1) {
+				c = c + importSwitchFile[0];
+			}
+			if (importSwitchFile[2] != -1) {
+				tc = tc + importSwitchFile[2];
+			}
+		}
+		System.out.println("tc" + tc);
+		if (c != tc) {
+			rc = tc - c;
+		}
+
+		obj1.put("NUMBER OF UPLOADED ROWS", c);
+		obj1.put("NUMBER OF FAILD ROWS", rc);
+		obj1.put("NUMBER OF UPLOADED FILES", fu);
+		obj1.put("NUMBER OF INTERRUPTED FILES", fi);
+		importFileSWFilesReport.add(obj1);
+
+		return importFileSWFilesReport;
 	}
 
 	@GetMapping("getfieldidentification/{clientid}/{vendorid}/{channelid}/{modeid}/{formatid}")

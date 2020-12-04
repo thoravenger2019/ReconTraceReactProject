@@ -955,7 +955,7 @@ public class Trace_Service_Imp implements Trace_Service {
 				fos.write(file.getBytes());
 				fos.close();
 				content = Files.readAllLines(convFile.toPath());
-
+				totalContent=content.size();
 				JSONObject obj = new JSONObject();
 				String contentData = "";
 				int batchSize = 30000;
@@ -1659,15 +1659,15 @@ public class Trace_Service_Imp implements Trace_Service {
 	}
 
 	@Override
-	public List<JSONObject> importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby,
+	public int[] importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby,
 			String fileTypeName) {
 
 		return traceDao.importGlcbsFileData(glCbs, clientid, createdby, fileTypeName);
 	}
 
 	@Override
-	public List<JSONObject> importSwitchFile(MultipartFile sw, String clientid, String createdby, String fileTypeName)
-			throws IOException, SQLException, ParserConfigurationException, SAXException {
+	public int[] importSwitchFile(MultipartFile sw, String clientid, String createdby, String fileTypeName)
+{
 
 		return traceDao.importSwitchFile(sw, clientid, createdby, fileTypeName);
 	}
