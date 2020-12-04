@@ -1030,7 +1030,6 @@ public class Controller {
 		if (c != tc) {
 			rc = tc - c;
 		}
-
 		obj1.put("NUMBER OF UPLOADED ROWS", c);
 		obj1.put("NUMBER OF FAILD ROWS", rc);
 		obj1.put("NUMBER OF UPLOADED FILES", fu);
