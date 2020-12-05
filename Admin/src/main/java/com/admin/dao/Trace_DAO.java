@@ -290,4 +290,14 @@ public interface Trace_DAO {
 			String ejstatus, String nwstatus, String swstatus, String fromdatetxns, String todatetxns, String recontype,
 			String settlementtype, String userid);
 
+	public List<JSONObject> serachbyrrn(String clientid, String referencenumber, String terminalid, String fromdatetxn,
+			String todatetxn);
+
+	public List<JSONObject> gltxndetails(String referencenumber, String terminalid, String clientid);
+
+	public List<JSONObject> swtxndetails(String referencenumber, String terminalid, String clientid);
+
+	public List<JSONObject> nwtxndetails(String referencenumber, String terminalid, String channel, String mode,
+			String clientid);
+
 }

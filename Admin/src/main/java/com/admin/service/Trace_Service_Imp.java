@@ -25,7 +25,6 @@ import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -45,7 +44,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import com.admin.dao.Trace_DAO;
 import com.admin.model.User;
@@ -1873,5 +1871,32 @@ public class Trace_Service_Imp implements Trace_Service {
 		// TODO Auto-generated method stub
 		return traceDao.getforcesettlementtxns(clientid, channelid, modeid, glstatus, ejstatus, nwstatus, swstatus,
 				fromdatetxns, todatetxns, recontype, settlementtype, userid);
+	}
+
+	@Override
+	public List<JSONObject> serachbyrrn(String clientid, String referencenumber, String terminalid, String fromdatetxn,
+			String todatetxn) {
+		// TODO Auto-generated method stub
+		return traceDao.serachbyrrn(clientid, referencenumber, terminalid,
+				fromdatetxn, todatetxn);
+	}
+
+	@Override
+	public List<JSONObject> gltxndetails(String referencenumber, String terminalid, String clientid) {
+		// TODO Auto-generated method stub
+		return traceDao.gltxndetails(referencenumber, terminalid, clientid);
+	}
+
+	@Override
+	public List<JSONObject> swtxndetails(String referencenumber, String terminalid, String clientid) {
+		// TODO Auto-generated method stub
+		return traceDao.swtxndetails(referencenumber, terminalid, clientid);
+	}
+
+	@Override
+	public List<JSONObject> nwtxndetails(String referencenumber, String terminalid, String channel, String mode,
+			String clientid) {
+		// TODO Auto-generated method stub
+		return traceDao.nwtxndetails(referencenumber, terminalid,channel,mode, clientid);
 	}
 }

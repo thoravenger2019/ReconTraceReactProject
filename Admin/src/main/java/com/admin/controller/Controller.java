@@ -1328,5 +1328,49 @@ public class Controller {
 				glstatus, ejstatus, nwstatus, swstatus, fromdatetxns, todatetxns, recontype, settlementtype, userid);
 		return getforcesettlementtxns;
 	}
+	
+	@GetMapping("serachbyrrn/{clientid}/{referencenumber}/{terminalid}/{fromdatetxn}/{todatetxn}")
+	public List<JSONObject> serachbyrrn(@PathVariable("clientid") String clientid,
+			@PathVariable("referencenumber") String referencenumber, @PathVariable("terminalid") String terminalid,
+			@PathVariable("fromdatetxn") String fromdatetxn, @PathVariable("todatetxn") String todatetxn) {
+		if (terminalid.equalsIgnoreCase("undefined")) {
+			terminalid = "0";
+		}
+		List<JSONObject> serachbyrrn = traceService.serachbyrrn(clientid, referencenumber, terminalid,
+				fromdatetxn, todatetxn);
+		return serachbyrrn;
+	}
+	
+	
+	@GetMapping("gltxndetails/{referencenumber}/{terminalid}/{clientid}")
+	public List<JSONObject> gltxndetails(@PathVariable("referencenumber") String referencenumber,
+			@PathVariable("terminalid") String terminalid, @PathVariable("clientid") String clientid) {
+		if (terminalid.equalsIgnoreCase("undefined")) {
+			terminalid = "0";
+		}
+		List<JSONObject> gltxndetails = traceService.gltxndetails(referencenumber, terminalid, clientid);
+		return gltxndetails;
+	}
+	@GetMapping("swtxndetails/{referencenumber}/{terminalid}/{clientid}")
+	public List<JSONObject> swtxndetails(@PathVariable("referencenumber") String referencenumber,
+			@PathVariable("terminalid") String terminalid, @PathVariable("clientid") String clientid) {
+		if (terminalid.equalsIgnoreCase("undefined")) {
+			terminalid = "0";
+		}
+		List<JSONObject> swtxndetails = traceService.swtxndetails(referencenumber, terminalid, clientid);
+		return swtxndetails;
+	}
+	@GetMapping("nwtxndetails/{referencenumber}/{terminalid}/{channel}/{mode}/{clientid}")
+	public List<JSONObject> nwtxndetails(@PathVariable("referencenumber") String referencenumber,
+			@PathVariable("terminalid") String terminalid, 
+			@PathVariable("channel") String channel,
+			@PathVariable("mode") String mode,
+			@PathVariable("clientid") String clientid) {
+		if (terminalid.equalsIgnoreCase("undefined")) {
+			terminalid = "0";
+		}
+		List<JSONObject> nwtxndetails = traceService.nwtxndetails(referencenumber, terminalid,channel,mode, clientid);
+		return nwtxndetails;
+	}
 
 }

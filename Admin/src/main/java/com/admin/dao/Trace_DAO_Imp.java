@@ -4224,12 +4224,11 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	}
 
 	@Override
-	public int[] importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby,
-			String fileTypeName) {
+	public int[] importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby, String fileTypeName) {
 		List<JSONObject> importglcbsfileStatus = new ArrayList<JSONObject>();
 		JSONObject obj1 = new JSONObject();
 		int[] arr = new int[3];
-		int count = 0,totalContent=0;
+		int count = 0, totalContent = 0;
 		try {
 			String extFile = FilenameUtils.getExtension(glCbs.getOriginalFilename());
 			Connection con = datasource.getConnection();
@@ -4253,7 +4252,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			System.out.println("nodelistLength" + nodeList.getLength());
 			String RowName = nodeList.item(0).getNodeName();
 			int actualRowPosition = -1;
-			if (RowName.equalsIgnoreCase("ActualRowPostion")) {
+			if (RowName.equalsIgnoreCase("ActualRowPosition")) {
 				Node startPosNode = nodeList.item(0);
 				NodeList startPosNodeValue = startPosNode.getChildNodes();
 				actualRowPosition = Integer.parseInt(startPosNodeValue.item(0).getNodeValue());
@@ -5459,21 +5458,21 @@ public class Trace_DAO_Imp implements Trace_DAO {
 //						stmt.executeBatch();
 //						long end = System.currentTimeMillis();
 //						System.out.println("TIME:  " + (end - start));
-						glcbsStatus = true;
+					glcbsStatus = true;
 //					}
 
 				}
 				stmt.close();
 				con.close();
 				if (glcbsStatus == true) {
-					arr[0]=incr;
-					arr[1]=1;
-					arr[2]=sheet.getPhysicalNumberOfRows();
+					arr[0] = incr;
+					arr[1] = 1;
+					arr[2] = sheet.getPhysicalNumberOfRows();
 					return arr;
 				} else {
-					arr[0]=incr;
-					arr[1]=2;
-					arr[2]=sheet.getPhysicalNumberOfRows();
+					arr[0] = incr;
+					arr[1] = 2;
+					arr[2] = sheet.getPhysicalNumberOfRows();
 					return arr;
 				}
 			} else if (ext.equalsIgnoreCase("xls")) {
@@ -6648,28 +6647,39 @@ public class Trace_DAO_Imp implements Trace_DAO {
 //					obj1.put("GLCBSSTATUS", "GL_CBS_EXCEL_FILE_UPLOADED");
 //					importglcbsfileStatus.add(obj1);
 //					return importglcbsfileStatus;
-					arr[0]=incr;
-					arr[1]=1;
-					arr[2]=sheet.getPhysicalNumberOfRows();
+					arr[0] = incr;
+					arr[1] = 1;
+					arr[2] = sheet.getPhysicalNumberOfRows();
 					return arr;
 				} else {
-					arr[0]=incr;
-					arr[1]=2;
-					arr[2]=sheet.getPhysicalNumberOfRows();
+					arr[0] = incr;
+					arr[1] = 2;
+					arr[2] = sheet.getPhysicalNumberOfRows();
 					return arr;
 				}
 			}
 
 		} catch (Exception e) {
-			arr[0]=0;
-			arr[1]=2;
-			arr[2]=0;
+			arr[0] = 0;
+			arr[1] = 2;
+			arr[2] = 0;
 			return arr;
 		}
-		arr[0]=0;
-		arr[1]=2;
-		arr[2]=0;
+		arr[0] = 0;
+		arr[1] = 2;
+		arr[2] = 0;
 		return arr;
+	}
+
+	private boolean checkIfRowIsEmpty(HSSFRow row) {
+		if (row == null || row.getLastCellNum() <= 0) {
+			return true;
+		}
+		HSSFCell cell = row.getCell((int) row.getFirstCellNum());
+		if (cell == null || "".equals(cell.getRichStringCellValue().getString())) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -6677,7 +6687,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		List<JSONObject> importFileSWITCHStatus = new ArrayList<JSONObject>();
 		JSONObject obj1 = new JSONObject();
 		int[] arr = new int[3];
-		int count = 0,totalContent=0;
+		int count = 0, totalContent = 0;
 		try {
 			String extFile = FilenameUtils.getExtension(sw.getOriginalFilename());
 			int w = 0;
@@ -6701,7 +6711,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			System.out.println("nodelistLength" + nodeList.getLength());
 			String RowName = nodeList.item(0).getNodeName();
 			int actualRowPosition = -1;
-			if (RowName.equalsIgnoreCase("ActualRowPostion")) {
+			if (RowName.equalsIgnoreCase("ActualRowPosition")) {
 				Node startPosNode = nodeList.item(0);
 				NodeList startPosNodeValue = startPosNode.getChildNodes();
 				actualRowPosition = Integer.parseInt(startPosNodeValue.item(0).getNodeValue());
@@ -6710,7 +6720,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			}
 			Boolean switchStatus = false;
 			for (int i = 1; i < nodeList.getLength(); i++) {
-				switchStatus = false;
+//				switchStatus = false;
 				String nodeName = nodeList.item(i).getNodeName();
 				Node startPosNode = nodeList.item(i);
 
@@ -6770,16 +6780,25 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			String TxnsPerticulars = null;
 			Iterator<Row> itr = sheet.iterator();
 			HSSFRow temprow = null;
-			int incr=actualRowPosition, batchSize = 30000;
+			int incr = actualRowPosition, batchSize = 30000;
 			long start = System.currentTimeMillis();
 			while (itr.hasNext()) {
-
+				switchStatus = false;
 				Row row = itr.next();
 				temprow = sheet.getRow(row.getRowNum());
-
+				Boolean isRowEmpty = checkIfRowIsEmpty(temprow);
+				System.out.println("isrowempty:" + isRowEmpty);
 				if (row.getRowNum() < actualRowPosition) {
 					continue;
-				} else {
+				} else if (isRowEmpty == true) {
+					incr++;
+					switchStatus = true;
+				}
+				else if(temprow.getCell(0).toString().contains("© Copyright"))
+				{
+					break;
+				}
+				else {
 					if (jsonObj.getJSONArray("ATMAccountNo").getString(0).equals("0")) {
 					} else {
 						if (temprow.getCell(
@@ -7894,7 +7913,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 				stmt.setString(48, null);
 				stmt.setString(49, null);
 				stmt.addBatch();
-				System.out.println(incr + "        " + sheet.getPhysicalNumberOfRows());
+
 				int diff = sheet.getPhysicalNumberOfRows() - incr;
 //				if (incr % batchSize == 0 || diff < 10) {
 
@@ -7905,30 +7924,32 @@ public class Trace_DAO_Imp implements Trace_DAO {
 				switchStatus = true;
 //				}
 				incr++;
+				System.out.println(incr + "        " + sheet.getPhysicalNumberOfRows());
 			}
 			int justCheck = 0;
-			if (switchStatus == true) {
-				
-				arr[0]=incr;
-				arr[1]=1;
-				arr[2]=sheet.getPhysicalNumberOfRows();
+			System.out.println("switchstatus" + switchStatus);
+			if (switchStatus == true || incr== sheet.getPhysicalNumberOfRows()) {
+
+				arr[0] = incr;
+				arr[1] = 1;
+				arr[2] = sheet.getPhysicalNumberOfRows();
 //				obj1.put("SWITCHSTATUS", "SWITCH_FILE_UPLOADED");
 //				importFileSWITCHStatus.add(obj1);
 				return arr;
 			} else {
-				arr[0]=incr;
-				arr[1]=2;
-				arr[2]=sheet.getPhysicalNumberOfRows();
+				arr[0] = incr;
+				arr[1] = 2;
+				arr[2] = sheet.getPhysicalNumberOfRows();
 			}
 		} catch (Exception e) {
-			arr[0]=0;
-			arr[1]=2;
-			arr[2]=0;
+			arr[0] = 0;
+			arr[1] = 2;
+			arr[2] = 0;
 			return arr;
 		}
-		arr[0]=0;
-		arr[1]=2;
-		arr[2]=0;
+		arr[0] = 0;
+		arr[1] = 2;
+		arr[2] = 0;
 		return arr;
 	}
 
@@ -9310,6 +9331,144 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			obj.put("glstatus", fields[11]);
 			obj.put("ReconType", fields[12]);
 			obj.put("TxnsSubType", fields[13]);
+			JSONObjects.add(obj);
+		}
+		return JSONObjects;
+	}
+
+	@Override
+	public List<JSONObject> serachbyrrn(String clientid, String referencenumber, String terminalid, String fromdatetxn,
+			String todatetxn) {
+		// TODO Auto-generated method stub
+		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("SPSEARCHBYRRN");
+		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(4, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(5, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(6, String.class, ParameterMode.REF_CURSOR);
+		query.setParameter(1, clientid);
+		query.setParameter(2, referencenumber);
+		query.setParameter(3, terminalid);
+		query.setParameter(4, fromdatetxn);
+		query.setParameter(5, todatetxn);
+		query.execute();
+		List<Object[]> result = query.getResultList();
+		System.out.println("result:" + result.toString());
+		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
+		for (Object record : result) {
+			Object[] fields = (Object[]) record;
+			JSONObject obj = new JSONObject();
+			obj.put("ChannelName", fields[0]);
+			obj.put("TransactionMode", fields[1]);
+			obj.put("TerminalId", fields[2]);
+			obj.put("TxnsDateTime", fields[3]);
+			obj.put("ReferenceNumber", fields[4]);
+			obj.put("CardNumber", fields[5]);
+			obj.put("CustAccountNo", fields[6]);
+			obj.put("TxnsAmount", fields[7]);
+			obj.put("ActualTxnsAmount", fields[8]);
+			obj.put("EJstatus", fields[9]);
+			obj.put("swstatus", fields[10]);
+			obj.put("nwstatus", fields[11]);
+			obj.put("glstatus", fields[12]);
+			obj.put("TxnsSubType", fields[13]);
+			obj.put("Type", fields[14]);
+			JSONObjects.add(obj);
+		}
+		return JSONObjects;
+	}
+
+	@Override
+	public List<JSONObject> gltxndetails(String referencenumber, String terminalid, String clientid) {
+		// TODO Auto-generated method stub
+		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("SPGLTXNDETAILS");
+		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(4, String.class, ParameterMode.REF_CURSOR);
+		query.setParameter(1, referencenumber);
+		query.setParameter(2, terminalid);
+		query.setParameter(3, clientid);
+		query.execute();
+		List<Object[]> result = query.getResultList();
+		System.out.println("result:" + result.toString());
+		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
+		for (Object record : result) {
+			Object[] fields = (Object[]) record;
+			JSONObject obj = new JSONObject();
+			obj.put("TerminalId", fields[0]);
+			obj.put("TxnsDateTime", fields[1]);
+			obj.put("CardNumber", fields[2]);
+			obj.put("ReferenceNumber", fields[3]);
+			obj.put("TxnsAmount", fields[4]);
+			obj.put("ResponseCode", fields[5]);
+			obj.put("ReversalFlag", fields[6]);
+			JSONObjects.add(obj);
+		}
+		return JSONObjects;
+	}
+
+	@Override
+	public List<JSONObject> swtxndetails(String referencenumber, String terminalid, String clientid) {
+		// TODO Auto-generated method stub
+		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("SPSWTXNDETAILS");
+		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(4, String.class, ParameterMode.REF_CURSOR);
+		query.setParameter(1, referencenumber);
+		query.setParameter(2, terminalid);
+		query.setParameter(3, clientid);
+		query.execute();
+		List<Object[]> result = query.getResultList();
+		System.out.println("result:" + result.toString());
+		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
+		for (Object record : result) {
+			Object[] fields = (Object[]) record;
+			JSONObject obj = new JSONObject();
+			obj.put("TerminalId", fields[0]);
+			obj.put("TxnsDateTime", fields[1]);
+			obj.put("CardNumber", fields[2]);
+			obj.put("ReferenceNumber", fields[3]);
+			obj.put("TxnsAmount", fields[4]);
+			obj.put("ResponseCode", fields[5]);
+			obj.put("ReversalFlag", fields[6]);
+			JSONObjects.add(obj);
+		}
+		return JSONObjects;
+	}
+
+	@Override
+	public List<JSONObject> nwtxndetails(String referencenumber, String terminalid, String channel, String mode,
+			String clientid) {
+		// TODO Auto-generated method stub
+		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("SPNWTXNDETAILS");
+		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(4, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(5, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(6, String.class, ParameterMode.REF_CURSOR);
+		query.setParameter(1, referencenumber);
+		query.setParameter(2, terminalid);
+		query.setParameter(3, channel);
+		query.setParameter(4, mode);
+		query.setParameter(5, clientid);
+		query.execute();
+		List<Object[]> result = query.getResultList();
+		System.out.println("result:" + result.toString());
+		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
+		for (Object record : result) {
+			Object[] fields = (Object[]) record;
+			JSONObject obj = new JSONObject();
+			obj.put("TerminalId", fields[0]);
+			obj.put("TxnsDateTime", fields[1]);
+			obj.put("CardNumber", fields[2]);
+			obj.put("ReferenceNumber", fields[3]);
+			obj.put("TxnsAmount", fields[4]);
+			obj.put("ResponseCode", fields[5]);
+			obj.put("ReversalFlag", fields[6]);
 			JSONObjects.add(obj);
 		}
 		return JSONObjects;
