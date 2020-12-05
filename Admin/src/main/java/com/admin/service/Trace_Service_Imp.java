@@ -11,15 +11,20 @@ import java.security.SecureRandom;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -39,7 +44,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import com.admin.dao.Trace_DAO;
 import com.admin.model.User;
@@ -56,6 +60,119 @@ public class Trace_Service_Imp implements Trace_Service {
 
 	@PersistenceContext
 	private EntityManager entityManager;
+
+	public static String checkDateFormat(String format, String strDate) throws ParseException {
+		System.out.println("strDate   " + strDate);
+		String d = null;
+		String MM = null;
+		String dd = null;
+		String HH = "00";
+		String mm = "00";
+		String ss = "00";
+		String HHmmss = null;
+		String FullTime = "00";
+		String yyyyHHmmss = null;
+		String yyyy = null;
+//		String splitFormatString=strDate.replaceAll("\\p{Punct}", "");
+//		String splitFormatString1=format.replaceAll("\\p{Punct}", "");
+//		char[] ch = new char[splitFormatString.length()]; 
+//		char[] ch1 = new char[format.length()]; 
+		String[] split = format.split(" ?(?<!\\G)((?<=[^\\p{Punct}])(?=\\p{Punct})|\\b) ?");
+		String[] split1 = strDate.split(" ?(?<!\\G)((?<=[^\\p{Punct}])(?=\\p{Punct})|\\b) ?");
+
+		for (int i = 0; i < split.length; i++) {
+			System.out.println(split[i]);
+			if (split[i].equals("yyyy")) {
+				yyyy = split1[i];
+			}
+			if (split[i].equals("yy")) {
+				yyyy = "20" + split1[i];
+			}
+			if (split[i].equals("MM")) {
+				MM = split1[i];
+			}
+			if (split[i].equals("MMM")) {
+//				SimpleDateFormat simpleformat = new SimpleDateFormat("MMM");
+				Date date = new SimpleDateFormat("MMM", Locale.ENGLISH).parse(split1[i]);
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(date);
+				int month = cal.get(Calendar.MONTH);
+				MM = String.valueOf(month + 1);
+			}
+			if (split[i].equals("dd")) {
+				dd = split1[i];
+			}
+			if (split[i].equals("HH")) {
+				HH = split1[i];
+			}
+			if (split[i].equals("hh")) {
+				HH = split1[i];
+			}
+			if (split[i].equals("mm")) {
+				mm = split1[i];
+			}
+			if (split[i].equals("ss")) {
+				ss = split1[i];
+			}
+			if (split[i].equals("HHmmss")) {
+				HHmmss = split1[i];
+				FullTime = HHmmss.substring(0, 2);
+			}
+
+			if (split[i].equals("yyyyHHmmss")) {
+				yyyyHHmmss = split1[i];
+			}
+		}
+		for (int i = 0; i < split.length; i++) {
+			if (split[i].equals("MM") && (split1[i].length()) < 2) {
+				MM = "0" + split1[i];
+			}
+			System.out.println("  " + split[i]);
+			if (split[i].equals("MMM") && (MM.length()) < 2) {
+				MM = "0" + MM;
+			}
+			if (split[i].equals("dd") && (split1[i].length()) < 2) {
+				dd = "0" + split1[i];
+			}
+			if (split[i].equals("HH") && (split1[i].length()) < 2) {
+				HH = "0" + split1[i];
+			}
+			if (split[i].equals("hh") && (split1[i].length()) < 2) {
+				HH = "0" + split1[i];
+				System.out.println(HH);
+			}
+			if (split[i].equals("mm") && (split1[i].length()) < 2) {
+				mm = "0" + split1[i];
+			}
+			if (split[i].equals("ss") && (split1[i].length()) < 2) {
+				ss = "0" + split1[i];
+			}
+		}
+
+		if (ss == null) {
+			ss = "00";
+		}
+		System.out.println(HH);
+//		if (Integer.parseInt(HH) <= 12 && Integer.parseInt(FullTime) <= 12) {
+		if (HHmmss != null) {
+			String tempstr = dd + MM + yyyy + HHmmss;
+			System.out.println("tempstr: " + tempstr);
+			DateFormat formatter = new SimpleDateFormat("ddMMyyyyHHmmss");
+			Date tempDate = formatter.parse(tempstr);
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			d = sdf.format(tempDate);
+		} else {
+			String tempstr = dd + MM + yyyy + HH + mm + ss;
+			DateFormat formatter = new SimpleDateFormat("ddMMyyyyHHmmss");
+			Date tempDate = formatter.parse(tempstr);
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			d = sdf.format(tempDate);
+		}
+
+//		}
+		System.out.println("d   " + d);
+		return d;
+	}
 
 	@Override
 	public List<User> getData(String username, String password) {
@@ -117,14 +234,14 @@ public class Trace_Service_Imp implements Trace_Service {
 		return traceDao.getUserDetails(username, clientID, branchID, roleID);
 	}
 
-	@Override
-	public String AddUser(String userName, String password, String firstName, String lastName, String roleID,
-			String clientID, String branchID, String emailID, String contactNo, String securityq, String securitya,
-			String createBy, String p_salt, String channel) {
-
-		return traceDao.AddUser(userName, password, firstName, lastName, roleID, clientID, branchID, emailID, contactNo,
-				securityq, securitya, createBy, p_salt, channel);
-	}
+//	@Override
+//	public String AddUser(String userName, String password, String firstName, String lastName, String roleID,
+//			String clientID, String branchID, String emailID, String contactNo, String securityq, String securitya,
+//			String createBy, String p_salt, String channel) {
+//
+//		return traceDao.AddUser(userName, password, firstName, lastName, roleID, clientID, branchID, emailID, contactNo,
+//				securityq, securitya, createBy, p_salt, channel);
+//	}
 
 	@Override
 	public List<JSONObject> getUploadFiletype() {
@@ -140,10 +257,10 @@ public class Trace_Service_Imp implements Trace_Service {
 
 	public String addUser(String userid, String password, String firstname, String lastname, String roleid,
 			String clientid, String branchid, String emailid, String contactno, String securityq, String securitya,
-			String createdby, String salt, String channel) {
+			String createdby, String salt) {
 
 		return traceDao.addUser(userid, password, firstname, lastname, roleid, clientid, branchid, emailid, contactno,
-				securityq, securitya, createdby, salt, channel);
+				securityq, securitya, createdby, salt);
 	}
 
 	@Override
@@ -267,15 +384,15 @@ public class Trace_Service_Imp implements Trace_Service {
 	}
 
 	@Override
-	public List mapBranchMasterReapExcelDatatoDB(MultipartFile reapExcelDataFile, String user) {
+	public List mapBranchMasterReapExcelDatatoDB(MultipartFile reapExcelDataFile, String user, String clientid) {
 
-		return traceDao.mapBranchMasterReapExcelDatatoDB(reapExcelDataFile, user);
+		return traceDao.mapBranchMasterReapExcelDatatoDB(reapExcelDataFile, user, clientid);
 	}
 
 	@Override
-	public List mapTerminalMasterReapExcelDatatoDB(MultipartFile reapExcelDataFile, String user) {
+	public List mapTerminalMasterReapExcelDatatoDB(MultipartFile reapExcelDataFile, String user, String clientid) {
 
-		return traceDao.mapTerminalMasterReapExcelDatatoDB(reapExcelDataFile, user);
+		return traceDao.mapTerminalMasterReapExcelDatatoDB(reapExcelDataFile, user, clientid);
 	}
 
 	@Override
@@ -408,13 +525,17 @@ public class Trace_Service_Imp implements Trace_Service {
 	}
 
 	@Override
-	public List<JSONObject> importFileNpciATMFiles(MultipartFile file, String clientid, String createdby)
-			throws Exception {
+	public int[] importFileNpciATMFiles(MultipartFile file, String clientid, String createdby) {
 		List<String> content = null;
 		String fileName = file.getOriginalFilename();
 		String ext = FilenameUtils.getExtension(file.getOriginalFilename());
-
+		System.out.println("filename" + fileName);
+		
 		if (fileName.contains("ACQ")) {
+			int[] arr = new int[3];
+			int count = 0,totalContent=0;
+			List<JSONObject> importFileNpciATMFilesACQ = new ArrayList<JSONObject>();
+			JSONObject obj1 = new JSONObject();
 			try {
 				String participant_ID = null, transaction_Type = null, from_Account_Type = null, to_Account_Type = null,
 						RRN = null, response_Code = null, card_number = null, member_Number = null,
@@ -425,11 +546,13 @@ public class Trace_Service_Imp implements Trace_Service {
 						transaction_Currency_code = null, transaction_Amount = null, actual_Transaction_Amount = null,
 						transaction_Acitivity_fee = null, acquirer_settlement_Currency_Code = null,
 						acquirer_settlement_Amount = null, acquirer_Settlement_Fee = null,
-						acquirer_settlement_processing_fee = null, transaction_Acquirer_Conversion_Rate = null;
+						acquirer_settlement_processing_fee = null, transaction_Acquirer_Conversion_Rate = null,
+						TxnsDateTimeMain = null, ACCSETDATEMain = null, CARDACCEPTERSETDATEMain = null, CardType = null,
+						RevEntryLeg = null, FilePath = null, createdon = null, modifiedon = null, modifiedby = null;
 				Connection con = dataSource.getConnection();
 				System.out.println("Con  " + con);
 				CallableStatement stmt = con.prepareCall(
-						"{call SPIMPORTNPCIACQUIEREFILE(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+						"{call SPIMPORTNPCIACQUIEREFILE(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
 				List<JSONObject> npcifileformatxml = traceDao.getformatfileinxml(clientid, 2);
 				JSONObject xmlFormatDescription = npcifileformatxml.get(0);
 				String tempStr = xmlFormatDescription.get("FormatDescriptionXml").toString();
@@ -438,8 +561,7 @@ public class Trace_Service_Imp implements Trace_Service {
 				Document doc = db.parse(new InputSource(new StringReader(tempStr)));
 				doc.getDocumentElement().normalize();
 				NodeList nodeList = doc.getDocumentElement().getChildNodes();
-				
-				
+
 				File convFile = new File(file.getOriginalFilename());
 				convFile.createNewFile();
 				FileOutputStream fos = new FileOutputStream(convFile);
@@ -450,13 +572,18 @@ public class Trace_Service_Imp implements Trace_Service {
 				String ForceMatch = file.getOriginalFilename();
 				String cycle = ForceMatch.substring(15, 17);
 				String fileDate = ForceMatch.substring(8, 14).trim();
-				List<JSONObject> importFileNpciATMFilesACQ = new ArrayList<JSONObject>();
+
 				JSONObject obj = new JSONObject();
-				JSONObject obj1 = new JSONObject();
-				int count = 0, batchSize = 30000;
+
+				int batchSize = 30000;
 				long start = System.currentTimeMillis();
+				int[] countBatch = null;
+				Boolean fileUploadingStatus = false;
+				totalContent=content.size();
 				for (int i = 0; i < content.size(); i++) {
+					String parseExce = null;
 					contentData = content.get(i);
+					fileUploadingStatus = false;
 					for (int j = 0; j < nodeList.getLength(); j++) {
 						List<String> nodeData = getXmlFields(nodeList, nodeList.item(j).getNodeName(), j);
 						String nodeName = nodeList.item(j).getNodeName();
@@ -467,189 +594,306 @@ public class Trace_Service_Imp implements Trace_Service {
 					}
 					String nodeName = null;
 
-					stmt.setString(1, clientid);
 					nodeName = nodeList.item(0).getNodeName();
 					if (obj.containsKey(nodeName)) {
 						participant_ID = obj.get(nodeName).toString();
-						stmt.setString(2, participant_ID);
+
 					}
 
 					nodeName = nodeList.item(1).getNodeName();
 					if (obj.containsKey(nodeName)) {
 						transaction_Type = obj.get(nodeName).toString();
 
-						stmt.setString(3, transaction_Type);
 					}
 
 					nodeName = nodeList.item(2).getNodeName();
 					if (obj.containsKey(nodeName)) {
 						from_Account_Type = obj.get(nodeName).toString();
-						stmt.setString(4, from_Account_Type);
+
 					}
 
 					nodeName = nodeList.item(3).getNodeName();
 					if (obj.containsKey(nodeName)) {
 						to_Account_Type = obj.get(nodeName).toString();
 
-						stmt.setString(5, to_Account_Type);
 					}
 
 					nodeName = nodeList.item(4).getNodeName();
 					if (obj.containsKey(nodeName)) {
 						RRN = obj.get(nodeName).toString();
 //						obj1.put("RRN", RRN);
-						stmt.setString(6, RRN);
+
 					}
 					nodeName = nodeList.item(5).getNodeName();
 					if (obj.containsKey(nodeName)) {
 						response_Code = obj.get(nodeName).toString();
 //						obj1.put("response_Code", response_Code);
-						stmt.setString(7, response_Code);
+
 					}
 					nodeName = nodeList.item(6).getNodeName();
 					if (obj.containsKey(nodeName)) {
 						card_number = obj.get(nodeName).toString();
 //						obj1.put("card_number", card_number);
-						stmt.setString(8, card_number);
+
 					}
 					nodeName = nodeList.item(7).getNodeName();
 					if (obj.containsKey(nodeName)) {
 						member_Number = obj.get(nodeName).toString();
 //						obj1.put("member_Number", member_Number);
-						stmt.setString(9, member_Number);
+
 					}
 					nodeName = nodeList.item(8).getNodeName();
 					if (obj.containsKey(nodeName)) {
 						approval_Number = obj.get(nodeName).toString();
 //						obj1.put("approval_Number", approval_Number);
-						stmt.setString(10, approval_Number);
+
 					}
 					nodeName = nodeList.item(9).getNodeName();
 					if (obj.containsKey(nodeName)) {
 						system_Trace_Audit_Number = obj.get(nodeName).toString();
 //						obj1.put("system_Trace_Audit_Number", system_Trace_Audit_Number);
-						stmt.setString(11, system_Trace_Audit_Number);
+
 					}
 					nodeName = nodeList.item(10).getNodeName();
 					if (obj.containsKey(nodeName)) {
 						transaction_Date = obj.get(nodeName).toString();
 //						obj1.put("transaction_Date", transaction_Date);
-						stmt.setString(12, transaction_Date);
+
 					}
 					nodeName = nodeList.item(11).getNodeName();
 					if (obj.containsKey(nodeName)) {
 						transaction_Time = obj.get(nodeName).toString();
 //						obj1.put("transaction_Time", transaction_Time);
-						stmt.setString(13, transaction_Time);
+
 					}
 					nodeName = nodeList.item(12).getNodeName();
 					if (obj.containsKey(nodeName)) {
 						merchant_Category_Code = obj.get(nodeName).toString();
 //						obj1.put("merchant_Category_Code", merchant_Category_Code);
-						stmt.setString(14, merchant_Category_Code);
+
 					}
 					nodeName = nodeList.item(13).getNodeName();
 					if (obj.containsKey(nodeName)) {
 						card_Acceptor_Settlement_Date = obj.get(nodeName).toString();
 //						obj1.put("card_Acceptor_Settlement_Date", card_Acceptor_Settlement_Date);
-						stmt.setString(15, card_Acceptor_Settlement_Date);
+
 					}
 					nodeName = nodeList.item(14).getNodeName();
 					if (obj.containsKey(nodeName)) {
 						card_Acceptor_ID = obj.get(nodeName).toString();
 //						obj1.put("card_Acceptor_ID", card_Acceptor_ID);
-						stmt.setString(16, card_Acceptor_ID);
+
 					}
 					nodeName = nodeList.item(15).getNodeName();
 					if (obj.containsKey(nodeName)) {
 						card_Acceptor_Terminal_ID = obj.get(nodeName).toString();
-						stmt.setString(17, card_Acceptor_Terminal_ID);
+
 					}
 					nodeName = nodeList.item(16).getNodeName();
 					if (obj.containsKey(nodeName)) {
 						card_Acceptor_Terminal_Location = obj.get(nodeName).toString();
-						stmt.setString(18, card_Acceptor_Terminal_Location);
+
 					}
 					nodeName = nodeList.item(17).getNodeName();
 					if (obj.containsKey(nodeName)) {
 						acquirer_ID = obj.get(nodeName).toString();
 
-						stmt.setString(19, acquirer_ID);
 					}
 					nodeName = nodeList.item(18).getNodeName();
 					if (obj.containsKey(nodeName)) {
 						acquirer_Settlement_Date = obj.get(nodeName).toString();
-						stmt.setString(20, acquirer_Settlement_Date);
+
 					}
 					nodeName = nodeList.item(19).getNodeName();
 					if (obj.containsKey(nodeName)) {
 						transaction_Currency_code = obj.get(nodeName).toString();
-						stmt.setString(21, transaction_Currency_code);
+
 					}
 					nodeName = nodeList.item(20).getNodeName();
 					if (obj.containsKey(nodeName)) {
 						transaction_Amount = obj.get(nodeName).toString();
-						stmt.setString(22, transaction_Amount);
+
 					}
 					nodeName = nodeList.item(21).getNodeName();
 					if (obj.containsKey(nodeName)) {
 						actual_Transaction_Amount = obj.get(nodeName).toString();
-						stmt.setString(23, actual_Transaction_Amount);
+
 					}
 					nodeName = nodeList.item(22).getNodeName();
 					if (obj.containsKey(nodeName)) {
 						transaction_Acitivity_fee = obj.get(nodeName).toString();
-						stmt.setString(24, transaction_Acitivity_fee);
+
 					}
 					nodeName = nodeList.item(23).getNodeName();
 					if (obj.containsKey(nodeName)) {
 						acquirer_settlement_Currency_Code = obj.get(nodeName).toString();
-						stmt.setString(25, acquirer_settlement_Currency_Code);
+
 					}
 					nodeName = nodeList.item(24).getNodeName();
 					if (obj.containsKey(nodeName)) {
 						acquirer_settlement_Amount = obj.get(nodeName).toString();
-						stmt.setString(26, acquirer_settlement_Amount);
+
 					}
 					nodeName = nodeList.item(25).getNodeName();
 					if (obj.containsKey(nodeName)) {
 						acquirer_Settlement_Fee = obj.get(nodeName).toString();
-						stmt.setString(27, acquirer_Settlement_Fee);
+
 					}
 					nodeName = nodeList.item(26).getNodeName();
 					if (obj.containsKey(nodeName)) {
 						acquirer_settlement_processing_fee = obj.get(nodeName).toString();
-						stmt.setString(28, acquirer_settlement_processing_fee);
+
 					}
 					nodeName = nodeList.item(27).getNodeName();
 					if (obj.containsKey(nodeName)) {
 						transaction_Acquirer_Conversion_Rate = obj.get(nodeName).toString();
-						stmt.setString(29, transaction_Acquirer_Conversion_Rate);
-					}
-					stmt.setString(30, ForceMatch);
-					stmt.setString(31, cycle);
-					stmt.setString(32, fileDate);
 
-					stmt.setString(33, createdby);
+					}
+//					
+					if (transaction_Date != null & transaction_Time != null) {
+						String pattern = "yyyy-MM-dd HH:mm:ss";
+						String temp = transaction_Date + " " + transaction_Time;
+						SimpleDateFormat sdf = new SimpleDateFormat("yyMMdd HHmmss");
+						try {
+							Date d = sdf.parse(temp);
+							sdf.applyPattern(pattern);
+
+							TxnsDateTimeMain = sdf.format(d);
+						} catch (ParseException p) {
+
+						}
+					}
+					if (acquirer_Settlement_Date != null) {
+						String pattern = "yyyy-MM-dd";
+						SimpleDateFormat sdf = new SimpleDateFormat("yyMMdd");
+						Date d = sdf.parse(acquirer_Settlement_Date);
+						sdf.applyPattern(pattern);
+						ACCSETDATEMain = sdf.format(d);
+					}
+					if (card_Acceptor_Settlement_Date != null) {
+						String pattern = "yyyy-MM-dd";
+						SimpleDateFormat sdf = new SimpleDateFormat("yyMMdd");
+						Date d = sdf.parse(card_Acceptor_Settlement_Date);
+						sdf.applyPattern(pattern);
+						CARDACCEPTERSETDATEMain = sdf.format(d);
+					}
+					String ecard_number = null;
+					if (card_number != null) {
+						ecard_number = card_number;
+					}
+					if (transaction_Amount != null) {
+						Double transaction_Amount_double = Double.parseDouble(transaction_Amount);
+						transaction_Amount = String.valueOf(transaction_Amount_double);
+					}
+
+					if (actual_Transaction_Amount != null) {
+						Double actual_Transaction_Amount_double = Double.parseDouble(actual_Transaction_Amount);
+						actual_Transaction_Amount = String.valueOf(actual_Transaction_Amount_double);
+					}
+
+					if (transaction_Acitivity_fee != null) {
+						Double transaction_Acitivity_fee_double = Double.parseDouble(transaction_Acitivity_fee);
+						transaction_Acitivity_fee = String.valueOf(transaction_Acitivity_fee_double);
+					}
+
+					if (acquirer_settlement_Amount != null) {
+						Double acquirer_settlement_Amount_double = Double.parseDouble(acquirer_settlement_Amount);
+						acquirer_settlement_Amount = String.valueOf(acquirer_settlement_Amount_double);
+					}
+
+					if (acquirer_Settlement_Fee != null) {
+						Double acquirer_Settlement_Fee_double = Double.parseDouble(acquirer_Settlement_Fee);
+						acquirer_Settlement_Fee = String.valueOf(acquirer_Settlement_Fee_double);
+					}
+					if (acquirer_settlement_processing_fee != null) {
+						Double acquirer_settlement_processing_fee_double = Double
+								.parseDouble(acquirer_settlement_processing_fee);
+						acquirer_settlement_processing_fee = String.valueOf(acquirer_settlement_processing_fee_double);
+					}
+					stmt.setString(1, clientid);
+					stmt.setString(2, participant_ID);
+					stmt.setString(3, transaction_Type);
+					stmt.setString(4, from_Account_Type);
+					stmt.setString(5, to_Account_Type);
+					stmt.setString(6, RRN);
+					stmt.setString(7, response_Code);
+					stmt.setString(8, ecard_number);
+					stmt.setString(9, CardType);
+					stmt.setString(10, member_Number);
+					stmt.setString(11, approval_Number);
+					stmt.setString(12, system_Trace_Audit_Number);
+					stmt.setString(13, TxnsDateTimeMain);
+					stmt.setString(14, transaction_Time);
+					stmt.setString(15, merchant_Category_Code);
+					stmt.setString(16, CARDACCEPTERSETDATEMain);
+					stmt.setString(17, card_Acceptor_ID);
+					stmt.setString(18, card_Acceptor_Terminal_ID);
+					stmt.setString(19, card_Acceptor_Terminal_Location);
+					stmt.setString(20, acquirer_ID);
+					stmt.setString(21, ACCSETDATEMain);
+					stmt.setString(22, transaction_Currency_code);
+					stmt.setString(23, transaction_Amount);
+					stmt.setString(24, actual_Transaction_Amount);
+					stmt.setString(25, transaction_Acitivity_fee);
+					stmt.setString(26, acquirer_settlement_Currency_Code);
+					stmt.setString(27, acquirer_settlement_Amount);
+					stmt.setString(28, acquirer_Settlement_Fee);
+					stmt.setString(29, acquirer_settlement_processing_fee);
+					stmt.setString(30, transaction_Acquirer_Conversion_Rate);
+					stmt.setString(31, RevEntryLeg);
+					stmt.setString(32, "0");
+					stmt.setString(33, cycle);
+					stmt.setString(34, fileDate);
+					stmt.setString(35, ForceMatch);
+					stmt.setString(36, FilePath);
+					stmt.setString(37, createdon);
+					stmt.setString(38, modifiedon);
+					stmt.setString(39, modifiedby);
+					stmt.setString(40, createdby);
+
 					stmt.addBatch();
 					count++;
-					System.out.println("count: " + count);
-					if (count % batchSize == 0 || count == content.size()) {
-						stmt.executeBatch();
-						long end = System.currentTimeMillis();
-						System.out.println("TIME:  " + (end - start));
-					}
+					countBatch = stmt.executeBatch();
+					System.out.println("count" + count);
+					
+//					System.out.println("count: " + count);
+//					if (count % batchSize == 0 || count == content.size()) {
+//						countBatch = stmt.executeBatch();
+//						long end = System.currentTimeMillis();
+//						System.out.println("TIME:  " + (end - start));
+					fileUploadingStatus = true;
+//						System.out.println("countBatch:    " + countBatch);
+//						System.out.println("countBatchLength:    " + countBatch.length);
+//					}
 				}
 				stmt.close();
 				con.close();
-				return importFileNpciATMFilesACQ;
+				if (fileUploadingStatus == true) {
+					System.out.println("suyog");
+					arr[0]=count;
+					arr[1]=1;
+					arr[2]=totalContent;
+					return arr;
+				} else {
+					arr[0]=count;
+					arr[1]=2;
+					arr[2]=totalContent;
+					return arr;
+				}
+			} catch (SQLException s) {
+				arr[0]=count;
+				arr[1]=2;
+				arr[2]=totalContent;
+				return arr;
 			} catch (Exception e) {
-				return null;
+				arr[0]=count;
+				arr[1]=2;
+				arr[2]=totalContent;
+				return arr;
 			}
 		} else if (fileName.contains("ISS")) {
-			Connection con = dataSource.getConnection();
-			CallableStatement stmt = con.prepareCall(
-					"{call SPIMPORTNPCIISSUERFILE(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+			int[] arr = new int[3];
+			int count = 0,totalContent=0;
 			String participant_ID = null;
 			String transaction_Type = null;
 			String from_Account_Type = null;
@@ -687,9 +931,14 @@ public class Trace_Service_Imp implements Trace_Service {
 			String cardHolderBillProcFee = null;
 			String cardHolderBillServiceFee = null;
 			String tRAN_ISSUERCONVERSRATE = null;
-			String tRANS_CARDHOLDERCONVERRATE = null;
-			
+			String tRANS_CARDHOLDERCONVERRATE = null, CardType = null, RevEntryLeg = null, FilePath = null,
+					createdon = null, modifiedon = null, modifiedby = null;
+			List<JSONObject> importFileNpciATMFilesISS = new ArrayList<JSONObject>();
+			JSONObject obj1 = new JSONObject();
 			try {
+				Connection con = dataSource.getConnection();
+				CallableStatement stmt = con.prepareCall(
+						"{call SPIMPORTNPCIISSUERFILE(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
 				List<JSONObject> npcifileformatxml = traceDao.getformatfileinxml(clientid, 3);
 				JSONObject xmlFormatDescription = npcifileformatxml.get(0);
 				String tempStr = xmlFormatDescription.get("FormatDescriptionXml").toString();
@@ -704,15 +953,19 @@ public class Trace_Service_Imp implements Trace_Service {
 				fos.write(file.getBytes());
 				fos.close();
 				content = Files.readAllLines(convFile.toPath());
-				List<JSONObject> importFileNpciATMFilesISS = null;
+				totalContent=content.size();
 				JSONObject obj = new JSONObject();
 				String contentData = "";
-				int count = 0, batchSize = 30000;
+				int batchSize = 30000;
 				String ForceMatch = file.getOriginalFilename();
 				String cycle = ForceMatch.substring(15, 17);
 				String fileDate = ForceMatch.substring(8, 14).trim();
 				long start = System.currentTimeMillis();
+				String TxnsDateTimeMain = null;
+				String CARDACCEPTERSETDATEMain = null;
+				Boolean fileUploadingStatus = false;
 				for (int i = 0; i < content.size(); i++) {
+					fileUploadingStatus = false;
 					contentData = content.get(i);
 					for (int j = 0; j < nodeList.getLength(); j++) {
 						List<String> nodeData = getXmlFields(nodeList, nodeList.item(j).getNodeName(), j);
@@ -721,7 +974,7 @@ public class Trace_Service_Imp implements Trace_Service {
 						int length = Integer.parseInt(nodeData.get(2));
 						String contentFieldData = contentData.substring(startPos - 1, (startPos - 1) + length).trim();
 						obj.put(nodeName, contentFieldData);
-						System.out.println("nodeName:  "+nodeName+"   contentFieldData  "+contentFieldData);
+						System.out.println("nodeName:  " + nodeName + "   contentFieldData  " + contentFieldData);
 					}
 //					importFileNpciATMFilesISS = traceDao.importFileNpciATMFilesISS(obj, clientid, fileDate, cycle,
 //							ForceMatch, createdby, nodeList);
@@ -883,7 +1136,69 @@ public class Trace_Service_Imp implements Trace_Service {
 					nodeName = nodeList.item(37).getNodeName();
 					if (obj.containsKey(nodeName)) {
 						tRANS_CARDHOLDERCONVERRATE = obj.get(nodeName).toString();
-					}	
+					}
+
+					if (transaction_Date != null & transaction_Time != null) {
+						String pattern = "yyyy-MM-dd HH:mm:ss";
+						String temp = transaction_Date + " " + transaction_Time;
+						SimpleDateFormat sdf = new SimpleDateFormat("yyMMdd HHmmss");
+						Date d = sdf.parse(temp);
+						sdf.applyPattern(pattern);
+						TxnsDateTimeMain = sdf.format(d);
+
+					}
+					if (card_Acceptor_Settlement_Date != null) {
+						String pattern = "yyyy-MM-dd";
+						SimpleDateFormat sdf = new SimpleDateFormat("yyMMdd");
+						Date d = sdf.parse(card_Acceptor_Settlement_Date);
+						sdf.applyPattern(pattern);
+						CARDACCEPTERSETDATEMain = sdf.format(d);
+					}
+					String ecard_number = null;
+					if (card_number != null) {
+						ecard_number = card_number;
+					}
+
+					if (txnAmount != null) {
+						Double txnAmount_double = Double.parseDouble(txnAmount);
+						txnAmount = String.valueOf(txnAmount_double);
+					}
+					if (actualTransAmount != null) {
+						Double actualTransAmount_double = Double.parseDouble(actualTransAmount);
+						actualTransAmount = String.valueOf(actualTransAmount_double);
+					}
+					if (tranActivityFee != null) {
+						Double tranActivityFee_double = Double.parseDouble(tranActivityFee);
+						tranActivityFee = String.valueOf(tranActivityFee_double);
+					}
+					if (issuerSetAmount != null) {
+						Double issuerSetAmount_double = Double.parseDouble(issuerSetAmount);
+						issuerSetAmount = String.valueOf(issuerSetAmount_double);
+					}
+					if (issuerSetFee != null) {
+						Double issuerSetFee_double = Double.parseDouble(issuerSetFee);
+						issuerSetFee = String.valueOf(issuerSetFee_double);
+					}
+					if (issuerSetProcFee != null) {
+						Double issuerSetProcFee_double = Double.parseDouble(issuerSetProcFee);
+						issuerSetProcFee = String.valueOf(issuerSetProcFee_double);
+					}
+					if (cardHolderBillAmount != null) {
+						Double cardHolderBillAmount_double = Double.parseDouble(cardHolderBillAmount);
+						cardHolderBillAmount = String.valueOf(cardHolderBillAmount_double);
+					}
+					if (cardHolderBillActFee != null) {
+						Double cardHolderBillActFee_double = Double.parseDouble(cardHolderBillActFee);
+						cardHolderBillActFee = String.valueOf(cardHolderBillActFee_double);
+					}
+					if (cardHolderBillProcFee != null) {
+						Double cardHolderBillProcFee_double = Double.parseDouble(cardHolderBillProcFee);
+						cardHolderBillProcFee = String.valueOf(cardHolderBillProcFee_double);
+					}
+					if (cardHolderBillServiceFee != null) {
+						Double cardHolderBillServiceFee_double = Double.parseDouble(cardHolderBillServiceFee);
+						cardHolderBillServiceFee = String.valueOf(cardHolderBillServiceFee_double);
+					}
 					stmt.setString(1, clientid);
 					stmt.setString(2, participant_ID);
 					stmt.setString(3, transaction_Type);
@@ -891,67 +1206,99 @@ public class Trace_Service_Imp implements Trace_Service {
 					stmt.setString(5, to_Account_Type);
 					stmt.setString(6, RRN);
 					stmt.setString(7, response_Code);
-					stmt.setString(8, card_number);
-					stmt.setString(9, member_Number);
-					stmt.setString(10, approval_Number);
-					stmt.setString(11, system_Trace_Audit_Number);
-					stmt.setString(12, transaction_Date);
-					stmt.setString(13, transaction_Time);
-					stmt.setString(14, merchant_Category_Code);
-					stmt.setString(15, card_Acceptor_Settlement_Date);
-					stmt.setString(16, card_Acceptor_ID);
-					stmt.setString(17, card_Acceptor_Terminal_ID);
-					stmt.setString(18, card_Acceptor_Terminal_Location);
-					stmt.setString(19, acquirer_ID);
-					stmt.setString(20, networkID);
-					stmt.setString(21, accountNo1);
-					stmt.setString(22, account1BranchId);
-					stmt.setString(23, accountNo2);
-					stmt.setString(24, account2BranchId);
-					stmt.setString(25, transCurrencyCode);
-					stmt.setString(26, txnAmount);
-					stmt.setString(27, actualTransAmount);
-					stmt.setString(28, tranActivityFee);
-					stmt.setString(29, issuerSetCurrencyCode);
-					stmt.setString(30, issuerSetAmount);
-					stmt.setString(31, issuerSetFee);
-					stmt.setString(32, issuerSetProcFee);
-					stmt.setString(33, cardHolderBillcurnCode);
-					stmt.setString(34, cardHolderBillAmount);
-					stmt.setString(35, cardHolderBillActFee);
-					stmt.setString(36, cardHolderBillProcFee);
-					stmt.setString(37, cardHolderBillServiceFee);
-					stmt.setString(38, tRAN_ISSUERCONVERSRATE);
-					stmt.setString(39, tRANS_CARDHOLDERCONVERRATE);
-					stmt.setString(40, cycle);
-					stmt.setString(41, fileDate);
-					stmt.setString(42, ForceMatch);
-					stmt.setString(43, createdby);
+					stmt.setString(8, ecard_number);
+					stmt.setString(9, CardType);
+					stmt.setString(10, member_Number);
+					stmt.setString(11, approval_Number);
+					stmt.setString(12, system_Trace_Audit_Number);
+					stmt.setString(13, TxnsDateTimeMain);
+					stmt.setString(14, transaction_Time);
+					stmt.setString(15, merchant_Category_Code);
+					stmt.setString(16, CARDACCEPTERSETDATEMain);
+					stmt.setString(17, card_Acceptor_ID);
+					stmt.setString(18, card_Acceptor_Terminal_ID);
+					stmt.setString(19, card_Acceptor_Terminal_Location);
+					stmt.setString(20, acquirer_ID);
+					stmt.setString(21, networkID);
+					stmt.setString(22, accountNo1);
+					stmt.setString(23, account1BranchId);
+					stmt.setString(24, accountNo2);
+					stmt.setString(25, account2BranchId);
+					stmt.setString(26, transCurrencyCode);
+					stmt.setString(27, txnAmount);
+					stmt.setString(28, actualTransAmount);
+					stmt.setString(29, tranActivityFee);
+					stmt.setString(30, issuerSetCurrencyCode);
+					stmt.setString(31, issuerSetAmount);
+					stmt.setString(32, issuerSetFee);
+					stmt.setString(33, issuerSetProcFee);
+					stmt.setString(34, cardHolderBillcurnCode);
+					stmt.setString(35, cardHolderBillAmount);
+					stmt.setString(36, cardHolderBillActFee);
+					stmt.setString(37, cardHolderBillProcFee);
+					stmt.setString(38, cardHolderBillServiceFee);
+					stmt.setString(39, tRAN_ISSUERCONVERSRATE);
+					stmt.setString(40, tRANS_CARDHOLDERCONVERRATE);
+					stmt.setString(41, RevEntryLeg);
+					stmt.setString(42, "0");
+					stmt.setString(43, cycle);
+					stmt.setString(44, fileDate);
+					stmt.setString(45, ForceMatch);
+					stmt.setString(46, FilePath);
+					stmt.setString(47, createdon);
+					stmt.setString(48, modifiedon);
+					stmt.setString(49, modifiedby);
+					stmt.setString(50, createdby);
 					stmt.addBatch();
 					count++;
+					stmt.executeBatch();
 					System.out.println("count: " + count);
-					if (count % batchSize == 0 || count == content.size()) {
-						stmt.executeBatch();
-						long end = System.currentTimeMillis();
-						System.out.println("TIME:  " + (end - start));
-					}
+//					if (count % batchSize == 0 || count == content.size()) {
+//						stmt.executeBatch();
+//						long end = System.currentTimeMillis();
+//						System.out.println("TIME:  " + (end - start));
+						fileUploadingStatus = true;
+//					}
 				}
-				return importFileNpciATMFilesISS;
+
+				stmt.close();
+				con.close();
+				if (fileUploadingStatus == true) {
+					arr[0]=count;
+					arr[1]=1;
+					arr[2]=totalContent;
+					return arr;
+				} else {
+					arr[0]=count;
+					arr[1]=2;
+					arr[2]=totalContent;
+					return arr;
+				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				arr[0]=count;
+				arr[1]=2;
+				arr[2]=totalContent;
+				return arr;
 			}
 		} else if (ext.equalsIgnoreCase("xls")) {
+			int[] arr = new int[3];
+			int count = 0,totalContent=0;
 			Workbook tempWorkBook = null;
+			JSONObject obj1 = new JSONObject();
+			Boolean fileUploadingStatus = false, fileUploadingStatus1 = false;
 			try {
 				tempWorkBook = new HSSFWorkbook(file.getInputStream());
 			} catch (IOException e) {
-
-				e.printStackTrace();
+				arr[0]=count;
+				arr[1]=2;
+				arr[2]=totalContent;
+				return arr;
 			}
 			Sheet sheet = tempWorkBook.getSheetAt(0);
 			DataFormatter formatter = new DataFormatter();
 			int dec = 0, setAmt = 0;
 			for (int i = 0; i < sheet.getPhysicalNumberOfRows(); i++) {
+				fileUploadingStatus = false;
 				int tempDec = 0;
 				int tempSetamt = 0;
 				Row row = sheet.getRow(i);
@@ -979,24 +1326,40 @@ public class Trace_Service_Imp implements Trace_Service {
 					setAmt = tempSetamt;
 				}
 				if (dec != 0 && setAmt != 0) {
-					ntslAtmFile(sheet, dec, setAmt, file, clientid, createdby);
+					fileUploadingStatus1 = ntslAtmFile(sheet, dec, setAmt, file, clientid, createdby);
 					dec = 0;
 					setAmt = 0;
+					if (fileUploadingStatus1 == true) {
+						fileUploadingStatus = true;
+					}
 				}
 
 			}
-
+			if (fileUploadingStatus == true) {
+				arr[0]=count;
+				arr[1]=1;
+				arr[2]=totalContent;
+				return arr;
+			} else {
+				arr[0]=count;
+				arr[1]=2;
+				arr[2]=totalContent;
+				return arr;
+			}
 		}
 
 		return null;
 	}
-	private void ntslAtmFile(Sheet sheet, int dec2, int setAmt, MultipartFile file, String clientid, String createdby) {
+
+	private Boolean ntslAtmFile(Sheet sheet, int dec2, int setAmt, MultipartFile file, String clientid,
+			String createdby) {
 		HSSFRow tempRow = null, forTitle = null;
 		String description = null;
 		double noOftxn = 0, debit = 0, credit = 0;
 		forTitle = (HSSFRow) sheet.getRow(dec2 - 2);
 		String titleString = forTitle.getCell(0).getStringCellValue();
 		String date = titleString.substring(titleString.length() - 10);
+		Boolean statusFromDB = false;
 		for (int i = dec2 + 1; i < setAmt + 1; i++) {
 			tempRow = (HSSFRow) sheet.getRow(i);
 			if (tempRow.getCell(0) == null) {
@@ -1018,8 +1381,9 @@ public class Trace_Service_Imp implements Trace_Service {
 			} else {
 				credit = tempRow.getCell(3).getNumericCellValue();
 			}
-			traceDao.ntsAtmFile(description, noOftxn, credit, debit, file, date, clientid, createdby);
+			statusFromDB = traceDao.ntsAtmFile(description, noOftxn, credit, debit, file, date, clientid, createdby);
 		}
+		return statusFromDB;
 	}
 
 	@Override
@@ -1286,29 +1650,31 @@ public class Trace_Service_Imp implements Trace_Service {
 	}
 
 	@Override
-	public List<JSONObject> importEJFileData(MultipartFile ej, String clientid, String createdby) {
+	public List<JSONObject> importEJFileData(MultipartFile ej, String clientid, String createdby, String fileTypeName)
+			throws ParseException {
 
-		return traceDao.importEJFileData(ej, clientid, createdby);
+		return traceDao.importEJFileData(ej, clientid, createdby, fileTypeName);
 	}
 
 	@Override
-	public List<JSONObject> importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby,
+	public int[] importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby,
 			String fileTypeName) {
 
 		return traceDao.importGlcbsFileData(glCbs, clientid, createdby, fileTypeName);
 	}
 
 	@Override
-	public List<JSONObject> importSwitchFile(MultipartFile sw, String clientid, String createdby,String fileTypeName) throws IOException, SQLException, ParserConfigurationException, SAXException {
+	public int[] importSwitchFile(MultipartFile sw, String clientid, String createdby, String fileTypeName)
+{
 
-		return traceDao.importSwitchFile(sw, clientid, createdby,fileTypeName);
+		return traceDao.importSwitchFile(sw, clientid, createdby, fileTypeName);
 	}
 
-	@Override
-	public List<JSONObject> getchannelmodeinfo(String clientid) {
-
-		return traceDao.getchannelmodeinfo(clientid);
-	}
+//	@Override
+//	public List<JSONObject> getchannelmodeinfo(String clientid) {
+//
+//		return traceDao.getchannelmodeinfo(clientid);
+//	}
 
 	@Override
 	public List<JSONObject> getfieldidentification(String clientid, String vendorid, String channelid, String modeid,
@@ -1331,13 +1697,13 @@ public class Trace_Service_Imp implements Trace_Service {
 			String p_MICROATMTYPE, String p_MOBILERECHARGETYPE, String p_DEPOSIT, String p_BALENQ,
 			String p_MINISTATEMENT, String p_PINCHANGE, String p_CHEQUEBOOKREQ, String p_RESPCODE1, String p_RESPCODE2,
 			String p_RESPTPE, String p_EODCODE, String p_OFFLINECODE, String p_DEBITCODE, String p_CREDITCODE,
-			String createdby) {
+			String createdby, String p_CHANNELID) {
 
 		return traceDao.addfieldconfig(p_CLIENTID, p_VENDORID, p_FORMATID, p_TERMINALCODE, p_BINNO, p_ACQUIRERID,
 				p_REVCODE1, p_REVCODE2, p_REVTYPE, p_REVENTRY, p_TXNDATETIME, p_TXNVALUEDATETIME, p_TXNPOSTDATETIME,
 				p_ATMTYPE, p_POSTYPE, p_ECOMTYPE, p_IMPSTYPE, p_UPITYPE, p_MICROATMTYPE, p_MOBILERECHARGETYPE,
 				p_DEPOSIT, p_BALENQ, p_MINISTATEMENT, p_PINCHANGE, p_CHEQUEBOOKREQ, p_RESPCODE1, p_RESPCODE2, p_RESPTPE,
-				p_EODCODE, p_OFFLINECODE, p_DEBITCODE, p_CREDITCODE, createdby);
+				p_EODCODE, p_OFFLINECODE, p_DEBITCODE, p_CREDITCODE, createdby, p_CHANNELID);
 	}
 
 	@Override
@@ -1433,5 +1799,104 @@ public class Trace_Service_Imp implements Trace_Service {
 			String p_ModeID, String p_VendorID) {
 
 		return traceDao.getFileFormatDefualt(p_FileExt, p_SeparatorType, p_ChannelID, p_ModeID, p_VendorID);
+	}
+
+	@Override
+	public List<JSONObject> getbranchname(String clientid) {
+		// TODO Auto-generated method stub
+		return traceDao.getbranchname(clientid);
+	}
+
+	@Override
+	public List<JSONObject> getterminaldetailschannelwise(String clientid, String channelid, String userid) {
+		// TODO Auto-generated method stub
+		return traceDao.getterminaldetailschannelwise(clientid, channelid, userid);
+	}
+
+	@Override
+	public List<JSONObject> getchannelmodedetailsremodify(String clientid) {
+		// TODO Auto-generated method stub
+		return traceDao.getchannelmodedetailsremodify(clientid);
+	}
+
+	@Override
+	public List<JSONObject> getdispensesummaryreport(String clientID, String channelID, String modeID,
+			String terminalID, String fromDateTxns, String toDateTxns, String txnType) throws ParseException {
+		// TODO Auto-generated method stub
+		return traceDao.getdispensesummaryreport(clientID, channelID, modeID, terminalID, fromDateTxns, toDateTxns,
+				txnType);
+	}
+
+	@Override
+	public List<JSONObject> getnetworktype(String clientid) {
+		// TODO Auto-generated method stub
+		return traceDao.getnetworktype(clientid);
+	}
+
+	@Override
+	public List<JSONObject> runreconall(String clientid, String fromdate, String todate, String channelid, String user,
+			String modeid, String terminalid) {
+		// TODO Auto-generated method stub
+		return traceDao.runreconall(clientid, fromdate, todate, channelid, user, modeid, terminalid);
+	}
+
+	@Override
+	public List<JSONObject> getunmatchedtxnreport(String clientid, String channelid, String modeid, String terminalid,
+			String fromdatetxns, String todatetxns, String txntype) {
+		// TODO Auto-generated method stub
+		return traceDao.getunmatchedtxnreport(clientid, channelid, modeid, terminalid, fromdatetxns, todatetxns,
+				txntype);
+	}
+
+	@Override
+	public List<JSONObject> getsuccessfultxnreport(String clientid, String channelid, String modeid, String terminalid,
+			String fromdatetxns, String todatetxns, String txntype) {
+		// TODO Auto-generated method stub
+		return traceDao.getsuccessfultxnreport(clientid, channelid, modeid, terminalid, fromdatetxns, todatetxns,
+				txntype);
+	}
+
+	@Override
+	public List<JSONObject> getreversaltxnreport(String clientid, String channelid, String modeid, String terminalid,
+			String fromdatetxns, String todatetxns, String txntype) {
+		// TODO Auto-generated method stub
+		return traceDao.getreversaltxnreport(clientid, channelid, modeid, terminalid, fromdatetxns, todatetxns,
+				txntype);
+	}
+
+	@Override
+	public List<JSONObject> getforcesettlementtxns(String clientid, String channelid, String modeid, String glstatus,
+			String ejstatus, String nwstatus, String swstatus, String fromdatetxns, String todatetxns, String recontype,
+			String settlementtype, String userid) {
+		// TODO Auto-generated method stub
+		return traceDao.getforcesettlementtxns(clientid, channelid, modeid, glstatus, ejstatus, nwstatus, swstatus,
+				fromdatetxns, todatetxns, recontype, settlementtype, userid);
+	}
+
+	@Override
+	public List<JSONObject> serachbyrrn(String clientid, String referencenumber, String terminalid, String fromdatetxn,
+			String todatetxn) {
+		// TODO Auto-generated method stub
+		return traceDao.serachbyrrn(clientid, referencenumber, terminalid,
+				fromdatetxn, todatetxn);
+	}
+
+	@Override
+	public List<JSONObject> gltxndetails(String referencenumber, String terminalid, String clientid) {
+		// TODO Auto-generated method stub
+		return traceDao.gltxndetails(referencenumber, terminalid, clientid);
+	}
+
+	@Override
+	public List<JSONObject> swtxndetails(String referencenumber, String terminalid, String clientid) {
+		// TODO Auto-generated method stub
+		return traceDao.swtxndetails(referencenumber, terminalid, clientid);
+	}
+
+	@Override
+	public List<JSONObject> nwtxndetails(String referencenumber, String terminalid, String channel, String mode,
+			String clientid) {
+		// TODO Auto-generated method stub
+		return traceDao.nwtxndetails(referencenumber, terminalid,channel,mode, clientid);
 	}
 }

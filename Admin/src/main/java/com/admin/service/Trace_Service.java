@@ -2,6 +2,7 @@ package com.admin.service;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -34,10 +35,6 @@ public interface Trace_Service {
 
 	public String getUserDetails(String username, String clientID, String branchID, String roleID);
 
-	public String AddUser(String userName, String password, String firstName, String lastName, String roleID,
-			String clientID, String branchID, String emailID, String contactNo, String securityq, String securitya,
-			String createBy, String p_salt, String channel);
-
 	public String resetPassword();
 
 	public List<JSONObject> getUploadFiletype();
@@ -46,7 +43,7 @@ public interface Trace_Service {
 
 	public String addUser(String userid, String password, String firstname, String lastname, String roleid,
 			String clientid, String branchid, String emailid, String contactno, String securityq, String securitya,
-			String createdby, String salt, String channel);
+			String createdby, String salt);
 
 	public String deleteUser(String userid, String roleid, String branchid, String createdby);
 
@@ -91,9 +88,9 @@ public interface Trace_Service {
 
 	public byte[] getTerminalFile(String clientid);
 
-	public List mapBranchMasterReapExcelDatatoDB(MultipartFile reapExcelDataFile, String user);
+	public List mapBranchMasterReapExcelDatatoDB(MultipartFile reapExcelDataFile, String user, String clientid);
 
-	public List mapTerminalMasterReapExcelDatatoDB(MultipartFile reapExcelDataFile, String user);
+	public List mapTerminalMasterReapExcelDatatoDB(MultipartFile reapExcelDataFile, String user, String clientid);
 
 	public List<JSONObject> getClientCode();
 
@@ -120,7 +117,7 @@ public interface Trace_Service {
 
 	// public List<JSONObject> importFile(MultipartFile file, String clientid,
 	// String createdby);
-	public List<JSONObject> importFileNpciATMFiles(MultipartFile file, String clientid, String createdby)
+	public int[] importFileNpciATMFiles(MultipartFile file, String clientid, String createdby)
 			throws IOException, EncryptedDocumentException, InvalidFormatException, Exception;
 
 	public List<JSONObject> getFileFormatHistory(String p_VendorType, String p_ClientID, String p_ChannelID,
@@ -133,13 +130,15 @@ public interface Trace_Service {
 
 	public List<JSONObject> importPosSettlementSummaryReportFiles(MultipartFile pos, String clientid, String createdby);
 
-	public List<JSONObject> importEJFileData(MultipartFile ej, String clientid, String createdby);
+	public List<JSONObject> importEJFileData(MultipartFile ej, String clientid, String createdby, String fileTypeName)
+			throws ParseException;
 
-	public List<JSONObject> importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby, String fileTypeName);
+	public int[] importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby,
+			String fileTypeName);
 
-	public List<JSONObject> importSwitchFile(MultipartFile sw, String clientid, String createdby,String fileTypeName) throws IOException, SQLException, ParserConfigurationException, SAXException;
+	public int[] importSwitchFile(MultipartFile sw, String clientid, String createdby, String fileTypeName);
 
-	public List<JSONObject> getchannelmodeinfo(String clientid);
+//	public List<JSONObject> getchannelmodeinfo(String clientid,);
 
 	public List<JSONObject> getfieldidentification(String clientid, String vendorid, String channelid, String modeid,
 			String formatid);
@@ -153,7 +152,7 @@ public interface Trace_Service {
 			String p_MICROATMTYPE, String p_MOBILERECHARGETYPE, String p_DEPOSIT, String p_BALENQ,
 			String p_MINISTATEMENT, String p_PINCHANGE, String p_CHEQUEBOOKREQ, String p_RESPCODE1, String p_RESPCODE2,
 			String p_RESPTPE, String p_EODCODE, String p_OFFLINECODE, String p_DEBITCODE, String p_CREDITCODE,
-			String createdby);
+			String createdby, String p_CHANNELID);
 
 	public List<JSONObject> getformatid(String clientid, String vendorid);
 
@@ -188,5 +187,42 @@ public interface Trace_Service {
 
 	public List<JSONObject> getFileFormatDefualt(String p_FileExt, String p_SeparatorType, String p_ChannelID,
 			String p_ModeID, String p_VendorID);
+
+	public List<JSONObject> getbranchname(String clientid);
+
+	public List<JSONObject> getterminaldetailschannelwise(String clientid, String channelid, String userid);
+
+	public List<JSONObject> getchannelmodedetailsremodify(String clientid);
+
+	public List<JSONObject> getdispensesummaryreport(String clientID, String channelID, String modeID,
+			String terminalID, String fromDateTxns, String toDateTxns, String txnType) throws ParseException;
+
+	public List<JSONObject> getnetworktype(String clientid);
+
+	public List<JSONObject> runreconall(String clientid, String fromdate, String todate, String channelid, String user,
+			String modeid, String terminalid);
+
+	public List<JSONObject> getunmatchedtxnreport(String clientid, String channelid, String modeid, String terminalid,
+			String fromdatetxns, String todatetxns, String txntype);
+
+	public List<JSONObject> getsuccessfultxnreport(String clientid, String channelid, String modeid, String terminalid,
+			String fromdatetxns, String todatetxns, String txntype);
+
+	public List<JSONObject> getreversaltxnreport(String clientid, String channelid, String modeid, String terminalid,
+			String fromdatetxns, String todatetxns, String txntype);
+
+	public List<JSONObject> getforcesettlementtxns(String clientid, String channelid, String modeid, String glstatus,
+			String ejstatus, String nwstatus, String swstatus, String fromdatetxns, String todatetxns, String recontype,
+			String settlementtype, String userid);
+
+	public List<JSONObject> serachbyrrn(String clientid, String referencenumber, String terminalid, String fromdatetxn,
+			String todatetxn);
+
+	public List<JSONObject> gltxndetails(String referencenumber, String terminalid, String clientid);
+
+	public List<JSONObject> swtxndetails(String referencenumber, String terminalid, String clientid);
+
+	public List<JSONObject> nwtxndetails(String referencenumber, String terminalid, String channel, String mode,
+			String clientid);
 
 }

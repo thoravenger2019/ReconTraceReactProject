@@ -10,6 +10,13 @@ public class XmlClass {
     private String vendorID;
     private String filePre;
     private String cutOffTime;
+    private String SepratorType;
+	public String getSepratorType() {
+		return SepratorType;
+	}
+	public void setSepratorType(String sepratorType) {
+		this.SepratorType = sepratorType;
+	}
 	public String getMyXmlData() {
 		return myXmlData;
 	}

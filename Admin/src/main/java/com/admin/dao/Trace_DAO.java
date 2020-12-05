@@ -39,9 +39,9 @@ public interface Trace_DAO {
 
 	public String getUserDetails(String username, String clientID, String branchID, String roleID);
 
-	public String AddUser(String userName, String password, String firstName, String lastName, String roleID,
-			String clientID, String branchID, String emailID, String contactNo, String securityq, String securitya,
-			String createBy, String p_salt, String channel);
+//	public String AddUser(String userName, String password, String firstName, String lastName, String roleID,
+//			String clientID, String branchID, String emailID, String contactNo, String securityq, String securitya,
+//			String createBy, String p_salt, String channel);
 
 	public String resetPassword();
 
@@ -51,7 +51,7 @@ public interface Trace_DAO {
 
 	public String addUser(String userid, String password, String firstname, String lastname, String roleid,
 			String clientid, String branchid, String emailid, String contactno, String securityq, String securitya,
-			String createdby, String salt, String channel);
+			String createdby, String salt);
 
 	public String deleteUser(String userid, String roleid, String branchid, String createdby);
 
@@ -96,9 +96,9 @@ public interface Trace_DAO {
 
 	public byte[] getTerminalFile(String clientid);
 
-	public List mapBranchMasterReapExcelDatatoDB(MultipartFile reapExcelDataFile, String user);
+	public List mapBranchMasterReapExcelDatatoDB(MultipartFile reapExcelDataFile, String user, String clientid);
 
-	public List mapTerminalMasterReapExcelDatatoDB(MultipartFile reapExcelDataFile, String user);
+	public List mapTerminalMasterReapExcelDatatoDB(MultipartFile reapExcelDataFile, String user, String clientid);
 
 	public List<JSONObject> getClientCode();
 
@@ -148,17 +148,23 @@ public interface Trace_DAO {
 	public List<JSONObject> getfileformat(String p_VENDORID, String p_CLIENTID, String p_FILEPREFIX, String p_FILEEXT,
 			String p_SEPARATORTYPE, String p_MODEID, String p_CHANNELID);
 
-	/*public List<JSONObject> importFileNpciATMFilesACQ(String participant_ID, String transaction_Type,
-			String from_Account_Type, String to_Account_Type, String transaction_Serial_Number, String response_Code,
-			String pan_Number, String member_Number, String approval_Number, String system_Trace_Audit_Number,
-			String transaction_Date, String transaction_Time, String merchant_Category_Code,
-			String card_Acceptor_Settlement_Date, String card_Acceptor_ID, String card_Acceptor_Terminal_ID,
-			String card_Acceptor_Terminal_Location, String acquirer_ID, String acquirer_Settlement_Date,
-			String transaction_Currency_code, String transaction_Amount, String actual_Transaction_Amount,
-			String transaction_Acitivity_fee, String acquirer_settlement_Currency_Code,
-			String acquirer_settlement_Amount, String acquirer_Settlement_Fee,
-			String acquirer_settlement_processing_fee, String transaction_Acquirer_Conversion_Rate, String forceMatch,
-			String clientid, String cycle, String fileDate, String createdby) throws ParseException;*/
+	/*
+	 * public List<JSONObject> importFileNpciATMFilesACQ(String participant_ID,
+	 * String transaction_Type, String from_Account_Type, String to_Account_Type,
+	 * String transaction_Serial_Number, String response_Code, String pan_Number,
+	 * String member_Number, String approval_Number, String
+	 * system_Trace_Audit_Number, String transaction_Date, String transaction_Time,
+	 * String merchant_Category_Code, String card_Acceptor_Settlement_Date, String
+	 * card_Acceptor_ID, String card_Acceptor_Terminal_ID, String
+	 * card_Acceptor_Terminal_Location, String acquirer_ID, String
+	 * acquirer_Settlement_Date, String transaction_Currency_code, String
+	 * transaction_Amount, String actual_Transaction_Amount, String
+	 * transaction_Acitivity_fee, String acquirer_settlement_Currency_Code, String
+	 * acquirer_settlement_Amount, String acquirer_Settlement_Fee, String
+	 * acquirer_settlement_processing_fee, String
+	 * transaction_Acquirer_Conversion_Rate, String forceMatch, String clientid,
+	 * String cycle, String fileDate, String createdby) throws ParseException;
+	 */
 
 	void save(NpciAcqModel npciAcqModel);
 
@@ -177,11 +183,13 @@ public interface Trace_DAO {
 
 	public List<JSONObject> importPosSettlementSummaryReportFiles(MultipartFile pos, String clientid, String createdby);
 
-	public List<JSONObject> importEJFileData(MultipartFile ej, String clientid, String createdby);
+	public List<JSONObject> importEJFileData(MultipartFile ej, String clientid, String createdby, String fileTypeName)
+			throws ParseException;
 
-	public List<JSONObject> importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby, String fileTypeName);
+	public int[] importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby,
+			String fileTypeName);
 
-	public List<JSONObject> importSwitchFile(MultipartFile sw, String clientid, String createdby,String fileTypeName) throws IOException, SQLException, ParserConfigurationException, SAXException;
+	public int[] importSwitchFile(MultipartFile sw, String clientid, String createdby, String fileTypeName);
 
 	List<JSONObject> importFile(String participant_ID, String transaction_Type, String from_Account_Type,
 			String to_Account_Type, String transaction_Serial_Number, String response_Code, String pan_Number,
@@ -194,10 +202,10 @@ public interface Trace_DAO {
 			String acquirer_settlement_processing_fee, String transaction_Acquirer_Conversion_Rate, String forceMatch,
 			String clientid, String cycle, String fileDate, String createdby) throws ParseException;
 
-	public void ntsAtmFile(String description, double noOftxn, double credit, double debit, MultipartFile file,
+	public Boolean ntsAtmFile(String description, double noOftxn, double credit, double debit, MultipartFile file,
 			String date, String clientid, String createdby);
 
-	public List<JSONObject> getchannelmodeinfo(String clientid);
+//	public List<JSONObject> getchannelmodeinfo(String clientid);
 
 	public List<JSONObject> getfieldidentification(String clientid, String vendorid, String channelid, String modeid,
 			String formatid);
@@ -211,7 +219,7 @@ public interface Trace_DAO {
 			String p_MICROATMTYPE, String p_MOBILERECHARGETYPE, String p_DEPOSIT, String p_BALENQ,
 			String p_MINISTATEMENT, String p_PINCHANGE, String p_CHEQUEBOOKREQ, String p_RESPCODE1, String p_RESPCODE2,
 			String p_RESPTPE, String p_EODCODE, String p_OFFLINECODE, String p_DEBITCODE, String p_CREDITCODE,
-			String createdby);
+			String createdby, String p_CHANNELID);
 
 	public List<JSONObject> getformatid(String clientid, String vendorid);
 
@@ -249,11 +257,47 @@ public interface Trace_DAO {
 
 	public List<JSONObject> getformatfileinxml(String clientid, int i);
 
-	public List<JSONObject> importFileNpciATMFilesACQ(JSONObject obj, String acqAtmNPCIdata, String fileDate, String cycle, String forceMatch, String createdby, NodeList nodeList);
+	public List<JSONObject> importFileNpciATMFilesACQ(JSONObject obj, String acqAtmNPCIdata, String fileDate,
+			String cycle, String forceMatch, String createdby, NodeList nodeList);
 
 	public List<JSONObject> importFileNpciATMFilesISS(JSONObject obj, String clientid, String fileDate, String cycle,
 			String forceMatch, String createdby, NodeList nodeList);
 
+	public List<JSONObject> getbranchname(String clientid);
 
+	public List<JSONObject> getterminaldetailschannelwise(String clientid, String channelid, String userid);
+
+	public List<JSONObject> getchannelmodedetailsremodify(String clientid);
+
+	public List<JSONObject> getdispensesummaryreport(String clientID, String channelID, String modeID,
+			String terminalID, String fromDateTxns, String toDateTxns, String txnType) throws ParseException;
+
+	public List<JSONObject> getnetworktype(String clientid);
+
+	public List<JSONObject> runreconall(String clientid, String fromdate, String todate, String channelid, String user,
+			String modeid, String terminalid);
+
+	public List<JSONObject> getunmatchedtxnreport(String clientid, String channelid, String modeid, String terminalid,
+			String fromdatetxns, String todatetxns, String txntype);
+
+	public List<JSONObject> getsuccessfultxnreport(String clientid, String channelid, String modeid, String terminalid,
+			String fromdatetxns, String todatetxns, String txntype);
+
+	public List<JSONObject> getreversaltxnreport(String clientid, String channelid, String modeid, String terminalid,
+			String fromdatetxns, String todatetxns, String txntype);
+
+	public List<JSONObject> getforcesettlementtxns(String clientid, String channelid, String modeid, String glstatus,
+			String ejstatus, String nwstatus, String swstatus, String fromdatetxns, String todatetxns, String recontype,
+			String settlementtype, String userid);
+
+	public List<JSONObject> serachbyrrn(String clientid, String referencenumber, String terminalid, String fromdatetxn,
+			String todatetxn);
+
+	public List<JSONObject> gltxndetails(String referencenumber, String terminalid, String clientid);
+
+	public List<JSONObject> swtxndetails(String referencenumber, String terminalid, String clientid);
+
+	public List<JSONObject> nwtxndetails(String referencenumber, String terminalid, String channel, String mode,
+			String clientid);
 
 }
