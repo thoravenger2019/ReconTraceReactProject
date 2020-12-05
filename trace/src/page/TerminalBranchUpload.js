@@ -206,9 +206,7 @@ const TerminalBranchUpload = props => {
       console.log(e)
     }
   };
-
   const menuData = props.location.state;
-
   return (
     <Layout>
       <Header style={{ padding: "20px" }}>

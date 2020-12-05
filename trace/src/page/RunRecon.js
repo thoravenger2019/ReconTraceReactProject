@@ -32,6 +32,7 @@ const RunRecon = props => {
   const [channelData,setChannelData]=useState([])
   const [modeData,setModeData]=useState([])
   const [spindata,setSpinData]=useState(false)
+  const [reconmsg,setReconMsg]=useState([])
   const [selectedFileData, setStateFile] = useState(undefined)
   useEffect(() => {
     //onDisplayImplortFile();
@@ -130,6 +131,12 @@ const ongetModeType = async (value) => {
       console.log(values)
       const importFileResponse = await axios.get(`runreconall/${clientid}/${values.fromdate}/${values.todate}/${values.channelid}/${values.modeid}`);
       console.log(importFileResponse.data)
+      const runreconmsg=importFileResponse.data;
+      const abc=runreconmsg.map((item,index)=>item.strMasg);
+      alert("Run Recon for "+ abc);
+      window.location.reload(false);
+
+      setReconMsg(abc);
       setSpinData(false);
       setLoader(false);
 
@@ -244,14 +251,14 @@ const ongetModeType = async (value) => {
                 <Row>
                   <Col span={12}>
                   {/* <DatePicker  format={dateFormat} style={{width:320 }} /> */}
-                  <Form.Item label="From Date" name="fromdate" >
+                  <Form.Item label="From Date" name="fromdate" style={{width:320 }}>
             {/* <DatePicker picker={"date"}  format={dateFormat}disabledTime={disabledDateTime}  style={{width:150 }} />  */}
             <Input type="date"/>
                
             </Form.Item>
                   </Col>
                   <Col span={12}>
-                  <Form.Item label="To Date" name="todate" >
+                  <Form.Item label="To Date" name="todate" style={{width:320 }}>
             {/* <DatePicker picker={"date"}  format={dateFormat} disabledTime={disabledDateTime} style={{width:150 }} /> */}
             <Input type="date"/>
             </Form.Item>
@@ -262,8 +269,11 @@ const ongetModeType = async (value) => {
                     <Button type={"primary"} size={"large"} style={{width:'100px'}} onClick={onRunRecon}>Run Recon</Button>   
                     {spindata?(<Spin style={{ margin: '0 18px', color: 'black' }} size="large" />):("") } 
                   </Form.Item>    
-                        
+                    
                 </Row>
+                {/* <Form.Item label={reconmsg} name=""> 
+                    
+                      </Form.Item>  */}
               </Form>
             </Card>
           </Content>

@@ -12,6 +12,7 @@ import {
   Layout,
   Avatar,
   Input,
+  Alert,
 } from 'antd';
 import Title from 'antd/lib/typography/Title';
 const { Header, Content } = Layout;
@@ -25,7 +26,10 @@ const ImportFile = props => {
   const [clientid, setClientID] = useState([])
   const [filetype, setFileType] = useState([])
   const [clientData, setClientData] = useState([])
+  const [filestatus,setStatus]=useState([])
   const [selectedFileData, setStateFile] = useState(undefined)
+  const [msgFlag,setMsgFlag]=useState(false)
+  console.log(filestatus)
   useEffect(() => {
     //onDisplayImplortFile();
     onDisplayClientNameList();
@@ -96,43 +100,65 @@ const ImportFile = props => {
 
   const onFileUpload = async () => {
     try {
-      alert(filetype);
+      //alert(filetype);
       //ATM NPCI Filess
       if (filetype == 'ATM_ALL_NPCI' || filetype == 'ATM_ACQUIRER_NPCI' || filetype == 'ATM_ISSUER_NPCI' || filetype == 'ATM_ONUS_NPCI') {
         //  alert("check ")
-        let currentFile = selectedFileData[0];
+        let currentFile = selectedFileData;
         const formData = new FormData();
-        formData.append('npci', currentFile);
+        //formData.append('npci', currentFile);
+        for (let i = 0; i < currentFile.length; i++) {
+          formData.append(`npci`, currentFile[i])
+          console.log(currentFile[i])
+        }
+
         console.log(currentFile);
         console.log(formData);
         const response = await axios.post(`importFileNpciATMFiles/${clientid}`, formData);
         //const response = await axios.post(`importFileNpciATMFiles`,formData);
         // const response = await axios.post(`importPosSettlementSummaryReportFiles/${clientid}`,formData);
         console.log(response.data);
-        console.log(response.data);
+        //console.log(response.data);
         const fileUploadStatus=response.data;
         
         if (filetype == 'ATM_ALL_NPCI' || filetype == 'ATM_ACQUIRER_NPCI')
         {
-          const statuss = fileUploadStatus.map((item)=>item.NPCIFILESTATUS)
-                    alert(statuss);
-                   window.location.reload(false);
+          const statuss = fileUploadStatus[0];
+          //const result
+          console.log(statuss);
+          setStatus(statuss);
+          setMsgFlag(true);
 
-        }
+          //alert(statuss);
+                   //window.location.reload(false);
+
+        } 
         if(filetype == 'ATM_ALL_NPCI' || filetype == 'ATM_ISSUER_NPCI'){
-          const statuss = fileUploadStatus.map((item)=>item.NPCIFILESTATUS)
-          alert(statuss);
-          window.location.reload(false);
+          const statuss = fileUploadStatus[0];
+          //const result
+          console.log(statuss);
+          setStatus(statuss);
+          setMsgFlag(true);
+ //window.location.reload(false);
         }
       }
-      
 
       if (filetype == 'CBS_ATM_ISSUER' || filetype=='CBS_ATM_ALL') {
 
-       alert("INSEIDE CBS ");
-        let currentFile = selectedFileData[0];
+       //alert("INSEIDE CBS ");
+
+        // let currentFile = selectedFileData[0];
+        // const formData = new FormData();
+        // formData.append('glCbs', currentFile);
+
+
+        let currentFile = selectedFileData;
         const formData = new FormData();
-        formData.append('glCbs', currentFile);
+        //formData.append('npci', currentFile);
+        for (let i = 0; i < currentFile.length; i++) {
+          formData.append(`glCbs`, currentFile[i]);
+          console.log(currentFile[i]);
+        }
         console.log(currentFile);
         console.log(formData);
         const response = await axios.post(`importGlcbsFileData/${clientid}/${filetype}`, formData);
@@ -140,17 +166,31 @@ const ImportFile = props => {
         // const response = await axios.post(`importPosSettlementSummaryReportFiles/${clientid}`,formData);
         const fileUploadStatus=response.data;
         console.log(fileUploadStatus);
-          const statuss = fileUploadStatus.map((item)=>item.GLCBSSTATUS)
-                    alert(statuss);
+          // const statuss = fileUploadStatus.map((item)=>item.GLCBSSTATUS)
+          //             alert(statuss);
+           const statuss = fileUploadStatus[0];
+          //const result
+          console.log(statuss);
+          setStatus(statuss);
+          setMsgFlag(true);
+
                    // window.location.reload(false);
       }
 
       if(filetype=='SWITCH_ATM_ALL' ){
 
-        alert("INSEIDE SWITCH ");
-        let currentFile = selectedFileData[0];
+        //alert("INSEIDE SWITCH ");
+        // let currentFile = selectedFileData[0];
+        // const formData = new FormData();
+        // formData.append('sw', currentFile);
+        let currentFile = selectedFileData;
         const formData = new FormData();
-        formData.append('sw', currentFile);
+        //formData.append('npci', currentFile);
+        for (let i = 0; i < currentFile.length; i++) {
+          formData.append(`sw`, currentFile[i])
+          console.log(currentFile[i])
+        }
+
         console.log(currentFile);
         console.log(formData);
         const response = await axios.post(`importSwitchFile/${clientid}/${filetype}`, formData);
@@ -158,13 +198,19 @@ const ImportFile = props => {
         // const response = await axios.post(`importPosSettlementSummaryReportFiles/${clientid}`,formData);
         console.log(response.data);
         const fileUploadStatus=response.data;
-          const statuss = fileUploadStatus.map((item)=>item.SWITCHSTATUS)
-                    alert(statuss);
-                   // window.location.reload(false);
+          // const statuss = fileUploadStatus.map((item)=>item.SWITCHSTATUS)
+          //          alert(statuss);
+          //          // window.location.reload(false);
+                   const statuss = fileUploadStatus[0];
+                   //const result
+                   console.log(statuss);
+                   setStatus(statuss);
+                   setMsgFlag(true);
+         
       }
       if(filetype=='EJ_ATM_ALL'){
 
-        alert("INSEIDE EJ ");
+        //alert("INSEIDE EJ ");
         let currentFile = selectedFileData[0];
         const formData = new FormData();
         formData.append('ej', currentFile);
@@ -180,16 +226,13 @@ const ImportFile = props => {
                     //window.location.reload(false);
       }
     } catch (e) {
-      console.log(e)
+      console.  log(e)
     }
   }
   const onChangeHandler = event => {
     setStateFile(event.target.files)
   }
   //const [componentSize, setComponentSize] = useState('small');
-
-  
-
 
   return (
 
@@ -202,50 +245,57 @@ const ImportFile = props => {
       <Layout>
         <MenuSideBar menuData={menuData} />
         <Layout style={{ height: "100vh", backgroundColor: "white" }}>
-          <Content>
-            <Card title="Import File" bordered={false} style={{ width: 800 }} >
+          <Content style={{ alignmentBaseline: 'center' }}>
+            <Card title="Import File" bordered={false} style={{ width: 1600}}  >
 
               <Form initialValues={{ remember: true }} layout={"vertical"} form={form} size={"large"} >
-
-                <Row gutter={8}>
-                  <Col xs={2} sm={16} md={12} lg={8} xl={10}><b>
+                <Row gutter={8} >
+                  <Col span={12}><b>
                     <Form.Item label="Client Name" name="clientid" >
-                      <Select defaultValue="--select--" style={{ width: 300 }} onChange={onChangeClientName}>
+                      <Select defaultValue="--select--" style={{ width: 500 }} onChange={onChangeClientName}>
                         {clientData}
                       </Select>
                     </Form.Item>
                   </b></Col>
                 </Row>
                 <Row gutter={8}>
-                  <Col xs={2} sm={16} md={12} lg={8} xl={10}><b>
+                  <Col span={12}><b>
                     <Form.Item
                       label="File Type"
                       name="FileType"
                       rules={[{ required: true, message: 'Please input your Role Type!' }]}>
-                      <Select defaultValue="--select--" style={{ width: 300 }} onChange={onChangeFileType} >
+                      <Select defaultValue="--select--" style={{ width: 500 }} onChange={onChangeFileType} >
                         {data}
                       </Select>
                     </Form.Item>
                   </b></Col>
                 </Row>
                 <Row gutter={8}>
-                  <Col xs={2} sm={16} md={12} lg={8} xl={10}><b>
+                  <Col span={12}><b>
                     <Form.Item
+                      label="File Upload"
                       name="file"
                       rules={[{ required: true, message: 'Please input your File..!' }]}>
 
                       {/* <Input type={'file'} name="file[]" size={"large"}  onChange={onChangeHandler}  multiple/> */}
-                      <Input type={'file'} name="file" size={"large"} onChange={onChangeHandler} />
+                      <Input type={'file'} name="file" size={"large"} style={{ width: 500 }} onChange={onChangeHandler} multiple/>
                       {/* <Input type="file" webkitdirectory="" directory="" /> */}
-
                     </Form.Item>
-
                   </b></Col>
-                  <Form.Item>
-                    <Button onClick={onFileUpload} size={"large"} type={"primary"}>Upload</Button>
-                    <Button style={{ margin: '0 8px' }} >Back</Button>
-                  </Form.Item>
-                </Row>
+                  </Row>
+                  <Form.Item >
+                    <Button onClick={onFileUpload} size={"large"} type={"primary"} >Upload</Button>
+                    <Button style={{ margin: '0 10px' }} >Back</Button>
+                  </Form.Item>  
+              
+                {msgFlag?(
+                <Form.Item>
+                  <Alert message={"NUMBER OF FAILD ROW : "+filestatus["NUMBER OF FAILD ROWS"]} type="error" style={{ width: 500 }}/>
+                  <Alert message={"NUMBER OF INTERRUPTED FILES : "+filestatus["NUMBER OF INTERRUPTED FILES"]} type="error" style={{ width: 500 }} />
+                  <Alert message={"NUMBER OF UPLOADED FILES : "+filestatus["NUMBER OF UPLOADED FILES"]} type="info" style={{ width: 500 }}/>   
+                  <Alert message={"NUMBER OF UPLOADED ROWS : "+filestatus["NUMBER OF UPLOADED ROWS"]} type="info" style={{ width: 500 }}/>
+                  </Form.Item> 
+                ):("")} 
               </Form>
             </Card>
           </Content>

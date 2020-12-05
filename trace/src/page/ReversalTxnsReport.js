@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
 import axios, { axiosGet } from '../utils/axios';
 import MenuSideBar from './menuSideBar';
-import moment from 'moment';
+import Image from 'react-bootstrap/Image'
+
 
 import {
   Form,
@@ -18,9 +19,12 @@ import {
   Input,
   DatePicker,
   Table,
+  Spin,
 } from 'antd';
-import Password from 'antd/lib/input/Password';
+
 import Title from 'antd/lib/typography/Title';
+import { FileExcelOutlined } from '@ant-design/icons';
+import ExportJsonExcel from 'js-export-excel';
 const { Header, Footer, Sider, Content } = Layout;
 const FormItem = Form.Item;
 const { Option } = Select;
@@ -38,6 +42,9 @@ const ReversalTxnsReport = props => {
   const [selectedFileData, setStateFile] = useState(undefined)
   const [setTerm,setTerminal]=useState(false)
   const [setTxnType,setTxn]=useState(false);
+  const [revtbl,setRevtbl]=useState(false);
+  const [spinLoad,setSpinLoad]=useState(false)
+
   useEffect(() => {
     //onDisplayImplortFile();
     onDisplayClientNameList();
@@ -192,34 +199,98 @@ const ongetModeType = async (value) => {
     }
   }
 
+  const downloadExcel = async() => {
+    
+    const data=dispenseSummaryReoprttbldata;
+    console.log(data);
+    var option={};
+    let dataTable = [];
+    if (data) {
+      for (let i in data) {
+        if(data){
+          let obj = {
+          
+                      'ChannelName': data [i].ChannelName,
+                      'Transaction Mode': data [i] .TransactionMode,
+                      'Terminal Id': data [i] .TerminalId,
+                      'Reference Number':data[i].ReferenceNumber,
+                      'Card Number':data[i].CardNumber,
+                      'CustAccountNo':data[i].CustAccountNo,
+                      'Txns Amount':data[i].TxnsAmount,
+                      'ej status' : data[i].ejstatus,
+                      'sw status':data[i].swstatus,
+                      'nw status':data[i].nwstatus,
+                      'gl status' :data[i].glstatus,
+                      'Txns SubType' :data[i].TxnsSubType
+          }
+          dataTable.push(obj);
+        }
+      }
+    }
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = today.getFullYear();
+
+    today = mm + '-' + dd + '-' + yyyy;
+    option.fileName = 'ReversalTxnsReport'+today
+    option.datas=[
+      {
+        sheetData:dataTable,
+        sheetName:'sheet',
+               sheetFilter: [  'ChannelName','Transaction Mode','Terminal Id','Reference Number','Card Number','CustAccountNo','Txns Amount','ej status','sw status','nw status','gl status','Txns SubType' ],
+               sheetHeader: [  'ChannelName','Transaction Mode','Terminal Id','Reference Number','Card Number','CustAccountNo','Txns Amount','ej status','sw status','nw status','gl status','Txns SubType' ],
+      }
+    ];
+    var toExcel = new ExportJsonExcel(option); 
+    toExcel.saveExcel(); 
+    }
+  
+
+
+
   const onShowReversaltxnreport=async()=>{
+  
     const validateFields=await form.validateFields();
     const values = form.getFieldsValue();
     console.log(values); 
+    setSpinLoad(true);
     const reversalReport = await axios.get(`getreversaltxnreport/${values.clientID}/${values.channelID}/${values.modeID}/${values.terminalID}/${values.fromDateTxns}/${values.toDateTxns}/${values.txnType}`);
     console.log(reversalReport.data)
-    const reversalReporttbl=reversalReport.data;
-    const dataAll = reversalReporttbl.map((item, index) => ({
-      TxnsDate: item.TXNDATE,
-      TerminalID: item.TERMINALID,
-      ATMDiff: item.ATMDIFF,
-      EJTotal: item.EJTOTAL,
-      GLAcquirer:item.GLACQUIRER,
-     // GLISSUER:item.GLISSUER,
-      GLOnus:item.GLONUS,
-      GLTotal:item.GLTOTAL,
-      NFSAcquirer:item.NFSACQUIRER,
-      NFSAcquirerDiff:item.NFSACQUIRERDIFF,
-     // GLONUS:item.NFSISSUER,
-      //GLONUS:item.NFSISSUERDIFF,
-      //GLONUS:item.SWISSUER,
-      SwitchTotal:item.SWITCHTOTAL,
-      UnSettledAmount:item.UNSETTLEDAMOUNT,
-      key: index,
-      size: '15px'
-    })
-    )
-    setDispenseSummaryReort(dataAll);
+    const resultRev=reversalReport.data
+    setSpinLoad(false);
+    if(JSON.stringify(resultRev)=="[]"){
+      alert("No data found..!")
+      window.location.reload(false);
+
+    }
+    else{
+      const reversalReporttbl=reversalReport.data;
+      const dataAll = reversalReporttbl.map((item, index) => ({
+        TxnsDate: item.TXNDATE,
+        TerminalID: item.TERMINALID,
+        ATMDiff: item.ATMDIFF,
+        EJTotal: item.EJTOTAL,
+        GLAcquirer:item.GLACQUIRER,
+       // GLISSUER:item.GLISSUER,
+        GLOnus:item.GLONUS,
+        GLTotal:item.GLTOTAL,
+        NFSAcquirer:item.NFSACQUIRER,
+        NFSAcquirerDiff:item.NFSACQUIRERDIFF,
+       // GLONUS:item.NFSISSUER,
+        //GLONUS:item.NFSISSUERDIFF,
+        //GLONUS:item.SWISSUER,
+        SwitchTotal:item.SWITCHTOTAL,
+        UnSettledAmount:item.UNSETTLEDAMOUNT,
+        key: index,
+        size: '15px'
+      })
+      )
+      setDispenseSummaryReort(dataAll);
+      setRevtbl(true);
+    }
+    
+    
  
   }
   const { RangePicker } = DatePicker;
@@ -243,66 +314,75 @@ const ongetModeType = async (value) => {
   function onChange(checkedValues) {
     console.log('checked = ', checkedValues);
   }
+  function onDateChange(value){
+    console.log(value);
+  }
 
   const columns = [
     {
-      title: 'Txns Date',
-      dataIndex: 'TxnsDate',
-      key: 'TxnsDate',
+      title: 'Channel',
+      dataIndex: 'ChannelName',
+      key: 'ChannelName',
       render: text => <a>{text}</a>,
     },
     {
-      title: 'Terminal ID',
-      dataIndex: 'TerminalID',
-      key: 'TerminalID',
+      title: 'Mode',
+      dataIndex: 'TransactionMode',
+      key: 'TransactionMode',
     },
     {
-      title: 'GL Onus',
-      dataIndex: 'GLOnus',
-      key: 'GLOnus',
+      title: 'Date & Time',
+      dataIndex: 'TxnsValueDateTime',
+      key: 'TxnsValueDateTime',
     },
     {
-      title: 'GL Acquirer',
-      dataIndex: 'GLAcquirer',
-      key: 'GLAcquirer',
+      title: 'Reference No.',
+      dataIndex: 'ReferenceNumber',
+      key: 'ReferenceNumber',
+        // render: (text, record) => <a href={'user/' + record.name}>{text}</a>
+        render: (text, record) => <a >{text}</a>
     },
     {
-      title: 'GL Total',
-      dataIndex: 'GLTotal',
-      key: 'GLTotal',
+      title: 'Card No',
+      dataIndex: 'CardNumber',
+      key: 'CardNumber',
     },
     {
-      title: 'Switch Total',
-      dataIndex: 'SwitchTotal',
-      key: 'SwitchTotal',
+      title: 'Account No',
+      dataIndex: 'CustAccountNo',
+      key: 'CustAccountNo',
     },    
     {
-      title: 'EJ Total',
-      dataIndex: 'EJTotal',
-      key: 'EJTotal',
+      title: 'Txn Amount',
+      dataIndex: 'TxnsAmount',
+      key: 'TxnsAmount',
     },
     {
-      title: 'NFS  Acquirer',
-      dataIndex: 'NFSAcquirer',
-      key: 'NFSAcquirer',
+      title: 'ej status',
+      dataIndex: 'ejstatus',
+      key: 'ejstatus',
     },
     {
-      title: 'NFS Acquirer Diff',
-      dataIndex: 'NFSAcquirerDiff',
-      key: 'NFSAcquirerDiff',
+      title: 'sw status',
+      dataIndex: 'swstatus',
+      key: 'swstatus',
     },
     {
-      title: 'ATM Diff',
-      dataIndex: 'ATMDiff',
-      key: 'ATMDiff',
+      title: 'nw status',
+      dataIndex: 'nwstatus',
+      key: 'nwstatus',
     },
     {
-      title: 'UnSettled Amount',
-      dataIndex: 'UnSettledAmount',
-      key: 'UnSettledAmount',
+      title: 'gl status',
+      dataIndex: 'glstatus',
+      key: 'glstatus',
+    },
+    {
+      title: 'Txns Type',
+      dataIndex: 'TxnsSubType',
+      key: 'TxnsSubType',
     }
   ];
-  
 
 
   return (
@@ -319,8 +399,10 @@ const ongetModeType = async (value) => {
               <Form initialValues={{ remember: true }} layout={"vertical"} size={"large"} form={form}>
                 <Row  gutter={8} >
                     <Col span={4}>
-                    <Form.Item label="Client Name" name="clientID" >
-                        <Select defaultValue="--select--" style={{ width: 200 }} onChange={onChangeClientName}>
+                    <Form.Item label="Client Name" name="clientID" 
+                    rules={[{ required: true, message: "Client name required" }]}>
+                        <Select defaultValue="--select--" style={{ width: 200 }} onChange={onChangeClientName} 
+                        >
                               {clientData}
                            </Select>                  
                     </Form.Item>
@@ -328,7 +410,8 @@ const ongetModeType = async (value) => {
                     </Col>
                     <Col span={4}>
                       
-                      <Form.Item label="Channel Type" name="channelID" >
+                      <Form.Item label="Channel Type" name="channelID" 
+                     >
                         <Select defaultValue="--select--" style={{ width: 200 }} onChange={onChangeChannel}>
                               {channelData}
                         </Select>                  
@@ -365,17 +448,19 @@ const ongetModeType = async (value) => {
                 </Row>
                 <Row  gutter={4} style={{ height: '50%' }}  >
                 <Col span={6}>
-                <Form.Item label=" " name="fromDateTxns" style={{width: 320}}>    
+                <Form.Item label="from Date" name="fromDateTxns" style={{width: 320}}
+                rules={[{ required: true, message: "From Date required" }]}>    
                  
                   {/* <DatePicker  format={dateFormat} style={{width:320 }} /> */}
-                  <Input type={"date"}></Input>
+                  <Input type={"date"} onChange={onDateChange}></Input>
                   
                 </Form.Item>
                 </Col>
                 <Col span={6}>
-                <Form.Item label=" " name="toDateTxns" style={{width: 320}}> 
+                <Form.Item label="to Date" name="toDateTxns" style={{width: 320}}
+                 rules={[{ required: true, message: "To Date required" }]}> 
                  
-                  <Input type={"date"}></Input>
+                  <Input type={"date"} onChange={onDateChange}></Input>
                   {/* <DatePicker format={dateFormat} style={{width: 320}}  /> */}
                   
                   </Form.Item>
@@ -383,11 +468,17 @@ const ongetModeType = async (value) => {
                 </Row>               
                 <Row  gutter={8}>  
                   <Form.Item label=" " name="">             
-                     <Button type={"primary"} size={"large"} style={{width:'100px'}} onClick={onShowReversaltxnreport}>Show</Button>       
+                     <Button type={"primary"} size={"large"} style={{width:'100px'}} onClick={onShowReversaltxnreport}>Show</Button>  
+                     {/* <Button style={{margin: '0 18px'}} shape="circle-outline" onClick={downloadExcel}  icon={ <FileExcelOutlined size={"large"}style={{background:'green'}}/>}   size={"large"}/>      */}
+                     {/* <Image src="./export-to-excel" rounded/> */}
+                     <a style={{margin: '0 18px'}}><Avatar  shape ="square"  size="large" src="./export-to-excel.png" onClick={downloadExcel}/></a>
+                     <a style={{margin: '0 2px'}}><Avatar  shape ="square"  size="large" src="./pdf.png" onClick={downloadExcel}/></a>
+                     {spinLoad?(<Spin style={{ margin: '0 38px', color: 'black' }} size="large" />):("") }    
                   </Form.Item>           
                 </Row>
               </Form>
-              {/* <Table columns={columns} dataSource={dispenseSummaryReoprttbldata}/> */}
+              {revtbl?(<Table columns={columns} dataSource={dispenseSummaryReoprttbldata}/>):("")}
+               
             </Card>
           </Content>
         </Layout>

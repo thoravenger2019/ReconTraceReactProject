@@ -4,6 +4,8 @@ import 'antd/dist/antd.css';
 import axios, { axiosGet } from '../utils/axios';
 import MenuSideBar from './menuSideBar';
 import moment from 'moment';
+import { FileExcelOutlined } from '@ant-design/icons';
+import ExportJsonExcel from 'js-export-excel';
 
 import {
   Form,
@@ -19,8 +21,9 @@ import {
   DatePicker,
   Table,
   Spin,
+  Image, 
+
 } from 'antd';
-import Password from 'antd/lib/input/Password';
 import Title from 'antd/lib/typography/Title';
 const { Header, Footer, Sider, Content } = Layout;
 const FormItem = Form.Item;
@@ -208,15 +211,70 @@ const ongetModeType = async (value) => {
     }
   }
 
+  const downloadExcel = async() => {
+    
+    const data=dispenseSummaryReoprttbldata;
+    console.log(data);
+    var option={};
+    let dataTable = [];
+    if (data) {
+      for (let i in data) {
+        if(data){
+          let obj = {
+          
+                      'ChannelName': data [i].ChannelName,
+                      'Transaction Mode': data [i] .TransactionMode,
+                      'Terminal Id': data [i] .TerminalId,
+                      'Reference Number':data[i].ReferenceNumber,
+                      'Card Number':data[i].CardNumber,
+                      'CustAccountNo':data[i].CustAccountNo,
+                      'Txns Amount':data[i].TxnsAmount,
+                      'ej status' : data[i].ejstatus,
+                      'sw status':data[i].swstatus,
+                      'nw status':data[i].nwstatus,
+                      'gl status' :data[i].glstatus,
+                      'Txns SubType' :data[i].TxnsSubType
+          }
+          dataTable.push(obj);
+        }
+      }
+    }
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, '0');
+    var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    var yyyy = today.getFullYear();
+
+    today = mm + '-' + dd + '-' + yyyy;
+    option.fileName = 'UnmatchedTxnReport'+today
+    option.datas=[
+      {
+        sheetData:dataTable,
+        sheetName:'sheet',
+               sheetFilter: [  'ChannelName','Transaction Mode','Terminal Id','Reference Number','Card Number','CustAccountNo','Txns Amount','ej status','sw status','nw status','gl status','Txns SubType' ],
+               sheetHeader: [  'ChannelName','Transaction Mode','Terminal Id','Reference Number','Card Number','CustAccountNo','Txns Amount','ej status','sw status','nw status','gl status','Txns SubType' ],
+      }
+    ];
+    var toExcel = new ExportJsonExcel(option); 
+    toExcel.saveExcel(); 
+    }
+  
+
+
   const onShowUnmatched=async()=>{
-    setSpinLoad(true);
+
     const validateFields=await form.validateFields();
     const values = form.getFieldsValue();
     console.log(values); 
+    setSpinLoad(true);
+
     const unmatchedReport = await axios.get(`getunmatchedtxnreport/${values.clientID}/${values.channelID}/${values.modeID}/${values.terminalID}/${values.fromDateTxns}/${values.toDateTxns}/${values.txnType}`);
     console.log(unmatchedReport.data)
-    const unmatchedReporttbl=unmatchedReport.data;
     setSpinLoad(false);
+    const unmatchedReporttbl=unmatchedReport.data;
+    if(JSON.stringify(unmatchedReporttbl)=="[]"){
+      alert("No data found..!")
+      window.location.reload(false);
+    }else{
     const dataAll = unmatchedReporttbl.map((item, index) => ({
       ChannelName: item.ChannelName,
       TransactionMode: item.TransactionMode,
@@ -241,7 +299,7 @@ const ongetModeType = async (value) => {
     setUnmatchedReport(dataAll);
     setUnmatched(true);
   }
-
+  }
   const { RangePicker } = DatePicker;
 
   const dateFormat = 'DD/MM/YYYY';
@@ -269,7 +327,7 @@ const ongetModeType = async (value) => {
       title: 'Channel Name',
       dataIndex: 'ChannelName',
       key: 'ChannelName',
-      render: text => <a>{text}</a>,
+      // render: text => <a>{text}</a>,
     },
     {
       title: 'Transaction Mode',
@@ -285,6 +343,8 @@ const ongetModeType = async (value) => {
       title: 'Reference Number',
       dataIndex: 'ReferenceNumber',
       key: 'ReferenceNumber',
+      // render: (text, record) => <a href={'user/' + record.name}>{text}</a>
+      render: (text, record) => <a >{text}</a>
     },
     {
       title: 'Card Number',
@@ -320,9 +380,15 @@ const ongetModeType = async (value) => {
       title: 'gl status',
       dataIndex: 'glstatus',
       key: 'glstatus',
+    },
+    {
+      title: 'Txns Type',
+      dataIndex: 'TxnsSubType',
+      key: 'TxnsSubType',
     }
   ];
 
+ 
   return (
 
 <Layout>
@@ -338,8 +404,10 @@ const ongetModeType = async (value) => {
               <Form initialValues={{ remember: true }} layout={"vertical"} size={"large"} form={form}>
                 <Row  gutter={8} >
                     <Col span={4}>
-                    <Form.Item label="Client Name" name="clientID" >
-                        <Select defaultValue="--select--" style={{ width: 200 }} onChange={onChangeClientName}>
+                    <Form.Item label="Client Name" name="clientID" 
+                    rules={[{ required: true, message: "Client name required" }]}>
+                        <Select defaultValue="--select--" style={{ width: 200 }} onChange={onChangeClientName} 
+                        >
                               {clientData}
                            </Select>                  
                     </Form.Item>
@@ -384,7 +452,8 @@ const ongetModeType = async (value) => {
                 </Row>
                 <Row  gutter={4} style={{ height: '50%' }}  >
                 <Col span={6}>
-                <Form.Item label=" " name="fromDateTxns" style={{width: 320}}>    
+                <Form.Item label="from Date" name="fromDateTxns" style={{width: 320}}
+                rules={[{ required: true, message: "From Date required" }]}>    
                  
                   {/* <DatePicker  format={dateFormat} style={{width:320 }} /> */}
                   <Input type={"date"}></Input>
@@ -392,17 +461,24 @@ const ongetModeType = async (value) => {
                 </Form.Item>
                 </Col>
                 <Col span={6}>
-                <Form.Item label=" " name="toDateTxns" style={{width: 320}}> 
+                <Form.Item label="to Date" name="toDateTxns" style={{width: 320}}
+                 rules={[{ required: true, message: "To Date required" }]}> 
                  
                   <Input type={"date"}></Input>
-                  {/* <DatePicker format={dateFormat} style={{width: 320}}  /> */}                  
+                  {/* <DatePicker format={dateFormat} style={{width: 320}}  /> */}
+                  
                   </Form.Item>
+                
                   </Col>
                 </Row>               
                 <Row  gutter={8}>  
                   <Form.Item label=" " name="">             
                      <Button type={"primary"} size={"large"} style={{width:'100px'}} onClick={onShowUnmatched}>Show</Button>   
-                     {spinLoad?(<Spin style={{ margin: '0 18px', color: 'black' }} size="large" />):("") }         
+                    
+                     {/* <Button style={{margin: '0 18px'}} shape="circle-outline" onClick={downloadExcel}  icon={ <FileExcelOutlined size={"large"}style={{background:'green'}}/>}   size={"large"}/> */}
+                     <a style={{margin: '0 18px'}}><Avatar  shape ="square"  size="large" src="./export-to-excel.png" onClick={downloadExcel}/></a>
+                     <a style={{margin: '0 2px'}}><Avatar  shape ="square"  size="large" src="./pdf.png" onClick={downloadExcel}/></a>
+                     {spinLoad?(<Spin style={{ margin: '0 38px', color: 'black' }} size="large" />):("") }         
                   </Form.Item>           
                 </Row>
               </Form>

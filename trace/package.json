@@ -15,6 +15,7 @@
     "dhx-suite": "^6.5.1",
     "express": "^4.17.1",
     "jquery": "^3.5.1",
+    "js-export-excel": "^1.1.4",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.1",
     "react-color": "^2.18.1",

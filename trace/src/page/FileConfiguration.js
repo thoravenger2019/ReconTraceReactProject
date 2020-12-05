@@ -800,7 +800,7 @@ const editSwitch = (record) => {
 
 
   function searchText(myxmlString) {
-    alert(myxmlString);
+    //alert(myxmlString);
     //  const response = await axios.post(`getinsertfileformat/${P_CLIENTID}/${P_VENDORTYPE}/${P_CHANNELID}/${P_MODEID}/${values.P_FILEEXT}/${P_VENDORID}`,formDataFilePre,formDataCutOff);
    if(P_VENDORTYPE=='NETWORK'){
     const filePrefix = inputFilePre;
@@ -827,14 +827,14 @@ const editSwitch = (record) => {
    }
 
    if(P_VENDORTYPE=='CBS'){
-     alert("in ajax cbc");
+    // alert("in ajax cbc");
      const filePrefix = inputFilePre;
      const cutOff = valueTime;
      var values=form.getFieldsValue();
      console.log(values.P_SEPARATORTYPE);
-     alert("value in sep",septype);
+    // alert("value in sep",septype);
      var styp=(septype!='undefined') ? (septype):(0);
-     alert("sept type",styp);
+     //alert("sept type",styp);
    
      var xmlcls = {
       "myXmlData": myxmlString,
@@ -852,7 +852,7 @@ const editSwitch = (record) => {
    }
   
    if(P_VENDORTYPE=='SWITCH'){
-    alert("in ajax switch");
+    //alert("in ajax switch");
     const filePrefix = inputFilePre;
     const cutOff = valueTime;
 
@@ -872,7 +872,7 @@ const editSwitch = (record) => {
   }
  
   if(P_VENDORTYPE=='EJ'){
-    alert("in ajax EJ");
+    //alert("in ajax EJ");
     const filePrefix = inputFilePre;
     const cutOff = valueTime;
 
@@ -910,7 +910,7 @@ const editSwitch = (record) => {
       
       if(P_VENDORTYPE=="NETWORK")
       {
-        alert("network xml");
+       // alert("network xml");
         var nodeNameTest = xmltable.map(item => item.FieldName);
         var filedNames = [];
         for (var i in nodeNameTest)
@@ -947,7 +947,7 @@ const editSwitch = (record) => {
 
    if(P_VENDORTYPE=="CBS")
    {
-    alert("cbs xml");
+   // alert("cbs xml");
     var nodeNameTest = xmltable.map(item => item.FieldNameCBS);
     var filedNames = [];
     for (var i in nodeNameTest)
@@ -958,7 +958,7 @@ const editSwitch = (record) => {
     var posValue = [];
     for (var i in startPosNodeValueNodeTest)
     posValue.push(startPosNodeValueNodeTest[i]);
-    alert(startPosNodeValueNodeTest);
+   // alert(startPosNodeValueNodeTest);
 
    
     var builder = require('xmlbuilder');
@@ -973,7 +973,7 @@ const editSwitch = (record) => {
 
    if(P_VENDORTYPE=="EJ")
    {
-    alert("cbs xml");
+   // alert("cbs xml");
     var nodeNameTest = xmltable.map(item => item.FieldNameEJ);
     var filedNames = [];
     for (var i in nodeNameTest)
@@ -984,7 +984,7 @@ const editSwitch = (record) => {
     var posValue = [];
     for (var i in startPosNodeValueNodeTest)
     posValue.push(startPosNodeValueNodeTest[i]);
-    alert(startPosNodeValueNodeTest);
+    //alert(startPosNodeValueNodeTest);
 
     var builder = require('xmlbuilder');
 
@@ -998,7 +998,7 @@ const editSwitch = (record) => {
 
    if(P_VENDORTYPE=="SWITCH")
    {
-    alert("cbs xml");
+    //alert("cbs xml");
     var nodeNameTest = xmltable.map(item => item.FieldNameSwitch);
     var filedNames = [];
     for (var i in nodeNameTest)
@@ -1009,7 +1009,7 @@ const editSwitch = (record) => {
     var posValue = [];
     for (var i in startPosNodeValueNodeTest)
     posValue.push(startPosNodeValueNodeTest[i]);
-    alert(startPosNodeValueNodeTest);
+   // alert(startPosNodeValueNodeTest);
 
    
     var builder = require('xmlbuilder');
