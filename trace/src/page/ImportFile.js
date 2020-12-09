@@ -221,10 +221,16 @@ const ImportFile = props => {
         // const response = await axios.post(`importPosSettlementSummaryReportFiles/${clientid}`,formData);
         console.log(response.data);
         const fileUploadStatus=response.data;
-        const statuss = fileUploadStatus.map((item)=>item.EJFILESTATUS)
-                    alert(statuss);
-                    //window.location.reload(false);
-      }
+          // const statuss = fileUploadStatus.map((item)=>item.EJFILESTATUS)
+          //             alert(statuss);
+          //             //window.location.reload(false);
+                    const statuss = fileUploadStatus[0];
+                    //const result
+                    console.log(statuss);
+                    setStatus(statuss);
+                    setMsgFlag(true);
+  
+                  }
     } catch (e) {
       console.  log(e)
     }

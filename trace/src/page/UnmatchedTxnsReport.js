@@ -6,7 +6,8 @@ import MenuSideBar from './menuSideBar';
 import moment from 'moment';
 import { FileExcelOutlined } from '@ant-design/icons';
 import ExportJsonExcel from 'js-export-excel';
-
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 import {
   Form,
   Button,
@@ -22,7 +23,7 @@ import {
   Table,
   Spin,
   Image, 
-
+  Modal,
 } from 'antd';
 import Title from 'antd/lib/typography/Title';
 const { Header, Footer, Sider, Content } = Layout;
@@ -39,17 +40,30 @@ const UnmatchedTxnsReport = props => {
   const [channelData,setChannelData]=useState([])
   const [modeData,setModeData]=useState([])
   const [dispenseSummaryReoprttbldata,setUnmatchedReport]=useState([])
-
+  const [fterminalid,setTerminalId]=useState([])
+  const [fRefnum,setRefNumber]=useState([])
+  const [glDetailstbl,setGlDetails]=useState([])
+  const [swdetailstbl,setSWDetails]=useState([])
+  const [ejdetailstbl,setEJDetails]=useState([])
+  const [nwDetailstbl,setNWDetails]=useState([])
+  const [chanId,setChannelId]=useState([])
+  const [modId,setModeID]=useState([])
+  
   const [selectedFileData, setStateFile] = useState(undefined)
   const [setTerm,setTerminal]=useState(false)
   const [setTxnType,setTxn]=useState(false);
   const [spinLoad,setSpinLoad]=useState(false)
   const [unmatchedtbl,setUnmatched]=useState(false)
+  const [exportOpt,setExportOpt]=useState(false)
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     //onDisplayImplortFile();
     onDisplayClientNameList();
   }, [])
+
+  console.log(fterminalid);
+  console.log(fRefnum);
 
   function onChangeClientName(value) {
     console.log(`selected ${value}`);  
@@ -59,6 +73,7 @@ const UnmatchedTxnsReport = props => {
 
   function onChangeMode(value) {
     console.log(`selected ${value}`);  
+    setModeID(value);
     if(JSON.stringify(value)=="2")  
     {setTxn(true);
        // alert("terminal type")
@@ -75,6 +90,7 @@ const UnmatchedTxnsReport = props => {
   }
   function onChangeChannel(value) {
     console.log(`selected ${value}`);  
+    setChannelId(value);
     if(JSON.stringify(value)=="2"){
         alert("txntype")
       setTxn(true);
@@ -150,21 +166,127 @@ const ongetModeType = async (value) => {
   }
 };
 
-  const onDisplayImplortFile = async () => {
+// const onRefReport=async()=>{
+//   const values = form.getFieldsValue();
+//   const gltxnsReport =  axios.get(`gltxndetails/${ReferenceNumber}/${TerminalId}/${clientid}`);
+//   console.log(gltxnsReport.data);
+//   const swtxnsReport =  axios.get(`swtxndetails/${ReferenceNumber}/${TerminalId}/${clientid}`);
+//   console.log("sw txns: ",swtxnsReport.data);
+//   const ejtxnsReport =  axios.get(`ejtxndetails/${ReferenceNumber}/${TerminalId}/${clientid}`);
+//   console.log("ej txns: ",ejtxnsReport.data);
+//   setVisible(true);
+//   // const nwtxnsReport =  axios.get(`nwtxndetails/${ReferenceNumber}/${TerminalId}/${values.channelID}/${values.modeID}/${clientid}`);
+//   // console.log("nw txns: ",nwtxnsReport.data);
+
+// }
+
+
+  const onRefReport = async (refid,termid) => {
     try {
       
-      const importFileResponse = await axios.get(`getUploadFiletype`);
-      console.log(importFileResponse.data)
-      setLoader(false);
+      console.log(refid);
+      console.log(termid);
+     // const gldetails;
+      const importFileResponse = await axios.get(`gltxndetails/${refid}/${termid}/${clientid}`);
+      console.log(importFileResponse.data);
+      const gldetails=importFileResponse.data;
+      if(JSON.stringify(gldetails)=="[]"){
+        //alert("no data recorded");
+        const dataNot=gldetails.map((item,index)=>({
+          ReferenceNumber: 'nodata'
+        }))
+        setGlDetails(dataNot);
+      }else{
+        const dataAll = gldetails.map((item, index) => ({
+          CardNumber: item.CardNumber,
+          ReferenceNumber: item.ReferenceNumber,
+          ResponseCode: item.ResponseCode,
+          ReversalFlag: item.ReversalFlag,
+          TerminalId: item.TerminalId,
+          TxnsAmount: item.TxnsAmount,
+          TxnsDateTime: item.TxnsDateTime,
+          key: index
+        })
+        )
+        setGlDetails(dataAll);
+        //const gldetails="no data found";
+      } 
+      //setGlDetails(gldetails);
+      
+      //--------------------------switch data-----------------------------------
+      const swtxnsReport = await axios.get(`swtxndetails/${refid}/${termid}/${clientid}`);
+      console.log("sw txns: ",swtxnsReport.data);
+      const swdetails=swtxnsReport.data;
+    
+      if(JSON.stringify(swdetails)=="[]"){
+       // setSWDetails("no data recorded");
+       const  dataAll="no data recored";
+      }else{
+        const dataAll = swdetails.map((item, index) => ({
+          CardNumber: item.CardNumber,
+          ReferenceNumber: item.ReferenceNumber,
+          ResponseCode: item.ResponseCode,
+          ReversalFlag: item.ReversalFlag,
+          TerminalId: item.TerminalId,
+          TxnsAmount: item.TxnsAmount,
+          TxnsDateTime: item.TxnsDateTime,
+          key: index
+        }))
+        setSWDetails(dataAll);
+      }
+//--------------------------------EJ Details ---------------------------------------------
 
-      const fileN = importFileResponse.data;
-      console.log(fileN);
+      const ejtxnsReport = await axios.get(`ejtxndetails/${refid}/${termid}/${clientid}`);
+      console.log("ej txns: ",ejtxnsReport.data);
+      const ejdetails=ejtxnsReport.data;
+    
+      if(JSON.stringify(ejdetails)=="[]"){
+        //setEJDetails("no data recorded");
+       const  dataAll="no data recored";
+      }else{
+        const dataAll = ejdetails.map((item, index) => ({
+          CardNumber: item.CardNumber,
+          ReferenceNumber: item.ReferenceNumber,
+          ResponseCode: item.ResponseCode,
+          ReversalFlag: item.ReversalFlag,
+          TerminalId: item.TerminalId,
+          TxnsAmount: item.TxnsAmount,
+          TxnsDateTime: item.TxnsDateTime,
+          ejstatus: item.ejstatus,
+          key: index
+        }))
+        setEJDetails(dataAll);
+      }
 
-      const listFile = fileN.map((item, index) => <Option value={item.id} key={index}>{item.fileType}</Option>)
-      setData(listFile);
+      const nwtxnsReport = await axios.get(`nwtxndetails/${refid}/${termid}/${chanId}/${modId}/${clientid}`);
+      console.log("nw txns: ",nwtxnsReport.data);
+      const nwdetails=ejtxnsReport.data;
+    
+      if(JSON.stringify(nwdetails)=="[]"){
+        //setEJDetails("no data recorded");
+       const  dataAll="no data recored";
+      }else{
+        const dataAll = nwdetails.map((item, index) => ({
+          CardNumber: item.CardNumber,
+          ReferenceNumber: item.ReferenceNumber,
+          ResponseCode: item.ResponseCode,
+          ReversalFlag: item.ReversalFlag,
+          TerminalId: item.TerminalId,
+          TxnsAmount: item.TxnsAmount,
+          TxnsDateTime: item.TxnsDateTime,
+          key: index
+        }))
+        setNWDetails(dataAll);
+      }
+      // setLoader(false);
+      // const fileN = importFileResponse.data;
+      // console.log(fileN);
 
-      //console.log(dataAll);
+      // const listFile = fileN.map((item, index) => <Option value={item.id} key={index}>{item.fileType}</Option>)
+      // setData(listFile);
 
+      // console.log(dataAll);
+      setVisible(true);
     } catch (e) {
       console.log(e)
     }
@@ -259,6 +381,96 @@ const ongetModeType = async (value) => {
     }
   
 
+    const downloadPDF = async() => {
+      //initialize jsPDF
+      const data=dispenseSummaryReoprttbldata;
+      console.log(data);
+      const doc = new jsPDF('landscape');
+      var imgData='./Finallogo.png'
+     // doc.setTextColor(255,0,0);
+      doc.addImage(imgData, 'PNG', 10, 5, 20, 8,)
+      doc.addImage(imgData, 'PNG', 250, 5, 20, 8)
+      // define the columns we want and their titles
+      const tableColumn = ['Channel Name','Transaction Mode','Terminal Id','Reference Number','Card Number','Account No','Txns Amount','EJ Status','SW Status','NW Status','GL Status','Txn Sub Type'];
+      // define an empty array of rows
+      const tableRows = [];
+      // for each ticket pass all its data into an array
+      data.forEach(ticket => {
+        const txnData = [
+          ticket.ChannelName,
+          ticket.TransactionMode,
+          ticket.TerminalId,
+          ticket.ReferenceNumber,
+          ticket.CardNumber,
+          ticket.CustAccountNo,
+          ticket.TxnsAmount,
+          ticket.ejstatus,
+          ticket.swstatus,
+          ticket.nwstatus,
+          ticket.glstatus,
+          ticket.TxnsSubType
+          // called date-fns to format the date on the ticket
+          //format(new Date(ticket.updated_at), "yyyy-MM-dd")
+        ];
+        // push each tickcet's info into a row
+        tableRows.push(txnData);
+        console.log(txnData);
+      });
+    
+      // startY is basically margin-top
+      doc.autoTable(tableColumn, tableRows, {startY: 30});
+      const date = Date().split(" ");
+      // we use a date string to generate our filename.
+      const dateStr = date[0] + date[1] + date[2] + date[3] + date[4];
+      // ticket title. and margin-top + margin-left
+      doc.text("Unmatched Transaction Report", 10, 12);
+      // we define the name of our PDF file.
+      doc.save(`Unmatchedtxnreport_${dateStr}.pdf`);
+    
+//     const unit = "pt";
+//     const size = "A4"; // Use A1, A2, A3 or A4
+//     const orientation = ""; 
+//     const marginLeft = 40;
+//     const doc = new jsPDF('l', unit, size);
+//     const dataTable = [];
+//     doc.setFontSize(15);
+//     const title = "Unmatched Transaction Report";
+//     const headers = [['Channel Name','Transaction Mode','Terminal Id','Reference Number','Card Number','Account No','Txns Amount','EJ Status','SW Status','NW Status','GL Status','Txn Sub Type']];
+//     const data = dispenseSummaryReoprttbldata;
+//     if (data) {
+//       for (let i in data) {
+//         if(data){
+//           let obj = {
+          
+//                       'ChannelName': data [i].ChannelName,
+//                       'Transaction Mode': data [i] .TransactionMode,
+//                       'Terminal Id': data [i] .TerminalId,
+//                       'Reference Number':data[i].ReferenceNumber,
+//                       'Card Number':data[i].CardNumber,
+//                       'CustAccountNo':data[i].CustAccountNo,
+//                       'Txns Amount':data[i].TxnsAmount,
+//                       'ej status' : data[i].ejstatus,
+//                       'sw status':data[i].swstatus,
+//                       'nw status':data[i].nwstatus,
+//                       'gl status' :data[i].glstatus,
+//                       'Txns SubType' :data[i].TxnsSubType
+//           }
+//           dataTable.push(obj);
+//         }
+//       }
+//     }
+// console.log(dataTable);
+//     console.log(data);
+//     let content = {
+//       startY: 50,
+//       head: headers,
+//       body: dataTable
+//     };
+//     doc.text(title, marginLeft, 40);
+//     doc.autoTable(content);
+//     doc.save("report.pdf")
+    };
+    
 
   const onShowUnmatched=async()=>{
 
@@ -298,29 +510,11 @@ const ongetModeType = async (value) => {
     )
     setUnmatchedReport(dataAll);
     setUnmatched(true);
+    setExportOpt(true);
   }
   }
-  const { RangePicker } = DatePicker;
-
-  const dateFormat = 'DD/MM/YYYY';
-  const monthFormat = 'MM/YYYY';
-
-  const onChangeHandler = event => {     
-    setStateFile(event.target.files) 
-}
-  const [componentSize, setComponentSize] = useState('small');
-
-  const onFormLayoutChange = ({ size }) => {
-    setComponentSize(size);
-  };
-  const tailLayout = {
-    wrapperCol: { offset: 10 },
-  };
-  const FormItem = Form.Item;
-
-  function onChange(checkedValues) {
-    console.log('checked = ', checkedValues);
-  }
+  
+ 
 
   const columns = [
     {
@@ -344,7 +538,18 @@ const ongetModeType = async (value) => {
       dataIndex: 'ReferenceNumber',
       key: 'ReferenceNumber',
       // render: (text, record) => <a href={'user/' + record.name}>{text}</a>
-      render: (text, record) => <a >{text}</a>
+      render: (text,record,index) => <a onClick = {
+        (e) => {
+          console.log("corresponding email is :", record.TerminalId)
+          console.log("corresponding email is :", record.ReferenceNumber)
+          console.log("corresponding email is :", clientid)
+          setTerminalId(record.TerminalId);
+          setRefNumber(record.ReferenceNumber);   
+          const termid= record.TerminalId;
+          const refid= record.ReferenceNumber;
+          onRefReport(refid,termid);
+        }
+      }  /*() => setVisible(true)}*/ >{text}</a>
     },
     {
       title: 'Card Number',
@@ -388,7 +593,164 @@ const ongetModeType = async (value) => {
     }
   ];
 
- 
+
+  const ejcolumns = [
+    {
+      title: 'TerminalId',
+      dataIndex: 'TerminalId',
+      key: 'TerminalId',
+      // render: text => <a>{text}</a>,
+    },
+    {
+      title: 'TxnsDateTime',
+      dataIndex: 'TxnsDateTime',
+      key: 'TxnsDateTime',
+    },
+    {
+      title: 'CardNumber',
+      dataIndex: 'CardNumber',
+      key: 'CardNumber',
+    },
+    {
+      title: 'ReferenceNumber',
+      dataIndex: 'ReferenceNumber',
+      key: 'ReferenceNumber',
+    },
+    {
+      title: 'TxnsAmount',
+      dataIndex: 'TxnsAmount',
+      key: 'TxnsAmount',
+    },
+    {
+      title: 'ResponseCode',
+      dataIndex: 'ResponseCode',
+      key: 'ResponseCode',
+    },    
+    {
+      title: 'ej status',
+      dataIndex: 'ejstatus',
+      key: 'ejstatus',
+    }
+  ];
+
+  const swcolumns = [
+    {
+      title: 'TerminalId',
+      dataIndex: 'TerminalId',
+      key: 'TerminalId',
+      // render: text => <a>{text}</a>,
+    },
+    {
+      title: 'TxnsDateTime',
+      dataIndex: 'TxnsDateTime',
+      key: 'TxnsDateTime',
+    },
+    {
+      title: 'CardNumber',
+      dataIndex: 'CardNumber',
+      key: 'CardNumber',
+    },
+    {
+      title: 'ReferenceNumber',
+      dataIndex: 'ReferenceNumber',
+      key: 'ReferenceNumber',
+    },
+    {
+      title: 'TxnsAmount',
+      dataIndex: 'TxnsAmount',
+      key: 'TxnsAmount',
+    },
+    {
+      title: 'ResponseCode',
+      dataIndex: 'ResponseCode',
+      key: 'ResponseCode',
+    },    
+    {
+      title: 'ReversalFlag',
+      dataIndex: 'ReversalFlag',
+      key: 'ReversalFlag',
+    }
+  ];
+
+
+  const nwcolumns = [
+    {
+      title: 'TerminalId',
+      dataIndex: 'TerminalId',
+      key: 'TerminalId',
+      // render: text => <a>{text}</a>,
+    },
+    {
+      title: 'TxnsDateTime',
+      dataIndex: 'TxnsDateTime',
+      key: 'TxnsDateTime',
+    },
+    {
+      title: 'CardNumber',
+      dataIndex: 'CardNumber',
+      key: 'CardNumber',
+    },
+    {
+      title: 'ReferenceNumber',
+      dataIndex: 'ReferenceNumber',
+      key: 'ReferenceNumber',
+    },
+    {
+      title: 'TxnsAmount',
+      dataIndex: 'TxnsAmount',
+      key: 'TxnsAmount',
+    },
+    {
+      title: 'ResponseCode',
+      dataIndex: 'ResponseCode',
+      key: 'ResponseCode',
+    },    
+    {
+      title: 'ReversalFlag',
+      dataIndex: 'ReversalFlag',
+      key: 'ReversalFlag',
+    }
+  ];
+
+  const glcolumns = [
+    {
+      title: 'TerminalId',
+      dataIndex: 'TerminalId',
+      key: 'TerminalId',
+      // render: text => <a>{text}</a>,
+    },
+    {
+      title: 'TxnsDateTime',
+      dataIndex: 'TxnsDateTime',
+      key: 'TxnsDateTime',
+    },
+    {
+      title: 'CardNumber',
+      dataIndex: 'CardNumber',
+      key: 'CardNumber',
+    },
+    {
+      title: 'ReferenceNumber',
+      dataIndex: 'ReferenceNumber',
+      key: 'ReferenceNumber',
+    },
+    {
+      title: 'TxnsAmount',
+      dataIndex: 'TxnsAmount',
+      key: 'TxnsAmount',
+    },
+    {
+      title: 'ResponseCode',
+      dataIndex: 'ResponseCode',
+      key: 'ResponseCode',
+    },    
+    {
+      title: 'ReversalFlag',
+      dataIndex: 'ReversalFlag',
+      key: 'ReversalFlag',
+    }
+  ];
+
   return (
 
 <Layout>
@@ -466,9 +828,8 @@ const ongetModeType = async (value) => {
                  
                   <Input type={"date"}></Input>
                   {/* <DatePicker format={dateFormat} style={{width: 320}}  /> */}
-                  
+
                   </Form.Item>
-                
                   </Col>
                 </Row>               
                 <Row  gutter={8}>  
@@ -476,13 +837,32 @@ const ongetModeType = async (value) => {
                      <Button type={"primary"} size={"large"} style={{width:'100px'}} onClick={onShowUnmatched}>Show</Button>   
                     
                      {/* <Button style={{margin: '0 18px'}} shape="circle-outline" onClick={downloadExcel}  icon={ <FileExcelOutlined size={"large"}style={{background:'green'}}/>}   size={"large"}/> */}
+                   
                      <a style={{margin: '0 18px'}}><Avatar  shape ="square"  size="large" src="./export-to-excel.png" onClick={downloadExcel}/></a>
-                     <a style={{margin: '0 2px'}}><Avatar  shape ="square"  size="large" src="./pdf.png" onClick={downloadExcel}/></a>
+                     <a style={{margin: '0 2px'}}><Avatar  shape ="square"  size="large" src="./pdf.png" onClick={downloadPDF}/></a>
+
                      {spinLoad?(<Spin style={{ margin: '0 38px', color: 'black' }} size="large" />):("") }         
                   </Form.Item>           
                 </Row>
               </Form>
-              {unmatchedtbl?(<Table columns={columns} dataSource={dispenseSummaryReoprttbldata}/>):("")}
+              {unmatchedtbl?(<Table columns={columns} dataSource={dispenseSummaryReoprttbldata} bordered/>):("")}
+              <Modal
+                  title="Transaction ID Details"
+                  centered
+                  visible={visible}
+                  onOk={() => setVisible(false)}
+                  onCancel={() => setVisible(false)}
+                  width={1500}
+                >
+                  <b><p style={{textAlign:"center", backgroundColor:"#87e8de"} } size="large">EJ DETAILS</p></b>
+                  <Table style={{backgroundColor:'blue'}} columns={ejcolumns} dataSource={ejdetailstbl} pagination={false} bordered></Table>
+                  <b><p style={{textAlign:"center",backgroundColor:"#87e8de"} } size="large">SW DETAILS</p></b>
+                  <Table columns={swcolumns} dataSource={swdetailstbl} pagination={false}  bordered></Table>
+                  <b><p style={{textAlign:"center",backgroundColor:"#87e8de"} } size="large">NW DETAILS</p></b> 
+                  <Table columns={nwcolumns} dataSource={nwDetailstbl} pagination={false}  bordered></Table>
+                   <b><p style={{textAlign:"center",backgroundColor:"#87e8de"} } size="large">GL DETAILS</p></b>
+                  <Table columns={glcolumns} dataSource={glDetailstbl} pagination={false} bordered></Table> 
+              </Modal>
             </Card>
           </Content>
         </Layout>

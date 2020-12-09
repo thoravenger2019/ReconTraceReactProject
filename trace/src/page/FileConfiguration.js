@@ -896,7 +896,7 @@ const editSwitch = (record) => {
       contentType: 'application/json; charset=utf-8',
       dataType: 'json',
       url: "http://192.168.1.34:8080/Admin/api/getxmlfileformat",
-
+      //url: "http://localhost:8080/Admin/api/getxmlfileformat",
       data: JSON.stringify(xmlcls), // Note it is important
       success: function (result) {
        console.log(result);

@@ -51,11 +51,10 @@ const MenuSideBar = props => {
           //  console.log(menu);
             const data= menu.map((item, i) => _renderSubMenuItem(item) )
 //console.log("Menus",data);
-return data
+            return data
         }else{
             return "invalid"
         }
-
     }
 
     const onMemuSelect = (params) => {
