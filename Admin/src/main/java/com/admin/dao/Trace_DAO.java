@@ -143,7 +143,7 @@ public interface Trace_DAO {
 	 * public String importFile(MultipartFile file);
 	 */
 	public List<JSONObject> getFileFormatHistory(String p_VendorType, String p_ClientID, String p_ChannelID,
-			String p_ModeID, String p_VendorID);
+			String p_ModeID, String p_VendorID, String filePrefix);
 
 	public List<JSONObject> getfileformat(String p_VENDORID, String p_CLIENTID, String p_FILEPREFIX, String p_FILEEXT,
 			String p_SEPARATORTYPE, String p_MODEID, String p_CHANNELID);
@@ -183,8 +183,7 @@ public interface Trace_DAO {
 
 	public List<JSONObject> importPosSettlementSummaryReportFiles(MultipartFile pos, String clientid, String createdby);
 
-	public List<JSONObject> importEJFileData(MultipartFile ej, String clientid, String createdby, String fileTypeName)
-			throws ParseException;
+	public int[] importEJFileData(MultipartFile ej, String clientid, String createdby, String fileTypeName);
 
 	public int[] importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby,
 			String fileTypeName);
@@ -202,7 +201,7 @@ public interface Trace_DAO {
 			String acquirer_settlement_processing_fee, String transaction_Acquirer_Conversion_Rate, String forceMatch,
 			String clientid, String cycle, String fileDate, String createdby) throws ParseException;
 
-	public Boolean ntsAtmFile(String description, double noOftxn, double credit, double debit, MultipartFile file,
+	public Boolean ntsAtmFile(String description, String noOftxn, String credit, String debit, String remark, MultipartFile file,
 			String date, String clientid, String createdby);
 
 //	public List<JSONObject> getchannelmodeinfo(String clientid);
@@ -299,5 +298,9 @@ public interface Trace_DAO {
 
 	public List<JSONObject> nwtxndetails(String referencenumber, String terminalid, String channel, String mode,
 			String clientid);
+
+	public List<JSONObject> ejtxndetails(String referencenumber, String terminalid, String clientid);
+
+	public List<JSONObject> getcbsswitchformatfileinxml(String clientid, String fileTypeName, String string);
 
 }

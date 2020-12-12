@@ -2059,19 +2059,21 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 	@Override
 	public List<JSONObject> getFileFormatHistory(String p_VendorType, String p_ClientID, String p_ChannelID,
-			String p_ModeID, String p_VendorID) {
+			String p_ModeID, String p_VendorID, String filePrefix) {
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("spGetFileFormatHistory1");
 		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(2, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(3, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(4, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(5, Integer.class, ParameterMode.IN);
-		query.registerStoredProcedureParameter(6, String.class, ParameterMode.REF_CURSOR);
+		query.registerStoredProcedureParameter(6, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(7, String.class, ParameterMode.REF_CURSOR);
 		query.setParameter(1, p_VendorType);
 		query.setParameter(2, Integer.parseInt(p_ClientID));
 		query.setParameter(3, Integer.parseInt(p_ChannelID));
 		query.setParameter(4, Integer.parseInt(p_ModeID));
 		query.setParameter(5, Integer.parseInt(p_VendorID));
+		query.setParameter(6, filePrefix);
 		query.execute();
 		List<Object[]> result = query.getResultList();
 		String tempStr = result.toString();
@@ -3348,9 +3350,9 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	}
 
 	@Override
-	public List<JSONObject> importEJFileData(MultipartFile ej, String clientid, String createdby, String fileTypeName)
-			throws ParseException {
-		System.out.println("suyog");
+	public int[] importEJFileData(MultipartFile ej, String clientid, String createdby, String fileTypeName) {
+		int[] arr = new int[3];
+		int count = 0, totalContent = 0;
 		String EjFileName = ej.getOriginalFilename();
 		String extFile = FilenameUtils.getExtension(EjFileName);
 		List<String> content = null;
@@ -3421,9 +3423,35 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 			String ErrorCode = null, TransSeqNo = null, Opcode = null, FunctionId = null, ResponseCodeRaw = null,
 					Denomination = null, RemainCount = null, RejectCount = null, Cassette1 = null, Cassette2 = null,
-					Cassette3 = null, Cassette4 = null, DispenseCount = null;
+					Cassette3 = null, Cassette4 = null, DispenseCount = null, ejErrorCode = null;
 
 			Boolean ejStatus = false;
+			for (int i = 0; i < content.size(); i++) {
+				Boolean rowContinueItr = false;
+				startIndex1 = GetIndex(content, i, "ATM ID");
+				endIndex1 = GetIndex(content, i, "------------------------------------");
+
+				startIndex = GetIndex(content, i, "TRANSACTION START");
+				endIndex = GetIndex(content, i, "TRANSACTION END");
+
+				if (startIndex > -1) {
+					a = startIndex;
+				}
+				if (endIndex > -1) {
+					b = endIndex;
+				}
+				if (a != -1 && b != -1) {
+					for (int k = a; k <= b; k++) {
+						rowContinueItr = true;
+					}
+					i = b;
+					a = -1;
+					b = -1;
+				}
+				if (rowContinueItr == true) {
+					count++;
+				}
+			}
 			for (int i = 0; i < content.size(); i++) {
 				startIndex1 = GetIndex(content, i, "ATM ID");
 				endIndex1 = GetIndex(content, i, "------------------------------------");
@@ -3538,6 +3566,13 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							Cassette2 = Notes[1];
 							Cassette3 = Notes[2];
 							Cassette4 = Notes[3];
+						}
+						if (contentData.contains("2*E") && contentData.contains("M-18")
+								|| contentData.contains("2*E") && contentData.contains("M-14")
+								|| contentData.contains("2*E") && contentData.contains("1*3")
+								|| contentData.contains("D*9") && contentData.contains("M-84")
+								|| contentData.contains("D*9") && contentData.contains("M-81")) {
+							ejErrorCode = contentData;
 						}
 
 					}
@@ -4105,6 +4140,44 @@ public class Trace_DAO_Imp implements Trace_DAO {
 					if (CardNumber != "") {
 						E_CardNumber = CardNumber;
 					}
+
+					System.out.println("ejErrorCode" + ejErrorCode);
+					if (ejErrorCode != null) {
+						if (ejErrorCode.contains("2*E") && ejErrorCode.contains("M-18")
+								|| ejErrorCode.contains("2*E") && ejErrorCode.contains("M-14")
+								|| ejErrorCode.contains("2*E") && ejErrorCode.contains("1*3")
+								|| ejErrorCode.contains("D*9") && ejErrorCode.contains("M-84")
+								|| ejErrorCode.contains("D*9") && ejErrorCode.contains("M-81")
+								|| ejErrorCode.contains("POWER")) {
+							ReserveField2 = ejErrorCode + " " + "Suspect";
+							ReserveField1 = "Suspect";
+						} else if (ejErrorCode.contains("M-00") && TxnsType == "") {
+							ReserveField2 = ejErrorCode + " " + "Successful";
+							ReserveField1 = "Successful";
+						}
+
+						if (ejErrorCode.trim() == "") {
+							if (!ejErrorCode.contains("M-00")) {
+								if (ejErrorCode.trim() == "") {
+									ErrorCode = ejErrorCode + " " + "Suspect";
+								} else {
+									ErrorCode = ejErrorCode + " " + "Suspect";
+								}
+								ReserveField1 = "Suspect";
+								ReserveField2 = ErrorCode;
+							} else if (!ErrorCode.contains("M-00")
+									&& (ejErrorCode.contains("2*E") && ejErrorCode.contains("M-18")
+											|| ejErrorCode.contains("2*E") && ejErrorCode.contains("M-14")
+											|| ejErrorCode.contains("2*E") && ejErrorCode.contains("1*3")
+											|| ejErrorCode.contains("D*9") && ejErrorCode.contains("M-84")
+											|| ejErrorCode.contains("D*9") && ejErrorCode.contains("M-81")
+											|| ejErrorCode.contains("E*2") && ejErrorCode.contains("M-03")
+											|| ejErrorCode.contains("E*2") || ejErrorCode.contains("M-"))) {
+								ErrorCode = ejErrorCode;
+								ReserveField2 = ErrorCode;
+							}
+						}
+					}
 					stmt.setString(1, clientid);
 					stmt.setString(2, ChannelID);
 					stmt.setString(3, ModeID);
@@ -4183,26 +4256,36 @@ public class Trace_DAO_Imp implements Trace_DAO {
 					ejStatus = true;
 
 //					}
-
 				}
 			}
-
-			if (ejStatus == true) {
-				obj1.put("EJFILESTATUS", "EJ_FILE_UPLOADED");
-				importFileEJStatus.add(obj1);
-				return importFileEJStatus;
+			System.out.println("incr" + incr);
+			System.out.println("count" + count);
+			if (ejStatus == true || incr == count) {
+//				obj1.put("EJFILESTATUS", "EJ_FILE_UPLOADED");
+//				importFileEJStatus.add(obj1);
+//				return importFileEJStatus;
+				arr[0] = incr;
+				arr[1] = 1;
+				arr[2] = count;
+				return arr;
 			} else {
-				obj1.put("EJFILESTATUS", "EJ_FILE_INTRRRUPTED");
-				importFileEJStatus.add(obj1);
-				return importFileEJStatus;
+//				obj1.put("EJFILESTATUS", "EJ_FILE_INTRRRUPTED");
+//				importFileEJStatus.add(obj1);
+//				return importFileEJStatus;
+				arr[0] = incr;
+				arr[1] = 2;
+				arr[2] = count;
+				return arr;
 			}
 
 		} catch (Exception e) {
-
-			obj1.put("EJFILESTATUS", e.toString());
-			importFileEJStatus.add(obj1);
-			return importFileEJStatus;
-
+//			obj1.put("EJFILESTATUS", e.toString());
+//			importFileEJStatus.add(obj1);
+//			return importFileEJStatus;
+			arr[0] = 0;
+			arr[1] = 2;
+			arr[2] = count;
+			return arr;
 		}
 	}
 
@@ -4241,6 +4324,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 					fileTypeName, "." + extFile);
 			System.out.println("cbsfileformatxml====" + cbsfileformatxml.toString());
 			System.out.println("cbsIdentificationfileformatxml====" + cbsIdentificationfileformatxml.toString());
+
 			JSONObject xmlFormatDescription = cbsfileformatxml.get(0);
 			String tempStr = xmlFormatDescription.get("FormatDescriptionXml").toString();
 			System.out.println("tempStr:" + tempStr);
@@ -6793,12 +6877,9 @@ public class Trace_DAO_Imp implements Trace_DAO {
 				} else if (isRowEmpty == true) {
 					incr++;
 					switchStatus = true;
-				}
-				else if(temprow.getCell(0).toString().contains("© Copyright"))
-				{
+				} else if (temprow.getCell(0).toString().contains("© Copyright")) {
 					break;
-				}
-				else {
+				} else {
 					if (jsonObj.getJSONArray("ATMAccountNo").getString(0).equals("0")) {
 					} else {
 						if (temprow.getCell(
@@ -7928,7 +8009,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			}
 			int justCheck = 0;
 			System.out.println("switchstatus" + switchStatus);
-			if (switchStatus == true || incr== sheet.getPhysicalNumberOfRows()) {
+			if (switchStatus == true || incr == sheet.getPhysicalNumberOfRows()) {
 
 				arr[0] = incr;
 				arr[1] = 1;
@@ -8026,11 +8107,11 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	}
 
 	@Override
-	public Boolean ntsAtmFile(String description, double noOftxn, double credit, double debit, MultipartFile file,
-			String date, String clientid, String createdby) {
+	public Boolean ntsAtmFile(String description, String noOftxn, String credit, String debit, String remark,
+			MultipartFile file, String date, String clientid, String createdby) {
 		String fileName = file.getOriginalFilename();
 		String cycle = fileName.substring(fileName.length() - 6, fileName.length() - 4);
-		String remarks = "NA";
+//		String remarks = "NA";
 		Boolean statusFromDB = false;
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("SPIMPORTNPCIATMSETTLEMENT");
 
@@ -8049,10 +8130,10 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query.setParameter(1, date);
 		query.setParameter(2, cycle);
 		query.setParameter(3, description);
-		query.setParameter(4, String.valueOf(noOftxn));
-		query.setParameter(5, String.valueOf(debit));
-		query.setParameter(6, String.valueOf(credit));
-		query.setParameter(7, remarks);
+		query.setParameter(4, noOftxn);
+		query.setParameter(5, debit);
+		query.setParameter(6, credit);
+		query.setParameter(7, remark);
 		query.setParameter(8, clientid);
 		query.setParameter(9, fileName);
 		query.setParameter(10, createdby);
@@ -9469,6 +9550,36 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			obj.put("TxnsAmount", fields[4]);
 			obj.put("ResponseCode", fields[5]);
 			obj.put("ReversalFlag", fields[6]);
+			JSONObjects.add(obj);
+		}
+		return JSONObjects;
+	}
+
+	@Override
+	public List<JSONObject> ejtxndetails(String referencenumber, String terminalid, String clientid) {
+		// TODO Auto-generated method stub
+		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("SPEJTXNDETAILS");
+		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(4, String.class, ParameterMode.REF_CURSOR);
+		query.setParameter(1, referencenumber);
+		query.setParameter(2, terminalid);
+		query.setParameter(3, clientid);
+		query.execute();
+		List<Object[]> result = query.getResultList();
+		System.out.println("result:" + result.toString());
+		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
+		for (Object record : result) {
+			Object[] fields = (Object[]) record;
+			JSONObject obj = new JSONObject();
+			obj.put("TerminalId", fields[0]);
+			obj.put("TxnsDateTime", fields[1]);
+			obj.put("CardNumber", fields[2]);
+			obj.put("ReferenceNumber", fields[3]);
+			obj.put("TxnsAmount", fields[4]);
+			obj.put("ResponseCode", fields[5]);
+			obj.put("ejstatus", fields[6]);
 			JSONObjects.add(obj);
 		}
 		return JSONObjects;
