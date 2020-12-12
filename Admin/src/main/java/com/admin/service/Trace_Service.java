@@ -1,17 +1,13 @@
 package com.admin.service;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.json.simple.JSONObject;
 import org.springframework.web.multipart.MultipartFile;
-import org.xml.sax.SAXException;
 
 import com.admin.model.User;
 

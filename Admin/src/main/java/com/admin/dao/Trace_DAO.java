@@ -1,17 +1,12 @@
 package com.admin.dao;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import com.admin.model.NpciAcqModel;
 import com.admin.model.User;
