@@ -3452,7 +3452,9 @@ public class Trace_DAO_Imp implements Trace_DAO {
 					count++;
 				}
 			}
+			String resultBeforeTxnStart = null, contentDataBeforeTxnStart = null;
 			for (int i = 0; i < content.size(); i++) {
+				contentDataBeforeTxnStart = content.get(i);
 				startIndex1 = GetIndex(content, i, "ATM ID");
 				endIndex1 = GetIndex(content, i, "------------------------------------");
 
@@ -3465,7 +3467,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 				if (endIndex > -1) {
 					b = endIndex;
 				}
-
+				resultBeforeTxnStart = contentDataBeforeTxnStart;
 				if (a != -1 && b != -1) {
 					ejStatus = false;
 					for (int k = a; k <= b; k++) {
@@ -3571,7 +3573,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 								|| contentData.contains("2*E") && contentData.contains("M-14")
 								|| contentData.contains("2*E") && contentData.contains("1*3")
 								|| contentData.contains("D*9") && contentData.contains("M-84")
-								|| contentData.contains("D*9") && contentData.contains("M-81")) {
+								|| contentData.contains("D*9") && contentData.contains("M-81")
+								|| resultBeforeTxnStart.contains("POWER")) {
 							ejErrorCode = contentData;
 						}
 
@@ -4148,7 +4151,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 								|| ejErrorCode.contains("2*E") && ejErrorCode.contains("1*3")
 								|| ejErrorCode.contains("D*9") && ejErrorCode.contains("M-84")
 								|| ejErrorCode.contains("D*9") && ejErrorCode.contains("M-81")
-								|| ejErrorCode.contains("POWER")) {
+								|| resultBeforeTxnStart.contains("POWER")) {
 							ReserveField2 = ejErrorCode + " " + "Suspect";
 							ReserveField1 = "Suspect";
 						} else if (ejErrorCode.contains("M-00") && TxnsType == "") {
@@ -4157,23 +4160,29 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						}
 
 						if (ejErrorCode.trim() == "") {
-							if (!ejErrorCode.contains("M-00")) {
+							if (!ejErrorCode.contains("M-00") && resultBeforeTxnStart.contains("POWER")) {
 								if (ejErrorCode.trim() == "") {
-									ErrorCode = ejErrorCode + " " + "Suspect";
+									ErrorCode = resultBeforeTxnStart + " " + "Suspect";
 								} else {
 									ErrorCode = ejErrorCode + " " + "Suspect";
 								}
 								ReserveField1 = "Suspect";
 								ReserveField2 = ErrorCode;
 							} else if (!ErrorCode.contains("M-00")
-									&& (ejErrorCode.contains("2*E") && ejErrorCode.contains("M-18")
-											|| ejErrorCode.contains("2*E") && ejErrorCode.contains("M-14")
-											|| ejErrorCode.contains("2*E") && ejErrorCode.contains("1*3")
-											|| ejErrorCode.contains("D*9") && ejErrorCode.contains("M-84")
-											|| ejErrorCode.contains("D*9") && ejErrorCode.contains("M-81")
-											|| ejErrorCode.contains("E*2") && ejErrorCode.contains("M-03")
-											|| ejErrorCode.contains("E*2") || ejErrorCode.contains("M-"))) {
-								ErrorCode = ejErrorCode;
+									&& (resultBeforeTxnStart.contains("2*E") && resultBeforeTxnStart.contains("M-18")
+											|| resultBeforeTxnStart.contains("2*E")
+													&& resultBeforeTxnStart.contains("M-14")
+											|| resultBeforeTxnStart.contains("2*E")
+													&& resultBeforeTxnStart.contains("1*3")
+											|| resultBeforeTxnStart.contains("D*9")
+													&& resultBeforeTxnStart.contains("M-84")
+											|| resultBeforeTxnStart.contains("D*9")
+													&& resultBeforeTxnStart.contains("M-81")
+											|| resultBeforeTxnStart.contains("E*2")
+													&& resultBeforeTxnStart.contains("M-03")
+											|| resultBeforeTxnStart.contains("E*2")
+											|| resultBeforeTxnStart.contains("M-"))) {
+								ErrorCode = resultBeforeTxnStart;
 								ReserveField2 = ErrorCode;
 							}
 						}
