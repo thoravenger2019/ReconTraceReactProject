@@ -178,7 +178,7 @@ public interface Trace_DAO {
 
 	public List<JSONObject> importPosSettlementSummaryReportFiles(MultipartFile pos, String clientid, String createdby);
 
-	public int[] importEJFileData(MultipartFile ej, String clientid, String createdby, String fileTypeName);
+	public int[] importEJFileDataNCR(MultipartFile ej, String clientid, String createdby, String fileTypeName);
 
 	public int[] importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby,
 			String fileTypeName);
@@ -297,5 +297,11 @@ public interface Trace_DAO {
 	public List<JSONObject> ejtxndetails(String referencenumber, String terminalid, String clientid);
 
 	public List<JSONObject> getcbsswitchformatfileinxml(String clientid, String fileTypeName, String string);
+
+	public List<JSONObject> getcbsswitchejIdentificationfileformatxml(String clientid, String fileTypeName, String ext);
+
+	public List<JSONObject> getvendorname(String vendorid);
+
+	public int[] importEJFileDataDIEBOLD(MultipartFile ej, String clientid, String createdby, String fileTypeName);
 
 }

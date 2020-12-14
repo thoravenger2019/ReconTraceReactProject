@@ -1373,9 +1373,7 @@ public class Trace_Service_Imp implements Trace_Service {
 					count++;
 					if (fileUploadingStatus1 == true) {
 						fileUploadingStatus = true;
-					}
-					else
-					{
+					} else {
 						fileUploadingStatus = false;
 					}
 				}
@@ -1387,7 +1385,7 @@ public class Trace_Service_Imp implements Trace_Service {
 				arr[2] = totalContent;
 				return arr;
 			} else {
-				System.out.println(count+ " "+ totalContent);
+				System.out.println(count + " " + totalContent);
 				arr[0] = count;
 				arr[1] = 2;
 				arr[2] = totalContent;
@@ -1443,7 +1441,7 @@ public class Trace_Service_Imp implements Trace_Service {
 		forTitle = (HSSFRow) sheet.getRow(dec2 - 2);
 		String titleString = forTitle.getCell(0).getStringCellValue();
 		String date = titleString.substring(titleString.length() - 10);
-		System.out.println("jsonObj"+jsonObj.toString());
+		System.out.println("jsonObj" + jsonObj.toString());
 		for (int i = dec2 + 1; i < setAmt + 1; i++) {
 			tempRow = (HSSFRow) sheet.getRow(i);
 
@@ -1463,9 +1461,8 @@ public class Trace_Service_Imp implements Trace_Service {
 				} else {
 					noOftxn = tempRow.getCell(Integer.parseInt(jsonObj.getJSONArray("NoTxns").getString(0)) - 1)
 							.toString();
-					if(noOftxn == null)
-					{
-						noOftxn="0";
+					if (noOftxn == null) {
+						noOftxn = "0";
 					}
 				}
 			}
@@ -1476,9 +1473,8 @@ public class Trace_Service_Imp implements Trace_Service {
 				} else {
 					debit = tempRow.getCell(Integer.parseInt(jsonObj.getJSONArray("Debit").getString(0)) - 1)
 							.toString();
-					if(debit ==null)
-					{
-						debit="0";
+					if (debit == null) {
+						debit = "0";
 					}
 				}
 			}
@@ -1489,9 +1485,8 @@ public class Trace_Service_Imp implements Trace_Service {
 				} else {
 					credit = tempRow.getCell(Integer.parseInt(jsonObj.getJSONArray("Credit").getString(0)) - 1)
 							.toString();
-					if(credit== null)
-					{
-						credit="0";
+					if (credit == null) {
+						credit = "0";
 					}
 				}
 			}
@@ -1502,9 +1497,8 @@ public class Trace_Service_Imp implements Trace_Service {
 				} else {
 					remark = tempRow.getCell(Integer.parseInt(jsonObj.getJSONArray("Remarks").getString(0)) - 1)
 							.toString();
-					if(remark == null)
-					{
-						remark="0";
+					if (remark == null) {
+						remark = "0";
 					}
 				}
 			}
@@ -1787,7 +1781,29 @@ public class Trace_Service_Imp implements Trace_Service {
 	@Override
 	public int[] importEJFileData(MultipartFile ej, String clientid, String createdby, String fileTypeName) {
 
-		return traceDao.importEJFileData(ej, clientid, createdby, fileTypeName);
+		String ext = "." + FilenameUtils.getExtension(ej.getOriginalFilename());
+		List<JSONObject> getvendorid = traceDao.getcbsswitchejIdentificationfileformatxml(clientid, fileTypeName, ext);
+//		System.out.println("gevendorid"+getvendorid.toString());
+		JSONObject getvendoridjson=getvendorid.get(0);
+		String vendorid=getvendoridjson.get("VendorID").toString();
+		
+		List<JSONObject> getvendorname = traceDao.getvendorname(vendorid);
+		JSONObject getvendornamejson=getvendorname.get(0);
+		String vendorname = getvendornamejson.get("vendorname").toString();
+		System.out.println("vendorname"+vendorname);
+		System.out.println("vendorid"+vendorid);
+		if (vendorname != null) {
+			if (vendorname.equalsIgnoreCase("NCR")) {
+				return traceDao.importEJFileDataNCR(ej, clientid, createdby, fileTypeName);
+			} else if (vendorname.equalsIgnoreCase("DIEBOLD")) {
+				return traceDao.importEJFileDataDIEBOLD(ej, clientid, createdby, fileTypeName);
+			} else if (vendorname.equalsIgnoreCase("VERTEX")) {
+
+			}
+		} else {
+			return null;
+		}
+		return null;
 	}
 
 	@Override

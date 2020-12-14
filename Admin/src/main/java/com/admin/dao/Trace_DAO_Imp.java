@@ -3350,7 +3350,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	}
 
 	@Override
-	public int[] importEJFileData(MultipartFile ej, String clientid, String createdby, String fileTypeName) {
+	public int[] importEJFileDataNCR(MultipartFile ej, String clientid, String createdby, String fileTypeName) {
 		int[] arr = new int[3];
 		int count = 0, totalContent = 0;
 		String EjFileName = ej.getOriginalFilename();
@@ -8043,7 +8043,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		return arr;
 	}
 
-	private List<JSONObject> getcbsswitchejIdentificationfileformatxml(String clientid, String fileTypeName,
+	@Override
+	public List<JSONObject> getcbsswitchejIdentificationfileformatxml(String clientid, String fileTypeName,
 			String extFile) {
 		// TODO Auto-generated method stub
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("SPTESTFIELDDATA");
@@ -9592,5 +9593,42 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			JSONObjects.add(obj);
 		}
 		return JSONObjects;
+	}
+
+	@Override
+	public List<JSONObject> getvendorname(String vendorid) {
+		// TODO Auto-generated method stub
+		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("SPGETVENDORNAME");
+		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(2, String.class, ParameterMode.REF_CURSOR);
+		query.setParameter(1, vendorid);
+		query.execute();
+		List<Object[]> result = query.getResultList();
+		System.out.println("result:" + result.toString());
+		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
+		for (Object record : result) {
+			Object[] fields = (Object[]) record;
+			JSONObject obj = new JSONObject();
+			obj.put("vendorid", fields[0]);
+			obj.put("vendorname", fields[1]);
+			JSONObjects.add(obj);
+		}
+		return JSONObjects;
+	}
+
+	@Override
+	public int[] importEJFileDataDIEBOLD(MultipartFile ej, String clientid, String createdby, String fileTypeName) {
+		int[] arr = new int[3];
+		int count = 0, totalContent = 0;
+		String EjFileName = ej.getOriginalFilename();
+		String extFile = FilenameUtils.getExtension(EjFileName);
+		List<String> content = null;
+		String contentData = null;
+		List<JSONObject> importFileEJStatus = new ArrayList<JSONObject>();
+		JSONObject obj1 = new JSONObject();
+		List<JSONObject> cbsIdentificationfileformatxml = getcbsswitchejIdentificationfileformatxml(clientid,
+				fileTypeName, "." + extFile);
+		System.out.println(cbsIdentificationfileformatxml);
+		return null;
 	}
 }
