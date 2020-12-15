@@ -4,11 +4,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -589,12 +587,13 @@ public class Controller {
 		return getbranchname;
 	}
 
-	@GetMapping("getFileFormatHistory/{p_VendorType}/{p_ClientID}/{p_ChannelID}/{p_ModeID}/{p_VendorID}")
+	@GetMapping("getFileFormatHistory/{p_VendorType}/{p_ClientID}/{p_ChannelID}/{p_ModeID}/{p_VendorID}/{filePrefix}")
 	public List<JSONObject> getFileFormatHistory(@PathVariable("p_VendorType") String p_VendorType,
 			@PathVariable("p_ClientID") String p_ClientID, @PathVariable("p_ChannelID") String p_ChannelID,
-			@PathVariable("p_ModeID") String p_ModeID, @PathVariable("p_VendorID") String p_VendorID) throws Exception {
+			@PathVariable("p_ModeID") String p_ModeID, @PathVariable("p_VendorID") String p_VendorID,
+			@PathVariable("filePrefix") String filePrefix) throws Exception {
 		List<JSONObject> getFileFormatHistory = traceService.getFileFormatHistory(p_VendorType, p_ClientID, p_ChannelID,
-				p_ModeID, p_VendorID);
+				p_ModeID, p_VendorID,filePrefix);
 
 		System.out.println("getFileFormatHistory:  " + getFileFormatHistory);
 		String statusInstr = "";
@@ -842,16 +841,66 @@ public class Controller {
 //			String concatVendorTypeMode=p_VendorType+p_ModeID;
 //			hm.put(concatVendorTypeMode, JSONObjects);
 			return JSONObjects;
+		} else if (statusInstr.equals("[not exist]") && p_VendorType.equalsIgnoreCase("NETWORK")
+				&& p_ModeID.equalsIgnoreCase("0")) {
+			String line = "", str = "";
+			StringBuffer result = new StringBuffer();
+			String link = "C:\\Users\\suyog.mate.MAXIMUS\\git\\SpringReactProject\\Admin\\src\\main\\xmlFiles\\ntsl.xml";
+			BufferedReader br = new BufferedReader(new FileReader(link));
+			while ((line = br.readLine()) != null) {
+				result.append(line.trim());
+			}
+			str = result.toString();
+//	        Map<String, List<JSONObject>> hm=new HashMap<>();
+			System.out.println("str:  " + str);
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document doc = db.parse(new InputSource(new StringReader(str)));
+			doc.getDocumentElement().normalize();
+			NodeList nodeList = doc.getDocumentElement().getChildNodes();
+			List<JSONObject> JSONObjects = new ArrayList<JSONObject>(nodeList.getLength());
+
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				JSONObject obj = new JSONObject();
+				String nodeName = nodeList.item(i).getNodeName();
+				Node childNode = nodeList.item(i);
+				NodeList childNodeList = childNode.getChildNodes();
+
+				String index = childNodeList.item(0).getNodeValue();
+//				System.out.println("startPos: "+startPos);
+//				Node startPosNode = childNodeList.item(0);
+
+//				NodeList startPosNodeValue = startPosNode.getChildNodes();
+//				String IndexPosition = startPosNodeValue.item(0).getNodeValue();
+
+//				String index = childNodeList.item(1).getNodeName();
+//				Node lengthNode = childNodeList.item(1);
+//				NodeList lengthNodeValue = lengthNode.getChildNodes();
+//				String lengthNodeValueNode = lengthNodeValue.item(0).getNodeValue();
+
+				obj.put("NodeName", nodeName);
+				obj.put("indexPosition", index);
+
+				System.out.println("NodeName:  " + nodeName);
+				System.out.println("indexPosition:  " + index);
+//				System.out.println("LengthNodeValueNode:  " + lengthNodeValueNode);
+				JSONObjects.add(obj);
+			}
+//			String concatVendorTypeMode=p_VendorType+p_ModeID;
+//			hm.put(concatVendorTypeMode, JSONObjects);
+			return JSONObjects;
+
 		} else {
 			JSONObject xmlFormatDescription = getFileFormatHistory.get(0);
 //			Map<String, List<JSONObject>> hm=new HashMap<>();
-			if (p_VendorType.equalsIgnoreCase("NETWORK")) {
+			if (p_VendorType.equalsIgnoreCase("NETWORK") && (p_ModeID.equalsIgnoreCase("2") || p_ModeID.equalsIgnoreCase("3"))) {
 				List<JSONObject> xmlTojsonNETWORKList = xmlTojsonNETWORK(
 						xmlFormatDescription.get("FormatDescriptionXml"));
 				return xmlTojsonNETWORKList;
 			}
 			if (p_VendorType.equalsIgnoreCase("CBS") || p_VendorType.equalsIgnoreCase("Switch")
-					|| p_VendorType.equalsIgnoreCase("EJ")) {
+					|| p_VendorType.equalsIgnoreCase("EJ") || 
+					(p_VendorType.equalsIgnoreCase("NETWORK") && p_ModeID.equalsIgnoreCase("0"))) {
 				List<JSONObject> xmlTojsonCBS_Switch_EJList = xmlTojsonCBS_Switch_EJ(
 						xmlFormatDescription.get("FormatDescriptionXml"));
 				return xmlTojsonCBS_Switch_EJList;
@@ -902,8 +951,9 @@ public class Controller {
 		return joinedJsonList;
 	}
 
-	@PostMapping("importFileNpciATMFiles/{clientid}")
+	@PostMapping("importFileNpciATMFiles/{clientid}/{fileTypeName}")
 	public List<JSONObject> importFileNpciATMFiles(@PathVariable("clientid") String clientid,
+			@PathVariable("fileTypeName") String fileTypeName,
 			@RequestParam("npci") MultipartFile[] npci) throws Exception {
 		String createdby = username.getUsername();
 		int[] importFileNpciATMFiles = null;
@@ -912,7 +962,7 @@ public class Controller {
 		int fu = 0, fi = 0, c = 0, tc = 0, rc = 0;
 		System.out.println("npcilength" + npci.length);
 		for (int i = 0; i < npci.length; i++) {
-			importFileNpciATMFiles = traceService.importFileNpciATMFiles(npci[i], clientid, createdby);
+			importFileNpciATMFiles = traceService.importFileNpciATMFiles(npci[i], clientid, createdby,fileTypeName);
 			if (importFileNpciATMFiles[1] == 1) {
 				fu++;
 			} else if (importFileNpciATMFiles[1] == 2) {
@@ -957,11 +1007,39 @@ public class Controller {
 
 	@PostMapping("importEJFiledata/{clientid}/{fileTypeName}")
 	public List<JSONObject> importEJFileData(@PathVariable("clientid") String clientid,
-			@PathVariable("fileTypeName") String fileTypeName, @RequestParam("ej") MultipartFile ej)
+			@PathVariable("fileTypeName") String fileTypeName, @RequestParam("ej") MultipartFile[] ej)
 			throws ParseException {
 		String createdby = username.getUsername();
-		List<JSONObject> importEJFileData = traceService.importEJFileData(ej, clientid, createdby, fileTypeName);
-		return importEJFileData;
+		List<JSONObject> importFileEJFilesReport = new ArrayList<JSONObject>();
+		JSONObject obj1 = new JSONObject();
+		int[] importEJFileData = null;
+		int fu = 0, fi = 0, c = 0, tc = 0, rc = 0;
+		for (int i = 0; i < ej.length; i++) {
+			importEJFileData = traceService.importEJFileData(ej[i], clientid, createdby, fileTypeName);
+			if (importEJFileData[1] == 1) {
+				fu++;
+			} else if (importEJFileData[1] == 2) {
+				fi++;
+			}
+			if (importEJFileData[0] != -1) {
+				c = c + importEJFileData[0];
+			}
+			if (importEJFileData[2] != -1) {
+				tc = tc + importEJFileData[2];
+			}
+		}
+		System.out.println("tc" + tc);
+		if (c != tc) {
+			rc = tc - c;
+		}
+
+		obj1.put("NUMBER OF UPLOADED ROWS", c);
+		obj1.put("NUMBER OF FAILD ROWS", rc);
+		obj1.put("NUMBER OF UPLOADED FILES", fu);
+		obj1.put("NUMBER OF INTERRUPTED FILES", fi);
+		importFileEJFilesReport.add(obj1);
+
+		return importFileEJFilesReport;
 
 	}
 
@@ -1328,7 +1406,7 @@ public class Controller {
 				glstatus, ejstatus, nwstatus, swstatus, fromdatetxns, todatetxns, recontype, settlementtype, userid);
 		return getforcesettlementtxns;
 	}
-	
+
 	@GetMapping("serachbyrrn/{clientid}/{referencenumber}/{terminalid}/{fromdatetxn}/{todatetxn}")
 	public List<JSONObject> serachbyrrn(@PathVariable("clientid") String clientid,
 			@PathVariable("referencenumber") String referencenumber, @PathVariable("terminalid") String terminalid,
@@ -1336,12 +1414,11 @@ public class Controller {
 		if (terminalid.equalsIgnoreCase("undefined")) {
 			terminalid = "0";
 		}
-		List<JSONObject> serachbyrrn = traceService.serachbyrrn(clientid, referencenumber, terminalid,
-				fromdatetxn, todatetxn);
+		List<JSONObject> serachbyrrn = traceService.serachbyrrn(clientid, referencenumber, terminalid, fromdatetxn,
+				todatetxn);
 		return serachbyrrn;
 	}
-	
-	
+
 	@GetMapping("gltxndetails/{referencenumber}/{terminalid}/{clientid}")
 	public List<JSONObject> gltxndetails(@PathVariable("referencenumber") String referencenumber,
 			@PathVariable("terminalid") String terminalid, @PathVariable("clientid") String clientid) {
@@ -1351,6 +1428,7 @@ public class Controller {
 		List<JSONObject> gltxndetails = traceService.gltxndetails(referencenumber, terminalid, clientid);
 		return gltxndetails;
 	}
+
 	@GetMapping("swtxndetails/{referencenumber}/{terminalid}/{clientid}")
 	public List<JSONObject> swtxndetails(@PathVariable("referencenumber") String referencenumber,
 			@PathVariable("terminalid") String terminalid, @PathVariable("clientid") String clientid) {
@@ -1360,16 +1438,25 @@ public class Controller {
 		List<JSONObject> swtxndetails = traceService.swtxndetails(referencenumber, terminalid, clientid);
 		return swtxndetails;
 	}
-	@GetMapping("nwtxndetails/{referencenumber}/{terminalid}/{channel}/{mode}/{clientid}")
-	public List<JSONObject> nwtxndetails(@PathVariable("referencenumber") String referencenumber,
-			@PathVariable("terminalid") String terminalid, 
-			@PathVariable("channel") String channel,
-			@PathVariable("mode") String mode,
-			@PathVariable("clientid") String clientid) {
+
+	@GetMapping("ejtxndetails/{referencenumber}/{terminalid}/{clientid}")
+	public List<JSONObject> ejtxndetails(@PathVariable("referencenumber") String referencenumber,
+			@PathVariable("terminalid") String terminalid, @PathVariable("clientid") String clientid) {
 		if (terminalid.equalsIgnoreCase("undefined")) {
 			terminalid = "0";
 		}
-		List<JSONObject> nwtxndetails = traceService.nwtxndetails(referencenumber, terminalid,channel,mode, clientid);
+		List<JSONObject> ejtxndetails = traceService.ejtxndetails(referencenumber, terminalid, clientid);
+		return ejtxndetails;
+	}
+
+	@GetMapping("nwtxndetails/{referencenumber}/{terminalid}/{channel}/{mode}/{clientid}")
+	public List<JSONObject> nwtxndetails(@PathVariable("referencenumber") String referencenumber,
+			@PathVariable("terminalid") String terminalid, @PathVariable("channel") String channel,
+			@PathVariable("mode") String mode, @PathVariable("clientid") String clientid) {
+		if (terminalid.equalsIgnoreCase("undefined")) {
+			terminalid = "0";
+		}
+		List<JSONObject> nwtxndetails = traceService.nwtxndetails(referencenumber, terminalid, channel, mode, clientid);
 		return nwtxndetails;
 	}
 

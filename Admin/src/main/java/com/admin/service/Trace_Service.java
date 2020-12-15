@@ -1,17 +1,13 @@
 package com.admin.service;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.json.simple.JSONObject;
 import org.springframework.web.multipart.MultipartFile;
-import org.xml.sax.SAXException;
 
 import com.admin.model.User;
 
@@ -117,11 +113,11 @@ public interface Trace_Service {
 
 	// public List<JSONObject> importFile(MultipartFile file, String clientid,
 	// String createdby);
-	public int[] importFileNpciATMFiles(MultipartFile file, String clientid, String createdby)
+	public int[] importFileNpciATMFiles(MultipartFile file, String clientid, String createdby, String fileTypeName)
 			throws IOException, EncryptedDocumentException, InvalidFormatException, Exception;
 
 	public List<JSONObject> getFileFormatHistory(String p_VendorType, String p_ClientID, String p_ChannelID,
-			String p_ModeID, String p_VendorID);
+			String p_ModeID, String p_VendorID, String filePrefix);
 
 	public List<JSONObject> getfileformat(String p_VENDORID, String p_CLIENTID, String p_FILEPREFIX, String p_FILEEXT,
 			String p_SEPARATORTYPE, String p_MODEID, String p_CHANNELID);
@@ -130,8 +126,7 @@ public interface Trace_Service {
 
 	public List<JSONObject> importPosSettlementSummaryReportFiles(MultipartFile pos, String clientid, String createdby);
 
-	public List<JSONObject> importEJFileData(MultipartFile ej, String clientid, String createdby, String fileTypeName)
-			throws ParseException;
+	public int[] importEJFileData(MultipartFile ej, String clientid, String createdby, String fileTypeName);
 
 	public int[] importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby,
 			String fileTypeName);
@@ -224,5 +219,7 @@ public interface Trace_Service {
 
 	public List<JSONObject> nwtxndetails(String referencenumber, String terminalid, String channel, String mode,
 			String clientid);
+
+	public List<JSONObject> ejtxndetails(String referencenumber, String terminalid, String clientid);
 
 }
