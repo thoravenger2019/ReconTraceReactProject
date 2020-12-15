@@ -703,9 +703,10 @@ const editSwitch = (record) => {
   const getFileFormatHistory = async (P_VENDORTYPE, P_CLIENTID, P_CHANNELID, P_MODEID, P_VENDORID) => {
     try {
       //console.log(inputFilePre);
-
+      const values = form.getFieldsValue();
+      console.log(values)
       console.log(P_VENDORID)
-      const response = await axios.get(`getFileFormatHistory/${P_VENDORTYPE}/${P_CLIENTID}/${P_CHANNELID}/${P_MODEID}/${P_VENDORID}`);
+      const response = await axios.get(`getFileFormatHistory/${P_VENDORTYPE}/${P_CLIENTID}/${P_CHANNELID}/${P_MODEID}/${P_VENDORID}/${values.P_FILEPREFIX}`);
        console.log(response.data)
        const formatHistoryResponse = response.data;
 
@@ -731,6 +732,22 @@ const editSwitch = (record) => {
         )
         setXmlTable(listXml);
       }
+      if(P_VENDORTYPE == "NETWORK" && P_MODEID=="0"){
+        //alert("inside NTSl")
+        setCBSTable(true);
+        setNPCITable(false);
+        setSwitchTable(false);
+        setEJTable(false);
+        const listXml = formatHistoryResponse.map((item, index) => ({
+          FieldNameCBS: item.NodeName,
+          StartPositionCBS: item.indexPosition,
+          key: index,
+        })
+        )
+        setXmlTable(listXml);
+      }
+      
+
       if(P_VENDORTYPE == "CBS"){
         setCBSTable(true);
         setNPCITable(false);
@@ -907,8 +924,33 @@ const editSwitch = (record) => {
   const onFileConfig = async () => {
     try {
       console.log(xmltable);
-      
-      if(P_VENDORTYPE=="NETWORK")
+
+   if(P_VENDORTYPE=="NETWORK" && P_MODEID=="0")
+   {
+   // alert("cbs xml");
+    var nodeNameTest = xmltable.map(item => item.FieldNameCBS);
+    var filedNames = [];
+    for (var i in nodeNameTest)
+    filedNames.push(nodeNameTest[i]);
+    console.log(filedNames);
+   
+    var startPosNodeValueNodeTest = xmltable.map(item => item.StartPositionCBS);
+    var posValue = [];
+    for (var i in startPosNodeValueNodeTest)
+    posValue.push(startPosNodeValueNodeTest[i]);
+   // alert(startPosNodeValueNodeTest);
+
+   
+    var builder = require('xmlbuilder');
+
+    var root = builder.create('FileFormat');
+    for (var i = 0; i < filedNames.length; i++) {
+      //while(nodeNameTest.length!=0){
+      var item = root.ele(filedNames[i],posValue[i]);
+     // var item2 = root.ele('StartPosition', posValue[i]);
+    }
+   }
+if(P_VENDORTYPE=="NETWORK" && P_MODEID!=0)
       {
        // alert("network xml");
         var nodeNameTest = xmltable.map(item => item.FieldName);
@@ -944,6 +986,8 @@ const editSwitch = (record) => {
         // item.att('y');
         //}
    }
+
+   
 
    if(P_VENDORTYPE=="CBS")
    {
@@ -1178,7 +1222,7 @@ const editSwitch = (record) => {
                       <Row gutter={[16, 16]} layout="inline">
                         <Col span={5}><b>
                           <Form.Item
-                            label="Client Name"
+                            label="Bank Name"
                             name="P_CLIENTID"
                             rules={[{ required: true, message: 'required' }]}>
                             <Select defaultValue="--select--" style={{ width: 150 }} onChange={onChangeClientName}>

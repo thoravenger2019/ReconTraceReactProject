@@ -225,7 +225,7 @@ const ongetModeType = async (value) => {
               <Form initialValues={{ remember: true }} layout={"vertical"} size={"large"} form={form}>
                 <Row>
                     <Col span={8}>
-                    <Form.Item label="Client Name" name="clientName" >
+                    <Form.Item label="Bank Name" name="clientName" >
                         <Select defaultValue="--select--" style={{ width: 200 }} onChange={onChangeClientName}>
                               {clientData}
                            </Select>                  
@@ -269,7 +269,6 @@ const ongetModeType = async (value) => {
                     <Button type={"primary"} size={"large"} style={{width:'100px'}} onClick={onRunRecon}>Run Recon</Button>   
                     {spindata?(<Spin style={{ margin: '0 18px', color: 'black' }} size="large" />):("") } 
                   </Form.Item>    
-                    
                 </Row>
                 {/* <Form.Item label={reconmsg} name=""> 
                     

@@ -6,6 +6,7 @@ import MenuSideBar from './menuSideBar';
 import Image from 'react-bootstrap/Image'
 import jsPDF from "jspdf";
 import "jspdf-autotable";
+import $ from 'jquery';
 
 import {
   Form,
@@ -49,7 +50,10 @@ const ReversalTxnsReport = props => {
   const [nwDetailstbl,setNWDetails]=useState([])
   const [chanId,setChannelId]=useState([])
   const [modId,setModeID]=useState([])
-  
+  const [sdate,setStartDate]=useState([])
+  const [eDate,setEndDate]=useState([])
+  const [toDate,setToDate]=useState([])
+  const [formDate,setFromDate]=useState([])
 
   const [selectedFileData, setStateFile] = useState(undefined)
   const [setTerm,setTerminal]=useState(false)
@@ -57,6 +61,7 @@ const ReversalTxnsReport = props => {
   const [revtbl,setRevtbl]=useState(false);
   const [spinLoad,setSpinLoad]=useState(false)
   const [visible, setVisible] = useState(false);
+  const [exportOpt,setExportOpt]=useState(false)
   useEffect(() => {
     //onDisplayImplortFile();
     onDisplayClientNameList();
@@ -219,7 +224,7 @@ const ongetModeType = async (value) => {
     var option={};
     let dataTable = [];
     if (data) {
-      for (let i in data) {
+      for (let i in data){
         if(data){
           let obj = {
           
@@ -263,12 +268,15 @@ const ongetModeType = async (value) => {
 
 
   const onShowReversaltxnreport=async()=>{
-  
+    if(formDate>toDate){
+      alert("to date should be greater then from date ");
+    }
+    else{
     const validateFields=await form.validateFields();
     const values = form.getFieldsValue();
     console.log(values); 
     setSpinLoad(true);
-    const reversalReport = await axios.get(`getreversaltxnreport/${values.clientID}/${values.channelID}/${values.modeID}/${values.terminalID}/${values.fromDateTxns}/${values.toDateTxns}/${values.txnType}`);
+    const reversalReport = await axios.get(`getreversaltxnreport/${values.clientID}/${values.channelID}/${values.modeID}/${values.terminalID}/${formDate}/${toDate}/${values.txnType}`);
     console.log(reversalReport.data)
     const resultRev=reversalReport.data
     setSpinLoad(false);
@@ -301,6 +309,8 @@ const ongetModeType = async (value) => {
       )
       setDispenseSummaryReort(dataAll);
       setRevtbl(true);
+      setExportOpt(true);
+    }
     }
   }
 
@@ -379,7 +389,7 @@ const ongetModeType = async (value) => {
         const dataNot=gldetails.map((item,index)=>({
           ReferenceNumber: 'nodata'
         }))
-        setGlDetails(dataNot);
+         setGlDetails(dataNot);
       }else{
         const dataAll = gldetails.map((item, index) => ({
           CardNumber: item.CardNumber,
@@ -395,8 +405,7 @@ const ongetModeType = async (value) => {
         setGlDetails(dataAll);
         //const gldetails="no data found";
       } 
-      //setGlDetails(gldetails);
-      
+      //setGlDetails(gldetails);      
       //--------------------------switch data-----------------------------------
       const swtxnsReport = await axios.get(`swtxndetails/${refid}/${termid}/${clientid}`);
       console.log("sw txns: ",swtxnsReport.data);
@@ -419,7 +428,6 @@ const ongetModeType = async (value) => {
         setSWDetails(dataAll);
       }
 //--------------------------------EJ Details ---------------------------------------------
-
       const ejtxnsReport = await axios.get(`ejtxndetails/${refid}/${termid}/${clientid}`);
       console.log("ej txns: ",ejtxnsReport.data);
       const ejdetails=ejtxnsReport.data;
@@ -499,9 +507,24 @@ const ongetModeType = async (value) => {
   function onChange(checkedValues) {
     console.log('checked = ', checkedValues);
   }
-  function onDateChange(value){
-    console.log(value);
+  function onToDateChange(){
+    //alert(value);
   }
+  function onfromDateChange(valu){
+    //alert(value);
+  }
+  function onChangeToDate(dateString) {
+    console.log(dateString);
+    setToDate(dateString);
+  //dateVAlidate();
+ 
+  }
+  
+  function onChangefromDate(dateString) {
+    console.log(dateString);
+    setFromDate(dateString);
+  }
+
 
   const columns = [
     {
@@ -737,6 +760,44 @@ const ongetModeType = async (value) => {
     }
   ];
 
+//   $('#fromDateTxns').on('change', function() {
+//     var val = this.value.split('-');
+//    if (val[0] > new Date().getFullYear()) {
+//     alert(val.length);
+//     alert('invalid date');
+//    } else {
+//      console.log('ok');
+//    }
+//  });
+
+//  $('#toDateTxns').on('change', function() {
+//   var val = this.value.split('-');
+//  if (val[0] > new Date().getFullYear()) {
+//   //  alert(val[0].lenght);
+//    alert('invalid date');
+//  } else {
+//    console.log('ok')
+//  }
+// // });
+
+// $("#toDateTxns").on('change', function() {
+//   var startDate = document.getElementById("fromDateTxns").value;
+//   var endDate = document.getElementById("toDateTxns").value;
+//   // var fstartDate=new Date(startDate);
+//   // var fendDate=new Date(endDate);
+//  setStartDate(startDate);
+//  setEndDate(endDate);
+//  dateVAlidate();
+//   }
+// );
+// const dateVAlidate=async()=>{
+//   if(toDate<formDate){
+//     alert("to date shoud be greater than from date");
+//   }
+// }
+   // docume
+
+
   return (
     <Layout>
       <Header style={{ padding: "20px" }}>
@@ -751,8 +812,8 @@ const ongetModeType = async (value) => {
               <Form initialValues={{ remember: true }} layout={"vertical"} size={"large"} form={form}>
                 <Row  gutter={8} >
                     <Col span={4}>
-                    <Form.Item label="Client Name" name="clientID" 
-                    rules={[{ required: true, message: "Client name required" }]}>
+                    <Form.Item label="Bank Name" name="clientID" 
+                    rules={[{ required: true, message: "Bank name required" }]}>
                         <Select defaultValue="--select--" style={{ width: 200 }} onChange={onChangeClientName} 
                         >
                               {clientData}
@@ -799,34 +860,42 @@ const ongetModeType = async (value) => {
                       </Col>
                 </Row>
                 <Row  gutter={4} style={{ height: '50%' }}  >
-                <Col span={6}>
+                <Col span={4}>
                 <Form.Item label="from Date" name="fromDateTxns" style={{width: 320}}
                 rules={[{ required: true, message: "From Date required" }]}>    
                  
                   {/* <DatePicker  format={dateFormat} style={{width:320 }} /> */}
-                  <Input type={"date"} onChange={onDateChange}></Input>
-                  
+                  {/* <Input type={"date"} onChange={onfromDateChange} id={"fromDateTxns"} onkeydown="return false"></Input> */}
+                  {/* <input type="date" onkeydown="return false" /> */}
+                  <DatePicker style={{ width: 200 }} onChange={(date, dateString) => onChangefromDate(dateString)} size={"large"}/>
                 </Form.Item>
                 </Col>
-                <Col span={6}>
-                <Form.Item label="to Date" name="toDateTxns" style={{width: 320}}
+                <Col span={2}>
+                <Form.Item label="to Date" name="toDateTxns"  style={{width: 320}}
                  rules={[{ required: true, message: "To Date required" }]}> 
-                 
-                  <Input type={"date"} onChange={onDateChange}></Input>
-                  {/* <DatePicker format={dateFormat} style={{width: 320}}  /> */}
-                  
+                  <DatePicker style={{ width: 200 }} onChange={(date, dateString) => onChangeToDate(dateString)} size={"large"} />
                   </Form.Item>
                   </Col>
                 </Row>               
                 <Row  gutter={8}>  
+                {exportOpt?(
                   <Form.Item label=" " name="">             
-                     <Button type={"primary"} size={"large"} style={{width:'100px'}} onClick={onShowReversaltxnreport}>Show</Button>  
-                     {/* <Button style={{margin: '0 18px'}} shape="circle-outline" onClick={downloadExcel}  icon={ <FileExcelOutlined size={"large"}style={{background:'green'}}/>}   size={"large"}/>      */}
-                     {/* <Image src="./export-to-excel" rounded/> */}
-                     <a style={{margin: '0 18px'}}><Avatar  shape ="square"  size="large" src="./export-to-excel.png" onClick={downloadExcel}/></a>
-                     <a style={{margin: '0 2px'}}><Avatar  shape ="square"  size="large" src="./pdf.png" onClick={downloadPDF}/></a>
-                     {spinLoad?(<Spin style={{ margin: '0 38px', color: 'black' }} size="large" />):("") }    
+                  <Button type={"primary"} size={"large"} style={{width:'100px'}} onClick={onShowReversaltxnreport}>Show</Button>  
+                  {/* <Button style={{margin: '0 18px'}} shape="circle-outline" onClick={downloadExcel}  icon={ <FileExcelOutlined size={"large"}style={{background:'green'}}/>}   size={"large"}/>      */}
+                  {/* <Image src="./export-to-excel" rounded/> */}
+                  <a style={{margin: '0 18px'}}><Avatar  shape ="square"  size="large" src="./export-to-excel.png" onClick={downloadExcel}/></a>
+                  <a style={{margin: '0 2px'}}><Avatar  shape ="square"  size="large" src="./pdf.png" onClick={downloadPDF}/></a>
+                  {spinLoad?(<Spin style={{ margin: '0 38px', color: 'black' }} size="large" />):("") }    
                   </Form.Item>           
+                ):(
+                  <Form.Item label=" " name="">             
+                  <Button type={"primary"} size={"large"} style={{width:'100px'}} onClick={onShowReversaltxnreport}>Show</Button>  
+                  {/* <Button style={{margin: '0 18px'}} shape="circle-outline" onClick={downloadExcel}  icon={ <FileExcelOutlined size={"large"}style={{background:'green'}}/>}   size={"large"}/>      */}
+                  {/* <Image src="./export-to-excel" rounded/> */}
+                  {spinLoad?(<Spin style={{ margin: '0 38px', color: 'black' }} size="large" />):("") }    
+               </Form.Item>           
+                )}
+                 
                 </Row>
               </Form>
               {revtbl?(<Table columns={columns} dataSource={dispenseSummaryReoprttbldata} bordered/>):("")}

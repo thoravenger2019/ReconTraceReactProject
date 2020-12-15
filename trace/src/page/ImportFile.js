@@ -114,7 +114,7 @@ const ImportFile = props => {
 
         console.log(currentFile);
         console.log(formData);
-        const response = await axios.post(`importFileNpciATMFiles/${clientid}`, formData);
+        const response = await axios.post(`importFileNpciATMFiles/${clientid}/${filetype}`, formData);
         //const response = await axios.post(`importFileNpciATMFiles`,formData);
         // const response = await axios.post(`importPosSettlementSummaryReportFiles/${clientid}`,formData);
         console.log(response.data);
@@ -257,7 +257,7 @@ const ImportFile = props => {
               <Form initialValues={{ remember: true }} layout={"vertical"} form={form} size={"large"} >
                 <Row gutter={8} >
                   <Col span={12}><b>
-                    <Form.Item label="Client Name" name="clientid" >
+                    <Form.Item label="Bank Name" name="clientid" >
                       <Select defaultValue="--select--" style={{ width: 500 }} onChange={onChangeClientName}>
                         {clientData}
                       </Select>

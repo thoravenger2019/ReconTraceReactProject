@@ -48,6 +48,9 @@ const UnmatchedTxnsReport = props => {
   const [nwDetailstbl,setNWDetails]=useState([])
   const [chanId,setChannelId]=useState([])
   const [modId,setModeID]=useState([])
+  const [toDate,setToDate]=useState([])
+  const [fromDate,setFromDate]=useState([])
+
   
   const [selectedFileData, setStateFile] = useState(undefined)
   const [setTerm,setTerminal]=useState(false)
@@ -473,13 +476,16 @@ const ongetModeType = async (value) => {
     
 
   const onShowUnmatched=async()=>{
-
+    if(fromDate>toDate){
+      alert("ToDate should be greater then FromDate ");
+    }
+    else{
     const validateFields=await form.validateFields();
     const values = form.getFieldsValue();
     console.log(values); 
     setSpinLoad(true);
 
-    const unmatchedReport = await axios.get(`getunmatchedtxnreport/${values.clientID}/${values.channelID}/${values.modeID}/${values.terminalID}/${values.fromDateTxns}/${values.toDateTxns}/${values.txnType}`);
+    const unmatchedReport = await axios.get(`getunmatchedtxnreport/${values.clientID}/${values.channelID}/${values.modeID}/${values.terminalID}/${fromDate}/${toDate}/${values.txnType}`);
     console.log(unmatchedReport.data)
     setSpinLoad(false);
     const unmatchedReporttbl=unmatchedReport.data;
@@ -513,7 +519,7 @@ const ongetModeType = async (value) => {
     setExportOpt(true);
   }
   }
-  
+}
  
 
   const columns = [
@@ -751,6 +757,16 @@ const ongetModeType = async (value) => {
     }
   ];
 
+  function onChangeToDate(dateString) {
+    console.log(dateString);
+    setToDate(dateString);
+  }
+  
+  function onChangefromDate(dateString) {
+    console.log(dateString);
+    setFromDate(dateString);
+  }
+
   return (
 
 <Layout>
@@ -766,8 +782,8 @@ const ongetModeType = async (value) => {
               <Form initialValues={{ remember: true }} layout={"vertical"} size={"large"} form={form}>
                 <Row  gutter={8} >
                     <Col span={4}>
-                    <Form.Item label="Client Name" name="clientID" 
-                    rules={[{ required: true, message: "Client name required" }]}>
+                    <Form.Item label="Bank Name" name="clientID" 
+                    rules={[{ required: true, message: "Bank name required" }]}>
                         <Select defaultValue="--select--" style={{ width: 200 }} onChange={onChangeClientName} 
                         >
                               {clientData}
@@ -813,36 +829,40 @@ const ongetModeType = async (value) => {
                       </Col>
                 </Row>
                 <Row  gutter={4} style={{ height: '50%' }}  >
-                <Col span={6}>
+                <Col span={4}>
                 <Form.Item label="from Date" name="fromDateTxns" style={{width: 320}}
                 rules={[{ required: true, message: "From Date required" }]}>    
                  
                   {/* <DatePicker  format={dateFormat} style={{width:320 }} /> */}
-                  <Input type={"date"}></Input>
-                  
+                  {/* <Input type={"date"} onChange={onfromDateChange} id={"fromDateTxns"} onkeydown="return false"></Input> */}
+                  {/* <input type="date" onkeydown="return false" /> */}
+                  <DatePicker style={{ width: 200 }} onChange={(date, dateString) => onChangefromDate(dateString)} size={"large"}/>
                 </Form.Item>
                 </Col>
-                <Col span={6}>
-                <Form.Item label="to Date" name="toDateTxns" style={{width: 320}}
+                <Col span={2}>
+                <Form.Item label="to Date" name="toDateTxns"  style={{width: 320}}
                  rules={[{ required: true, message: "To Date required" }]}> 
-                 
-                  <Input type={"date"}></Input>
-                  {/* <DatePicker format={dateFormat} style={{width: 320}}  /> */}
-
+                  <DatePicker style={{ width: 200 }} onChange={(date, dateString) => onChangeToDate(dateString)} size={"large"} />
                   </Form.Item>
                   </Col>
-                </Row>               
+                </Row>              
                 <Row  gutter={8}>  
+                {exportOpt?(
                   <Form.Item label=" " name="">             
-                     <Button type={"primary"} size={"large"} style={{width:'100px'}} onClick={onShowUnmatched}>Show</Button>   
-                    
-                     {/* <Button style={{margin: '0 18px'}} shape="circle-outline" onClick={downloadExcel}  icon={ <FileExcelOutlined size={"large"}style={{background:'green'}}/>}   size={"large"}/> */}
-                   
+                     <Button type={"primary"} size={"large"} style={{width:'100px'}} onClick={onShowUnmatched}>Show</Button>                       
+                     {/* <Button style={{margin: '0 18px'}} shape="circle-outline" onClick={downloadExcel}  icon={ <FileExcelOutlined size={"large"}style={{background:'green'}}/>}   size={"large"}/> */}                   
                      <a style={{margin: '0 18px'}}><Avatar  shape ="square"  size="large" src="./export-to-excel.png" onClick={downloadExcel}/></a>
                      <a style={{margin: '0 2px'}}><Avatar  shape ="square"  size="large" src="./pdf.png" onClick={downloadPDF}/></a>
-
                      {spinLoad?(<Spin style={{ margin: '0 38px', color: 'black' }} size="large" />):("") }         
-                  </Form.Item>           
+                  </Form.Item>   
+                ):(
+                  <Form.Item label=" " name="">             
+                     <Button type={"primary"} size={"large"} style={{width:'100px'}} onClick={onShowUnmatched}>Show</Button>                       
+                     {/* <Button style={{margin: '0 18px'}} shape="circle-outline" onClick={downloadExcel}  icon={ <FileExcelOutlined size={"large"}style={{background:'green'}}/>}   size={"large"}/> */}                   
+                     {spinLoad?(<Spin style={{ margin: '0 38px', color: 'black' }} size="large" />):("") }         
+                  </Form.Item>
+                )}
+                             
                 </Row>
               </Form>
               {unmatchedtbl?(<Table columns={columns} dataSource={dispenseSummaryReoprttbldata} bordered/>):("")}
