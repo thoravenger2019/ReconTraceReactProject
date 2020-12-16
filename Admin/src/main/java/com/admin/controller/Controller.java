@@ -17,7 +17,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.io.FilenameUtils;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -501,10 +500,7 @@ public class Controller {
 	public Map<String, String> mapBranchMasterReapExcelDatatoDB(@PathVariable("clientid") String clientid,
 			@RequestParam("file") MultipartFile reapExcelDataFile) {
 		Map<String, String> hm = new HashMap<String, String>();
-		String extFile = FilenameUtils.getExtension(reapExcelDataFile.getOriginalFilename());
-
 		String user = username.getUsername();
-
 		List result = traceService.mapBranchMasterReapExcelDatatoDB(reapExcelDataFile, user, clientid);
 		hm.put("mapBranchMasterReapExcelDatatoDB", result.toString());
 		return hm;
@@ -514,8 +510,6 @@ public class Controller {
 	public Map<String, String> mapTerminaMasterReapExcelDatatoDB(@PathVariable("clientid") String clientid,
 			@RequestParam("file") MultipartFile reapExcelDataFile) {
 		String user = username.getUsername();
-		String extFile = FilenameUtils.getExtension(reapExcelDataFile.getOriginalFilename());
-
 		Map<String, String> hm = new HashMap<String, String>();
 		List result = traceService.mapTerminalMasterReapExcelDatatoDB(reapExcelDataFile, user, clientid);
 		hm.put("mapTerminaMasterReapExcelDatatoDB", result.toString());
@@ -593,7 +587,7 @@ public class Controller {
 			@PathVariable("p_ModeID") String p_ModeID, @PathVariable("p_VendorID") String p_VendorID,
 			@PathVariable("filePrefix") String filePrefix) throws Exception {
 		List<JSONObject> getFileFormatHistory = traceService.getFileFormatHistory(p_VendorType, p_ClientID, p_ChannelID,
-				p_ModeID, p_VendorID,filePrefix);
+				p_ModeID, p_VendorID, filePrefix);
 
 		System.out.println("getFileFormatHistory:  " + getFileFormatHistory);
 		String statusInstr = "";
@@ -613,7 +607,6 @@ public class Controller {
 			while ((line = br.readLine()) != null) {
 				result.append(line.trim());
 			}
-//	        Map<String, List<JSONObject>> hm=new HashMap<>();
 			str = result.toString();
 			System.out.println("str:  " + str);
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -629,13 +622,13 @@ public class Controller {
 				Node childNode = nodeList.item(i);
 				NodeList childNodeList = childNode.getChildNodes();
 
-				String startPos = childNodeList.item(0).getNodeName();
+//				String startPos = childNodeList.item(0).getNodeName();
 				Node startPosNode = childNodeList.item(0);
 
 				NodeList startPosNodeValue = startPosNode.getChildNodes();
 				String startPosNodeValueNode = startPosNodeValue.item(0).getNodeValue();
 
-				String length = childNodeList.item(1).getNodeName();
+//				String length = childNodeList.item(1).getNodeName();
 				Node lengthNode = childNodeList.item(1);
 				NodeList lengthNodeValue = lengthNode.getChildNodes();
 				String lengthNodeValueNode = lengthNodeValue.item(0).getNodeValue();
@@ -649,8 +642,6 @@ public class Controller {
 				System.out.println("LengthNodeValueNode:  " + lengthNodeValueNode);
 				JSONObjects.add(obj);
 			}
-//			String concatVendorTypeMode=p_VendorType+p_ModeID;
-//			hm.put(concatVendorTypeMode, JSONObjects);
 			return JSONObjects;
 		} else if (statusInstr.equals("[not exist]") && p_VendorType.equalsIgnoreCase("NETWORK")
 				&& p_ModeID.equalsIgnoreCase("3")) {
@@ -662,7 +653,6 @@ public class Controller {
 				result.append(line.trim());
 			}
 			str = result.toString();
-//	        Map<String, List<JSONObject>> hm=new HashMap<>();
 			System.out.println("str:  " + str);
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
@@ -697,8 +687,6 @@ public class Controller {
 				System.out.println("LengthNodeValueNode:  " + lengthNodeValueNode);
 				JSONObjects.add(obj);
 			}
-//			String concatVendorTypeMode=p_VendorType+p_ModeID;
-//			hm.put(concatVendorTypeMode, JSONObjects);
 			return JSONObjects;
 		} else if (statusInstr.equals("[not exist]") && p_VendorType.equalsIgnoreCase("CBS")) {
 			String line = "", str = "";
@@ -709,7 +697,6 @@ public class Controller {
 				result.append(line.trim());
 			}
 			str = result.toString();
-//	        Map<String, List<JSONObject>> hm=new HashMap<>();
 			System.out.println("str:  " + str);
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
@@ -741,11 +728,8 @@ public class Controller {
 
 				System.out.println("NodeName:  " + nodeName);
 				System.out.println("indexPosition:  " + index);
-//				System.out.println("LengthNodeValueNode:  " + lengthNodeValueNode);
 				JSONObjects.add(obj);
 			}
-//			String concatVendorTypeMode=p_VendorType+p_ModeID;
-//			hm.put(concatVendorTypeMode, JSONObjects);
 			return JSONObjects;
 		} else if (statusInstr.equals("[not exist]") && p_VendorType.equalsIgnoreCase("Switch")) {
 			String line = "", str = "";
@@ -756,7 +740,6 @@ public class Controller {
 				result.append(line.trim());
 			}
 			str = result.toString();
-//	        Map<String, List<JSONObject>> hm=new HashMap<>();
 			System.out.println("str:  " + str);
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
@@ -791,8 +774,6 @@ public class Controller {
 //				System.out.println("LengthNodeValueNode:  " + lengthNodeValueNode);
 				JSONObjects.add(obj);
 			}
-//			String concatVendorTypeMode=p_VendorType+p_ModeID;
-//			hm.put(concatVendorTypeMode, JSONObjects);
 			return JSONObjects;
 		} else if (statusInstr.equals("[not exist]") && p_VendorType.equalsIgnoreCase("EJ")) {
 			String line = "", str = "";
@@ -803,7 +784,6 @@ public class Controller {
 				result.append(line.trim());
 			}
 			str = result.toString();
-//	        Map<String, List<JSONObject>> hm=new HashMap<>();
 			System.out.println("str:  " + str);
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
@@ -835,11 +815,8 @@ public class Controller {
 
 				System.out.println("NodeName:  " + nodeName);
 				System.out.println("indexPosition:  " + index);
-//				System.out.println("LengthNodeValueNode:  " + lengthNodeValueNode);
 				JSONObjects.add(obj);
 			}
-//			String concatVendorTypeMode=p_VendorType+p_ModeID;
-//			hm.put(concatVendorTypeMode, JSONObjects);
 			return JSONObjects;
 		} else if (statusInstr.equals("[not exist]") && p_VendorType.equalsIgnoreCase("NETWORK")
 				&& p_ModeID.equalsIgnoreCase("0")) {
@@ -851,7 +828,6 @@ public class Controller {
 				result.append(line.trim());
 			}
 			str = result.toString();
-//	        Map<String, List<JSONObject>> hm=new HashMap<>();
 			System.out.println("str:  " + str);
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
@@ -892,15 +868,15 @@ public class Controller {
 
 		} else {
 			JSONObject xmlFormatDescription = getFileFormatHistory.get(0);
-//			Map<String, List<JSONObject>> hm=new HashMap<>();
-			if (p_VendorType.equalsIgnoreCase("NETWORK") && (p_ModeID.equalsIgnoreCase("2") || p_ModeID.equalsIgnoreCase("3"))) {
+			if (p_VendorType.equalsIgnoreCase("NETWORK")
+					&& (p_ModeID.equalsIgnoreCase("2") || p_ModeID.equalsIgnoreCase("3"))) {
 				List<JSONObject> xmlTojsonNETWORKList = xmlTojsonNETWORK(
 						xmlFormatDescription.get("FormatDescriptionXml"));
 				return xmlTojsonNETWORKList;
 			}
 			if (p_VendorType.equalsIgnoreCase("CBS") || p_VendorType.equalsIgnoreCase("Switch")
-					|| p_VendorType.equalsIgnoreCase("EJ") || 
-					(p_VendorType.equalsIgnoreCase("NETWORK") && p_ModeID.equalsIgnoreCase("0"))) {
+					|| p_VendorType.equalsIgnoreCase("EJ")
+					|| (p_VendorType.equalsIgnoreCase("NETWORK") && p_ModeID.equalsIgnoreCase("0"))) {
 				List<JSONObject> xmlTojsonCBS_Switch_EJList = xmlTojsonCBS_Switch_EJ(
 						xmlFormatDescription.get("FormatDescriptionXml"));
 				return xmlTojsonCBS_Switch_EJList;
@@ -911,7 +887,6 @@ public class Controller {
 
 	private List<JSONObject> xmlTojsonCBS_Switch_EJ(Object xmlstrfromdb)
 			throws ParserConfigurationException, SAXException, IOException {
-		// TODO Auto-generated method stub
 		String xmlStr = xmlstrfromdb.toString();
 		System.out.println("xmlStr:  " + xmlStr);
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -953,8 +928,8 @@ public class Controller {
 
 	@PostMapping("importFileNpciATMFiles/{clientid}/{fileTypeName}")
 	public List<JSONObject> importFileNpciATMFiles(@PathVariable("clientid") String clientid,
-			@PathVariable("fileTypeName") String fileTypeName,
-			@RequestParam("npci") MultipartFile[] npci) throws Exception {
+			@PathVariable("fileTypeName") String fileTypeName, @RequestParam("npci") MultipartFile[] npci)
+			throws Exception {
 		String createdby = username.getUsername();
 		int[] importFileNpciATMFiles = null;
 		List<JSONObject> importFileNpciATMFilesReport = new ArrayList<JSONObject>();
@@ -962,7 +937,7 @@ public class Controller {
 		int fu = 0, fi = 0, c = 0, tc = 0, rc = 0;
 		System.out.println("npcilength" + npci.length);
 		for (int i = 0; i < npci.length; i++) {
-			importFileNpciATMFiles = traceService.importFileNpciATMFiles(npci[i], clientid, createdby,fileTypeName);
+			importFileNpciATMFiles = traceService.importFileNpciATMFiles(npci[i], clientid, createdby, fileTypeName);
 			if (importFileNpciATMFiles[1] == 1) {
 				fu++;
 			} else if (importFileNpciATMFiles[1] == 2) {
@@ -1197,7 +1172,7 @@ public class Controller {
 				P_TXNPOSTDATETIME, P_ATMTYPE, P_POSTYPE, P_ECOMTYPE, P_IMPSTYPE, P_UPITYPE, P_MICROATMTYPE,
 				P_MOBILERECHARGETYPE, P_DEPOSIT, P_BALENQ, P_MINISTATEMENT, P_PINCHANGE, P_CHEQUEBOOKREQ, P_RESPCODE1,
 				P_RESPCODE2, P_RESPTPE, P_EODCODE, P_OFFLINECODE, P_DEBITCODE, P_CREDITCODE, createdby, P_CHANNELID);
-		hm.put("status:", addfieldconfig);
+		hm.put("status", addfieldconfig);
 		return hm;
 	}
 
@@ -1293,7 +1268,6 @@ public class Controller {
 
 	@GetMapping("/getchannelmodedetailsremodify/{clientid}")
 	public List<JSONObject> getchannelmodedetailsremodify(@PathVariable("clientid") String clientid) {
-		String userid = username.getUsername();
 		List<JSONObject> getchannelmodedetailsremodify = traceService.getchannelmodedetailsremodify(clientid);
 		return getchannelmodedetailsremodify;
 	}
@@ -1329,13 +1303,13 @@ public class Controller {
 			Node childNode = nodeList.item(i);
 			NodeList childNodeList = childNode.getChildNodes();
 
-			String startPos = childNodeList.item(0).getNodeName();
+//			String startPos = childNodeList.item(0).getNodeName();
 			Node startPosNode = childNodeList.item(0);
 
 			NodeList startPosNodeValue = startPosNode.getChildNodes();
 			String startPosNodeValueNode = startPosNodeValue.item(0).getNodeValue();
 
-			String length = childNodeList.item(1).getNodeName();
+//			String length = childNodeList.item(1).getNodeName();
 			Node lengthNode = childNodeList.item(1);
 			NodeList lengthNodeValue = lengthNode.getChildNodes();
 			String lengthNodeValueNode = lengthNodeValue.item(0).getNodeValue();
