@@ -314,27 +314,37 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 	@Override
 	public List<User> getData(String username, String password) {
-
+		
+		StoredProcedureQuery query1=entityManager.createStoredProcedureQuery("spclientcodedetails");
+		query1.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(3, String.class, ParameterMode.REF_CURSOR);
+		query1.setParameter(1, username);
+		query1.setParameter(2, password);
+		query1.execute();
+		List<Object[]> result = query1.getResultList();
+		String clientCode=null;
+		for (Object record : result) {
+			Object[] fields = (Object[]) record;
+			JSONObject obj = new JSONObject();
+			clientCode=fields[0].toString();
+		}
+		System.out.println("clientcode"+clientCode);
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("splogindetails");
-
 		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(4, String.class, ParameterMode.REF_CURSOR);
-
 		query.setParameter(1, username);
 		query.setParameter(2, password);
-		query.setParameter(3, "1");
-
+		query.setParameter(3, clientCode);
 		query.execute();
-
 		List<Object[]> res = query.getResultList();
 		List<User> list = new ArrayList<User>();
 		Iterator it = res.iterator();
 		while (it.hasNext()) {
 			Object[] line = (Object[]) it.next();
 			User eq = new User();
-
 			eq.setUsername(String.valueOf(line[0]));
 			eq.setPassword(String.valueOf(line[1]));
 			eq.setRoleID(String.valueOf(line[2]));
