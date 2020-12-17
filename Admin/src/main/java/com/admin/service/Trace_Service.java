@@ -13,7 +13,7 @@ import com.admin.model.User;
 
 public interface Trace_Service {
 
-	public List<User> getData(String useername, String password);
+	public List<User> getData(String useername, String password, String clientcode);
 
 	public String getMenuData(String username, String roleID, String clientId);
 
@@ -221,5 +221,7 @@ public interface Trace_Service {
 			String clientid);
 
 	public List<JSONObject> ejtxndetails(String referencenumber, String terminalid, String clientid);
+
+	public String getuserclientcode(String user_name, String password);
 
 }

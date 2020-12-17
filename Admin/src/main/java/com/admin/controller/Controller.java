@@ -61,7 +61,13 @@ public class Controller {
 	@GetMapping("login1/{username}/{password}")
 	public Map<String, String> userLogin(@PathVariable("username") String user_name,
 			@PathVariable("password") String password) {
-		List<User> lst = traceService.getData(user_name, password);
+		
+		System.out.println("username"+user_name);
+		System.out.println("password"+password);
+		String clientcode=traceService.getuserclientcode(user_name,password);
+		List<User> lst = traceService.getData(user_name, password,clientcode);
+		
+
 		username = lst.get(0);
 		session.setAttribute("username", username.getUsername());
 		session.setAttribute("roleID", username.getRoleID());

@@ -14,7 +14,7 @@ import com.admin.model.User;
 @Repository
 public interface Trace_DAO {
 
-	public List<User> getData(String username, String password);
+	public List<User> getData(String username, String password, String clientcode);
 
 	public List<String> getData();
 
@@ -303,5 +303,7 @@ public interface Trace_DAO {
 	public List<JSONObject> getvendorname(String vendorid);
 
 	public int[] importEJFileDataDIEBOLD(MultipartFile ej, String clientid, String createdby, String fileTypeName);
+
+	public String getuserclientcode(String user_name, String password);
 
 }

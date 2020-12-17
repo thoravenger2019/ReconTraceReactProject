@@ -313,31 +313,15 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	}
 
 	@Override
-	public List<User> getData(String username, String password) {
-		
-		StoredProcedureQuery query1=entityManager.createStoredProcedureQuery("spclientcodedetails");
-		query1.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
-		query1.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
-		query1.registerStoredProcedureParameter(3, String.class, ParameterMode.REF_CURSOR);
-		query1.setParameter(1, username);
-		query1.setParameter(2, password);
-		query1.execute();
-		List<Object[]> result = query1.getResultList();
-		String clientCode=null;
-		for (Object record : result) {
-			Object[] fields = (Object[]) record;
-			JSONObject obj = new JSONObject();
-			clientCode=fields[0].toString();
-		}
-		System.out.println("clientcode"+clientCode);
+	public List<User> getData(String username, String password,String clientcode) {
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("splogindetails");
 		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(4, String.class, ParameterMode.REF_CURSOR);
-		query.setParameter(1, username);
-		query.setParameter(2, password);
-		query.setParameter(3, clientCode);
+		query.setParameter(1, username.toUpperCase());
+		query.setParameter(2, password.toUpperCase());
+		query.setParameter(3, clientcode);
 		query.execute();
 		List<Object[]> res = query.getResultList();
 		List<User> list = new ArrayList<User>();
@@ -10467,5 +10451,30 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			arr[2] = count;
 			return arr;
 		}
+	}
+
+	@Override
+	public String getuserclientcode(String user_name, String password) {
+		// TODO Auto-generated method stub
+		StoredProcedureQuery query1=entityManager.createStoredProcedureQuery("spclientcodedetails");
+		query1.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(3, String.class, ParameterMode.REF_CURSOR);
+		query1.setParameter(1, user_name.toLowerCase());
+		query1.setParameter(2, password.toLowerCase());
+		query1.execute();
+		List<Object[]> result = query1.getResultList();
+		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
+		for (Object record : result) {
+			Object[] fields = (Object[]) record;
+			JSONObject obj = new JSONObject();
+			obj.put("clientcode", fields[0]);
+			obj.put("clientName", fields[1]);
+			JSONObjects.add(obj);
+			}
+		JSONObject jsonObj = JSONObjects.get(0);
+		String clientCode = jsonObj.get("clientcode").toString();
+		System.out.println("clientcode"+clientCode);
+		return clientCode;
 	}
 }

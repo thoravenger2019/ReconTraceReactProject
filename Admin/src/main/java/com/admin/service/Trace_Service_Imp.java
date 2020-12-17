@@ -169,9 +169,9 @@ public class Trace_Service_Imp implements Trace_Service {
 	}
 
 	@Override
-	public List<User> getData(String username, String password) {
+	public List<User> getData(String username, String password,String clientcode) {
 
-		return traceDao.getData(username, password);
+		return traceDao.getData(username, password, clientcode);
 	}
 
 	@Override
@@ -2004,5 +2004,11 @@ public class Trace_Service_Imp implements Trace_Service {
 	public List<JSONObject> ejtxndetails(String referencenumber, String terminalid, String clientid) {
 		// TODO Auto-generated method stub
 		return traceDao.ejtxndetails(referencenumber, terminalid, clientid);
+	}
+
+	@Override
+	public String getuserclientcode(String user_name, String password) {
+		// TODO Auto-generated method stub
+		return traceDao.getuserclientcode(user_name,password);
 	}
 }
