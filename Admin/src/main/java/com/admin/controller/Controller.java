@@ -77,6 +77,10 @@ public class Controller {
 		String roleID = String.valueOf(username.getRoleID());
 		String clientID = String.valueOf(username.getClientID());
 
+		System.out.println("user : "+user);
+		System.out.println("roleId" + roleID);
+		System.out.println("clientid" + clientID);
+		
 		String menu = traceService.getMenuData(user, roleID, clientID);
 
 		String subMenu = traceService.getSubMenuData(user, roleID, clientID);
@@ -107,9 +111,9 @@ public class Controller {
 	public Map<String, String> getRoleDtails(@PathVariable("roleName") String roleName,
 			@PathVariable("homePage") String homePage, @PathVariable("mode") String mode,
 			@PathVariable("roleID") String roleID, @PathVariable("clientID") String clientID) {
-
+		String createdby=username.getUsername();
 		Map<String, String> hm = new HashMap<String, String>();
-		String rowsInserted = traceService.getRoleMaster(roleName, homePage, mode, roleID, clientID);
+		String rowsInserted = traceService.getRoleMaster(roleName, homePage, mode, roleID, clientID,createdby);
 		hm.put("roleNames", rowsInserted);
 		return hm;
 	}

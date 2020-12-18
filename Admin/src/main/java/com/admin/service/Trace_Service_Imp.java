@@ -199,9 +199,9 @@ public class Trace_Service_Imp implements Trace_Service {
 	}
 
 	@Override
-	public String getRoleMaster(String roleName, String homePage, String mode, String roleID, String clientID) {
+	public String getRoleMaster(String roleName, String homePage, String mode, String roleID, String clientID,String createdby) {
 
-		return traceDao.getRoleMaster(roleName, homePage, mode, roleID, clientID);
+		return traceDao.getRoleMaster(roleName, homePage, mode, roleID, clientID,createdby);
 	}
 
 	@Override

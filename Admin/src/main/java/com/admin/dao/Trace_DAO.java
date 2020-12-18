@@ -24,7 +24,7 @@ public interface Trace_DAO {
 
 	public String getRoleDetails(String clientID);
 
-	public String getRoleMaster(String roleName, String homePage, String mode, String roleID, String clientID);
+	public String getRoleMaster(String roleName, String homePage, String mode, String roleID, String clientID, String createdby);
 
 	public String getRoleAccessRights(String roleID, String clientID);
 

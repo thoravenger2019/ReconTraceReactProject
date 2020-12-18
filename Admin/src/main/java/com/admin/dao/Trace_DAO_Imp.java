@@ -319,8 +319,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(4, String.class, ParameterMode.REF_CURSOR);
-		query.setParameter(1, username.toUpperCase());
-		query.setParameter(2, password.toUpperCase());
+		query.setParameter(1, username);
+		query.setParameter(2, password);
 		query.setParameter(3, clientcode);
 		query.execute();
 		List<Object[]> res = query.getResultList();
@@ -341,6 +341,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		return list;
 	}
 
+	@Override
 	public String getMenuData(String userName, String roleID, String clientID) {
 
 		MenuModel menu = null;
@@ -480,7 +481,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	}
 
 	@Override
-	public String getRoleMaster(String roleName, String homePage, String mode, String roleID, String clientID) {
+	public String getRoleMaster(String roleName, String homePage, String mode, String roleID, String clientID,String createdby) {
 
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("sprolemaster");
 		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
@@ -496,7 +497,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query.setParameter(3, Integer.parseInt(clientID));
 		query.setParameter(4, String.valueOf(roleName));
 		query.setParameter(5, String.valueOf(homePage));
-		query.setParameter(6, "ROY");
+		query.setParameter(6, createdby);
 		query.execute();
 
 		String rowsInserted = null;
@@ -646,6 +647,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			roleObject.put("clientName", String.valueOf(line[6]));
 			roleObject.put("clientID", String.valueOf(line[7]));
 			roleObject.put("isLocked", String.valueOf(line[8]));
+			roleObject.put("branchcode", String.valueOf(line[9]));
 
 			roleArray.add(roleObject);
 
@@ -10460,8 +10462,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query1.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
 		query1.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
 		query1.registerStoredProcedureParameter(3, String.class, ParameterMode.REF_CURSOR);
-		query1.setParameter(1, user_name.toLowerCase());
-		query1.setParameter(2, password.toLowerCase());
+		query1.setParameter(1, user_name);
+		query1.setParameter(2, password);
 		query1.execute();
 		List<Object[]> result = query1.getResultList();
 		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
