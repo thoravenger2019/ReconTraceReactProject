@@ -223,9 +223,9 @@ public class Trace_Service_Imp implements Trace_Service {
 	}
 
 	@Override
-	public String getUserDetails(String username, String clientID, String branchID, String roleID) {
+	public String getUserDetails(String clientID, String branchID, String roleID) {
 
-		return traceDao.getUserDetails(username, clientID, branchID, roleID);
+		return traceDao.getUserDetails(clientID, branchID, roleID);
 	}
 
 	// @Override
@@ -2010,5 +2010,17 @@ public class Trace_Service_Imp implements Trace_Service {
 	public String getuserclientcode(String user_name, String password) {
 		// TODO Auto-generated method stub
 		return traceDao.getuserclientcode(user_name,password);
+	}
+
+	@Override
+	public List<JSONObject> getfiletypes(String channeltype) {
+		// TODO Auto-generated method stub
+		return traceDao.getfiletypes(channeltype);
+	}
+
+	@Override
+	public List<JSONObject> joinopt(String clientid,String channeltype, String mappingtablename) {
+		// TODO Auto-generated method stub
+		return traceDao.joinopt(clientid,mappingtablename,channeltype);
 	}
 }

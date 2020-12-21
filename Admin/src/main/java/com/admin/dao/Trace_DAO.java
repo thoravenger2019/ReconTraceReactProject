@@ -32,7 +32,7 @@ public interface Trace_DAO {
 
 	public String getBranchDetails(String clientID, String branchID);
 
-	public String getUserDetails(String username, String clientID, String branchID, String roleID);
+	public String getUserDetails(String username, String clientID, String branchID);
 
 //	public String AddUser(String userName, String password, String firstName, String lastName, String roleID,
 //			String clientID, String branchID, String emailID, String contactNo, String securityq, String securitya,
@@ -305,5 +305,9 @@ public interface Trace_DAO {
 	public int[] importEJFileDataDIEBOLD(MultipartFile ej, String clientid, String createdby, String fileTypeName);
 
 	public String getuserclientcode(String user_name, String password);
+
+	public List<JSONObject> getfiletypes(String channeltype);
+
+	public List<JSONObject> joinopt(String clientid, String mappingtablename, String channeltype);
 
 }

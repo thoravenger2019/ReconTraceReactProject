@@ -18,6 +18,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -100,14 +101,10 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		byte[] bytes = csvFile.getBytes();
 		String completeData = new String(bytes);
 		String[] rows = completeData.split(",");
-		// String[] columns = rows[0].split(",");
 		ArrayList arList = null;
 		ArrayList al = null;
 		arList = new ArrayList();
 		System.out.println("completeData  " + completeData.length());
-//        for(int i=0;i<rows.length;i++) {  
-//        	System.out.println(rows[i]);
-//        }
 		BufferedReader br;
 		List<String> result = new ArrayList<>();
 		try {
@@ -120,7 +117,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 				String strar[] = line.split("\\" + "|");
 				al = new ArrayList<>();
 				for (int i = 0; i < strar.length; i++) {
-//					System.out.println(strar[i]);
 					al.add(strar[i]);
 				}
 				arList.add(al);
@@ -129,63 +125,18 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
 		}
-
-//		ArrayList arList = null;
-//		ArrayList al = null;
-//		String thisLine=null;
-//		int count = 0;
 		File convFile = new File(csvFile.getOriginalFilename());
 		convFile.createNewFile();
-//		File convFile1 = new File(csvFile.getOriginalFilename());
-//		convFile.createNewFile();
-////		 Path pathToFile = Paths.get(convFile.getPath());
-////		FileInputStream fis = new FileInputStream(convFile);
-////		BufferedReader br = new BufferedReader(new InputStreamReader(fis,));
-////		FileInputStream fis = new FileInputStream(convFile);
-////		DataInputStream myInput = new DataInputStream(fis);
-////		String line = br.readLine();
-//		
-//		int i = 0;
-//		arList = new ArrayList();
-//		FileReader fr=new FileReader(convFile);
-//		BufferedReader br=new BufferedReader(fr);
-//		StringBuffer sb=new StringBuffer();
-////		while ((thisLine = myInput.readLine()) != null) {
-////			al = new ArrayList();
-////			String strar[] = thisLine.split(sepratorType);
-////			for (int j = 0; j < strar.length; j++) {
-////				al.add(strar[j]);
-////			}
-////			arList.add(al);
-////			System.out.println();
-////			i++;
-////		}
-//		while( (thisLine=br.readLine())!=null )
-//		{
-//			sb.append(thisLine);
-//			al = new ArrayList();
-//			String temp=sb.toString();
-//			String strar[] = temp.split(sepratorType);
-//			for (int j = 0; j < strar.length; j++) {
-//				al.add(strar[j]);
-//				System.out.println(strar[j]);
-//			}
-//			arList.add(al);
-//			
-//		}
 		try {
 			XSSFWorkbook hwb = new XSSFWorkbook();
 			XSSFSheet sheet = hwb.createSheet("new sheet");
 			for (int k = 0; k < arList.size(); k++) {
 				ArrayList ardata = (ArrayList) arList.get(k);
-//				System.out.println("ardata " + ardata.size());
 				XSSFRow row = sheet.createRow((short) 0 + k);
 				for (int p = 0; p < ardata.size(); p++) {
-//					System.out.print(ardata.get(p));
 					XSSFCell cell = row.createCell((short) p);
 					cell.setCellValue(ardata.get(p).toString());
 				}
-//				System.out.println();
 			}
 			FileOutputStream fileOut = new FileOutputStream(convFile);
 			FileOutputStream fileOut1 = new FileOutputStream("C:\\Users\\suyog.mate.MAXIMUS\\Desktop\\azizi\\s1.xls");
@@ -211,10 +162,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		String FullTime = "00";
 		String yyyyHHmmss = null;
 		String yyyy = null;
-//		String splitFormatString=strDate.replaceAll("\\p{Punct}", "");
-//		String splitFormatString1=format.replaceAll("\\p{Punct}", "");
-//		char[] ch = new char[splitFormatString.length()]; 
-//		char[] ch1 = new char[format.length()]; 
 		String[] split = format.split(" ?(?<!\\G)((?<=[^\\p{Punct}])(?=\\p{Punct})|\\b) ?");
 		String[] split1 = strDate.split(" ?(?<!\\G)((?<=[^\\p{Punct}])(?=\\p{Punct})|\\b) ?");
 
@@ -230,7 +177,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 				MM = split1[i];
 			}
 			if (split[i].equals("MMM")) {
-//				SimpleDateFormat simpleformat = new SimpleDateFormat("MMM");
 				Date date = new SimpleDateFormat("MMM", Locale.ENGLISH).parse(split1[i]);
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(date);
@@ -290,11 +236,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		if (ss == null) {
 			ss = "00";
 		}
-//		System.out.println(HH);
-//		if (Integer.parseInt(HH) <= 12 && Integer.parseInt(FullTime) <= 12) {
 		if (HHmmss != null) {
 			String tempstr = dd + MM + yyyy + HHmmss;
-//			System.out.println("tempstr: " + tempstr);
 			DateFormat formatter = new SimpleDateFormat("ddMMyyyyHHmmss");
 			Date tempDate = formatter.parse(tempstr);
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -306,14 +249,11 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			d = sdf.format(tempDate);
 		}
-
-//		}
-//		System.out.println("d   " + d);
 		return d;
 	}
 
 	@Override
-	public List<User> getData(String username, String password,String clientcode) {
+	public List<User> getData(String username, String password, String clientcode) {
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("splogindetails");
 		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
@@ -481,7 +421,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	}
 
 	@Override
-	public String getRoleMaster(String roleName, String homePage, String mode, String roleID, String clientID,String createdby) {
+	public String getRoleMaster(String roleName, String homePage, String mode, String roleID, String clientID,
+			String createdby) {
 
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("sprolemaster");
 		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
@@ -610,20 +551,18 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	}
 
 	@Override
-	public String getUserDetails(String username, String clientID, String branchID, String roleID) {
+	public String getUserDetails(String clientID, String branchID, String roleID) {
 
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("spgetuserdetails");
 
-		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
-		query.registerStoredProcedureParameter(2, Integer.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
-		query.registerStoredProcedureParameter(4, String.class, ParameterMode.IN);
-		query.registerStoredProcedureParameter(5, String.class, ParameterMode.REF_CURSOR);
+		query.registerStoredProcedureParameter(4, String.class, ParameterMode.REF_CURSOR);
 
-		query.setParameter(1, username);
-		query.setParameter(2, Integer.parseInt(clientID));
-		query.setParameter(3, branchID);
-		query.setParameter(4, roleID);
+		query.setParameter(1, Integer.parseInt(clientID));
+		query.setParameter(2, branchID);
+		query.setParameter(3, roleID);
 
 		query.execute();
 
@@ -3411,7 +3350,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							TerminalID = contentData.substring(contentData.indexOf(":") + 1).trim();
 
 						}
-						if (contentData.contains("REF NO") || contentData.contains("RRN NO") || contentData.contains("RRN")) {
+						if (contentData.contains("REF NO") || contentData.contains("RRN NO")
+								|| contentData.contains("RRN")) {
 							ReferenceNumber = contentData.substring(contentData.indexOf(":") + 1).trim();
 
 						}
@@ -3422,7 +3362,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							TxnsTime = contentData.substring(contentData.indexOf(":") + 1);
 
 						}
-						if (contentData.contains("CARD NO") || contentData.contains("CARD NUMBER") || contentData.contains("CARD:") ) {
+						if (contentData.contains("CARD NO") || contentData.contains("CARD NUMBER")
+								|| contentData.contains("CARD:")) {
 							CardNumber = contentData.substring(contentData.indexOf(":") + 1);
 
 						}
@@ -3430,11 +3371,12 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							CustAccountNo = contentData.substring(contentData.indexOf(":") + 1);
 
 						}
-						if (contentData.contains("TRANSTYPE") || contentData.contains("TRANSACTION   :") ) {
+						if (contentData.contains("TRANSTYPE") || contentData.contains("TRANSACTION   :")) {
 							TxnsSubType = contentData.substring(contentData.indexOf(":") + 1);
 
 						}
-						if (contentData.contains("RESP CODE") || contentData.contains("RSP CODE") || contentData.contains("RSP_CODE")) {
+						if (contentData.contains("RESP CODE") || contentData.contains("RSP CODE")
+								|| contentData.contains("RSP_CODE")) {
 							ResponseCodeRaw = contentData.substring(contentData.indexOf(":") + 1);
 
 						}
@@ -10458,7 +10400,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	@Override
 	public String getuserclientcode(String user_name, String password) {
 		// TODO Auto-generated method stub
-		StoredProcedureQuery query1=entityManager.createStoredProcedureQuery("spclientcodedetails");
+		StoredProcedureQuery query1 = entityManager.createStoredProcedureQuery("spclientcodedetails");
 		query1.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
 		query1.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
 		query1.registerStoredProcedureParameter(3, String.class, ParameterMode.REF_CURSOR);
@@ -10473,10 +10415,54 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			obj.put("clientcode", fields[0]);
 			obj.put("clientName", fields[1]);
 			JSONObjects.add(obj);
-			}
+		}
 		JSONObject jsonObj = JSONObjects.get(0);
 		String clientCode = jsonObj.get("clientcode").toString();
-		System.out.println("clientcode"+clientCode);
+		System.out.println("clientcode" + clientCode);
 		return clientCode;
+	}
+
+	@Override
+	public List<JSONObject> getfiletypes(String channeltype) {
+		// TODO Auto-generated method stub
+		StoredProcedureQuery query1 = entityManager.createStoredProcedureQuery("SPGETFILELIST");
+		query1.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(2, String.class, ParameterMode.REF_CURSOR);
+		query1.setParameter(1, channeltype);
+		query1.execute();
+		List<Object[]> result = query1.getResultList();
+		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
+		for (Object record : result) {
+			Object[] fields = (Object[]) record;
+			JSONObject obj = new JSONObject();
+			obj.put("channel", fields[0]);
+			obj.put("fileList", fields[1]);
+			JSONObjects.add(obj);
+		}
+		return JSONObjects;
+	}
+
+	@Override
+	public List<JSONObject> joinopt(String clientid, String channeltype,String mappingtablename) {
+		// TODO Auto-generated method stub
+		StoredProcedureQuery query1 = entityManager.createStoredProcedureQuery("spclientcodedetails");
+		query1.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(4, String.class, ParameterMode.REF_CURSOR);
+		query1.setParameter(1, clientid);
+		query1.setParameter(2, channeltype);
+		query1.setParameter(3, mappingtablename);
+		query1.execute();
+		List<Object[]> result = query1.getResultList();
+		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
+		for (Object record : result) {
+			Object[] fields = (Object[]) record;
+			JSONObject obj = new JSONObject();
+			obj.put("channel", fields[0]);
+			obj.put("fileList", fields[1]);
+			JSONObjects.add(obj);
+		}
+		return JSONObjects;
 	}
 }

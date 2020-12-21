@@ -29,7 +29,7 @@ public interface Trace_Service {
 
 	public String getBranchDetails(String clientID, String branchID);
 
-	public String getUserDetails(String username, String clientID, String branchID, String roleID);
+	public String getUserDetails(String username, String clientID, String branchID);
 
 	public String resetPassword();
 
@@ -223,5 +223,9 @@ public interface Trace_Service {
 	public List<JSONObject> ejtxndetails(String referencenumber, String terminalid, String clientid);
 
 	public String getuserclientcode(String user_name, String password);
+
+	public List<JSONObject> getfiletypes(String channeltype);
+
+	public List<JSONObject> joinopt(String clientid, String mappingtablename, String mappingtablename2);
 
 }

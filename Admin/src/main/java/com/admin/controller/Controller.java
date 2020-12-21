@@ -161,9 +161,13 @@ public class Controller {
 	@GetMapping("GetUserDetails/{clientID}/{branchName}/{roleType}")
 	public Map<String, String> getUserDetails(@PathVariable("clientID") String clientID,
 			@PathVariable("branchName") String branchID, @PathVariable("roleType") String roleID) {
-		String username1 = username.getUsername();
+//		String username1 = username.getUsername();
 		Map<String, String> hm = new HashMap<String, String>();
-		String userList = traceService.getUserDetails(username1, clientID, branchID, roleID);
+//		if(username1.equalsIgnoreCase("undefined"))
+//		{
+			String username1=null;
+//		}
+		String userList = traceService.getUserDetails(clientID, branchID, roleID);
 		hm.put("getUser", userList);
 
 		return hm;
@@ -1443,5 +1447,20 @@ public class Controller {
 		List<JSONObject> nwtxndetails = traceService.nwtxndetails(referencenumber, terminalid, channel, mode, clientid);
 		return nwtxndetails;
 	}
-
+	
+	@GetMapping("getfiletypes/{channeltype}")
+	public List<JSONObject> getfiletypes(@PathVariable("channeltype") String channeltype)
+	{
+		return traceService.getfiletypes(channeltype);
+	}
+	
+	
+	@GetMapping("joinopt/{clientid}/{channeltype}/{mappingtablename}")
+	public List<JSONObject> joinopt(@PathVariable("clientid")String clientid,@PathVariable("channeltype")String channeltype,@PathVariable("mappingtablename")String mappingtablename)
+	{
+		return traceService.joinopt(clientid,channeltype,mappingtablename);
+	}
+	
+	
+	
 }
