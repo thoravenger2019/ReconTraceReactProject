@@ -226,6 +226,6 @@ public interface Trace_Service {
 
 	public List<JSONObject> getfiletypes(String channeltype);
 
-	public List<JSONObject> joinopt(String clientid, String mappingtablename, String mappingtablename2);
+	public List<JSONObject> joinopt(String clientid, String channeltype,String mode,String recontype,String mappingtablename);
 
 }

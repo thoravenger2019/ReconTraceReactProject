@@ -61,12 +61,11 @@ public class Controller {
 	@GetMapping("login1/{username}/{password}")
 	public Map<String, String> userLogin(@PathVariable("username") String user_name,
 			@PathVariable("password") String password) {
-		
-		System.out.println("username"+user_name);
-		System.out.println("password"+password);
-		String clientcode=traceService.getuserclientcode(user_name,password);
-		List<User> lst = traceService.getData(user_name, password,clientcode);
-		
+
+		System.out.println("username" + user_name);
+		System.out.println("password" + password);
+		String clientcode = traceService.getuserclientcode(user_name, password);
+		List<User> lst = traceService.getData(user_name, password, clientcode);
 
 		username = lst.get(0);
 		session.setAttribute("username", username.getUsername());
@@ -77,10 +76,10 @@ public class Controller {
 		String roleID = String.valueOf(username.getRoleID());
 		String clientID = String.valueOf(username.getClientID());
 
-		System.out.println("user : "+user);
+		System.out.println("user : " + user);
 		System.out.println("roleId" + roleID);
 		System.out.println("clientid" + clientID);
-		
+
 		String menu = traceService.getMenuData(user, roleID, clientID);
 
 		String subMenu = traceService.getSubMenuData(user, roleID, clientID);
@@ -111,9 +110,9 @@ public class Controller {
 	public Map<String, String> getRoleDtails(@PathVariable("roleName") String roleName,
 			@PathVariable("homePage") String homePage, @PathVariable("mode") String mode,
 			@PathVariable("roleID") String roleID, @PathVariable("clientID") String clientID) {
-		String createdby=username.getUsername();
+		String createdby = username.getUsername();
 		Map<String, String> hm = new HashMap<String, String>();
-		String rowsInserted = traceService.getRoleMaster(roleName, homePage, mode, roleID, clientID,createdby);
+		String rowsInserted = traceService.getRoleMaster(roleName, homePage, mode, roleID, clientID, createdby);
 		hm.put("roleNames", rowsInserted);
 		return hm;
 	}
@@ -165,7 +164,7 @@ public class Controller {
 		Map<String, String> hm = new HashMap<String, String>();
 //		if(username1.equalsIgnoreCase("undefined"))
 //		{
-			String username1=null;
+		String username1 = null;
 //		}
 		String userList = traceService.getUserDetails(clientID, branchID, roleID);
 		hm.put("getUser", userList);
@@ -1447,20 +1446,21 @@ public class Controller {
 		List<JSONObject> nwtxndetails = traceService.nwtxndetails(referencenumber, terminalid, channel, mode, clientid);
 		return nwtxndetails;
 	}
-	
+
 	@GetMapping("getfiletypes/{channeltype}")
-	public List<JSONObject> getfiletypes(@PathVariable("channeltype") String channeltype)
-	{
+	public List<JSONObject> getfiletypes(@PathVariable("channeltype") String channeltype) {
 		return traceService.getfiletypes(channeltype);
 	}
-	
-	
-	@GetMapping("joinopt/{clientid}/{channeltype}/{mappingtablename}")
-	public List<JSONObject> joinopt(@PathVariable("clientid")String clientid,@PathVariable("channeltype")String channeltype,@PathVariable("mappingtablename")String mappingtablename)
-	{
-		return traceService.joinopt(clientid,channeltype,mappingtablename);
+
+	@GetMapping("joinopt/{clientid}/{channeltype}/{mode}/{recontype}/{mappingtablename}")
+	public List<JSONObject> joinopt(@PathVariable("clientid") String clientid,
+			@PathVariable("channeltype") String channeltype,
+@PathVariable("mode") String mode,
+			@PathVariable("recontype") String recontype,
+
+			@PathVariable("mappingtablename") String mappingtablename) {
+		System.out.println("mappingtablename" + mappingtablename);
+		return traceService.joinopt(clientid, channeltype,mode, recontype, mappingtablename);
 	}
-	
-	
-	
+
 }

@@ -308,6 +308,6 @@ public interface Trace_DAO {
 
 	public List<JSONObject> getfiletypes(String channeltype);
 
-	public List<JSONObject> joinopt(String clientid, String mappingtablename, String channeltype);
+	public List<JSONObject> joinopt(String clientid, String channeltype,String mode, String recontype,String mappingtablename);
 
 }

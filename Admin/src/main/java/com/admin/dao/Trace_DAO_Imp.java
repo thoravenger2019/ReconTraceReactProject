@@ -10443,24 +10443,30 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	}
 
 	@Override
-	public List<JSONObject> joinopt(String clientid, String channeltype,String mappingtablename) {
+	public List<JSONObject> joinopt(String clientid, String channeltype,String mode,String recontype,String mappingtablename) {
 		// TODO Auto-generated method stub
-		StoredProcedureQuery query1 = entityManager.createStoredProcedureQuery("spclientcodedetails");
+		StoredProcedureQuery query1 = entityManager.createStoredProcedureQuery("spjointables");
 		query1.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
 		query1.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
 		query1.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
-		query1.registerStoredProcedureParameter(4, String.class, ParameterMode.REF_CURSOR);
+		query1.registerStoredProcedureParameter(4, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(5, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(6, String.class, ParameterMode.REF_CURSOR);
 		query1.setParameter(1, clientid);
 		query1.setParameter(2, channeltype);
-		query1.setParameter(3, mappingtablename);
+		query1.setParameter(3, mode);
+		query1.setParameter(4, recontype);
+		query1.setParameter(5, mappingtablename);
 		query1.execute();
 		List<Object[]> result = query1.getResultList();
 		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
 		for (Object record : result) {
 			Object[] fields = (Object[]) record;
 			JSONObject obj = new JSONObject();
-			obj.put("channel", fields[0]);
-			obj.put("fileList", fields[1]);
+			obj.put("t1", fields[0]);
+			obj.put("t2", fields[1]);
+			obj.put("t3", fields[2]);
+			obj.put("t4", fields[3]);
 			JSONObjects.add(obj);
 		}
 		return JSONObjects;
