@@ -2023,4 +2023,11 @@ public class Trace_Service_Imp implements Trace_Service {
 		// TODO Auto-generated method stub
 		return traceDao.joinopt(clientid, channeltype, mode,recontype, mappingtablename);
 	}
+
+	@Override
+	public List<JSONObject> getinfofromjointables(String clientid, String channelid, String tmode, String recontype,
+			String fileNameList, String colNameList, String createdBy) {
+		// TODO Auto-generated method stub
+		return traceDao.getinfofromjointables(clientid,channelid,tmode,recontype,fileNameList,colNameList,createdBy);
+	}
 }

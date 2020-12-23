@@ -228,4 +228,7 @@ public interface Trace_Service {
 
 	public List<JSONObject> joinopt(String clientid, String channeltype,String mode,String recontype,String mappingtablename);
 
+	public List<JSONObject> getinfofromjointables(String clientid, String channelid, String tmode, String recontype,
+			String fileNameList, String colNameList, String createdBy);
+
 }

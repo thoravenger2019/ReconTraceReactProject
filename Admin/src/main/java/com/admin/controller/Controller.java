@@ -1454,13 +1454,25 @@ public class Controller {
 
 	@GetMapping("joinopt/{clientid}/{channeltype}/{mode}/{recontype}/{mappingtablename}")
 	public List<JSONObject> joinopt(@PathVariable("clientid") String clientid,
-			@PathVariable("channeltype") String channeltype,
-@PathVariable("mode") String mode,
+			@PathVariable("channeltype") String channeltype, @PathVariable("mode") String mode,
 			@PathVariable("recontype") String recontype,
 
 			@PathVariable("mappingtablename") String mappingtablename) {
 		System.out.println("mappingtablename" + mappingtablename);
-		return traceService.joinopt(clientid, channeltype,mode, recontype, mappingtablename);
+		return traceService.joinopt(clientid, channeltype, mode, recontype, mappingtablename);
+	}
+
+	@PostMapping("getinfofromjointables/{clientid}/{channelid}/{tmode}/{recontype}/{fileNameList}/{colNameList}")
+	public List<JSONObject> getinfofromjointables(@PathVariable("clientid") String clientid,
+			@PathVariable("channelid") String channelid, @PathVariable("tmode") String tmode,
+			@PathVariable("recontype") String recontype, @PathVariable("fileNameList") String fileNameList,
+			@PathVariable("colNameList") String colNameList) {
+	
+		System.out.println("colNameList"+colNameList);
+		System.out.println("fileNameList"+fileNameList);
+		String createdBy=username.getUsername();
+		return traceService.getinfofromjointables(clientid,channelid,tmode,recontype,fileNameList,colNameList,createdBy);
+
 	}
 
 }

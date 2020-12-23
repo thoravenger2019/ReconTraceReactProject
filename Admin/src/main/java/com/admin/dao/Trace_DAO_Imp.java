@@ -10463,10 +10463,40 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		for (Object record : result) {
 			Object[] fields = (Object[]) record;
 			JSONObject obj = new JSONObject();
-			obj.put("t1", fields[0]);
-			obj.put("t2", fields[1]);
-			obj.put("t3", fields[2]);
-			obj.put("t4", fields[3]);
+			obj.put("tMode", fields[0]);
+			obj.put("MatchingColumn", fields[1]);
+			JSONObjects.add(obj);
+		}
+		return JSONObjects;
+	}
+
+	@Override
+	public List<JSONObject> getinfofromjointables(String clientid, String channelid, String tmode, String recontype,
+			String fileNameList, String colNameList, String createdBy) {
+		// TODO Auto-generated method stub
+		StoredProcedureQuery query1 = entityManager.createStoredProcedureQuery("SPSTOREJOINDETAILS");
+		query1.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(4, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(5, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(6, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(7, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(8, String.class, ParameterMode.REF_CURSOR);
+		query1.setParameter(1, clientid);
+		query1.setParameter(2, channelid);
+		query1.setParameter(3, tmode);
+		query1.setParameter(4, recontype);
+		query1.setParameter(5, fileNameList);
+		query1.setParameter(6, colNameList);
+		query1.setParameter(7, createdBy);
+		query1.execute();
+		List<Object[]> result = query1.getResultList();
+		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
+		for (Object record : result) {
+			/* Object[] fields = (Object[]) record; */
+			JSONObject obj = new JSONObject();
+			obj.put("Status", result.get(0));
 			JSONObjects.add(obj);
 		}
 		return JSONObjects;
