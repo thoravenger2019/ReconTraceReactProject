@@ -2030,4 +2030,10 @@ public class Trace_Service_Imp implements Trace_Service {
 		// TODO Auto-generated method stub
 		return traceDao.getinfofromjointables(clientid,channelid,tmode,recontype,fileNameList,colNameList,createdBy);
 	}
+
+	@Override
+	public List<JSONObject> getFileDataCol(String fileName) {
+		// TODO Auto-generated method stub
+		return traceDao.getFileDataCol(fileName);
+	}
 }

@@ -231,4 +231,6 @@ public interface Trace_Service {
 	public List<JSONObject> getinfofromjointables(String clientid, String channelid, String tmode, String recontype,
 			String fileNameList, String colNameList, String createdBy);
 
+	public List<JSONObject> getFileDataCol(String fileName);
+
 }

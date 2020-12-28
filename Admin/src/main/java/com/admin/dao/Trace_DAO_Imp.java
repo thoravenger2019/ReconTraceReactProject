@@ -13,12 +13,13 @@ import java.nio.file.Files;
 import java.sql.Blob;
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -10500,5 +10501,76 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			JSONObjects.add(obj);
 		}
 		return JSONObjects;
+	}
+
+	@Override
+	public List<JSONObject> getFileDataCol(String fileName) {
+		// TODO Auto-generated method stub
+	String glcbstemp="GLCBSTEMP";
+	String switchtemp="SWITCHTEMP";
+	String npciiss="NPCI_ISSUER_ATM_TEMP";
+		try
+		{
+			Connection con= datasource.getConnection();
+			
+			
+			if(fileName.equalsIgnoreCase("GL"))
+			{
+					PreparedStatement stmt=con.prepareStatement("SELECT DISTINCT table_name,column_name FROM all_tab_cols WHERE table_name = ?");
+					stmt.setString(1,glcbstemp);
+					ResultSet res=stmt.executeQuery();
+					List<JSONObject> JSONObjects = new ArrayList<JSONObject>(res.getFetchSize());
+					while(res.next())
+					{
+						JSONObject obj = new JSONObject();
+						obj.put("tableName", res.getString("table_name"));
+						obj.put("columnName", res.getString("column_name"));
+						JSONObjects.add(obj);
+					}
+					stmt.close();
+					con.close();
+					return JSONObjects;
+			}
+			else if(fileName.equalsIgnoreCase("SWITCH"))
+			{
+				PreparedStatement stmt=con.prepareStatement("SELECT DISTINCT table_name,column_name  FROM all_tab_cols WHERE table_name = ?");
+				stmt.setString(1,switchtemp);
+				ResultSet res=stmt.executeQuery();
+				List<JSONObject> JSONObjects = new ArrayList<JSONObject>(res.getFetchSize());
+				while(res.next())
+				{
+					JSONObject obj = new JSONObject();
+					obj.put("tableName", res.getString("table_name"));
+					obj.put("columnName", res.getString("column_name"));
+					JSONObjects.add(obj);
+				}
+				stmt.close();
+				con.close();
+				return JSONObjects;
+			}
+			else if(fileName.equalsIgnoreCase("NPCIISS"))
+			{
+				PreparedStatement stmt=con.prepareStatement("SELECT DISTINCT table_name,column_name FROM all_tab_cols WHERE table_name =?");
+				stmt.setString(1,npciiss);
+				ResultSet res=stmt.executeQuery();
+				List<JSONObject> JSONObjects = new ArrayList<JSONObject>(res.getFetchSize());
+				while(res.next())
+				{
+					JSONObject obj = new JSONObject();
+					obj.put("tableName", res.getString("table_name"));
+					obj.put("columnName", res.getString("column_name"));
+					JSONObjects.add(obj);
+				}
+				stmt.close();
+				con.close();
+				return JSONObjects;
+			}
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+		}
+		return null;
+		
+		
 	}
 }

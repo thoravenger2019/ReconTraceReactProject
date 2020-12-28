@@ -1451,6 +1451,17 @@ public class Controller {
 	public List<JSONObject> getfiletypes(@PathVariable("channeltype") String channeltype) {
 		return traceService.getfiletypes(channeltype);
 	}
+	
+	
+	@GetMapping("getFileDataCol/{fileName}")
+	public List<JSONObject> getFileDataCol(@PathVariable("fileName")String fileName)
+	{
+		List<JSONObject> getFileDataCol = traceService.getFileDataCol(fileName);
+		System.out.println(getFileDataCol);
+		return getFileDataCol;
+	}
+	
+	
 
 	@GetMapping("joinopt/{clientid}/{channeltype}/{mode}/{recontype}/{mappingtablename}")
 	public List<JSONObject> joinopt(@PathVariable("clientid") String clientid,
