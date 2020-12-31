@@ -10444,7 +10444,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	}
 
 	@Override
-	public List<JSONObject> joinopt(String clientid, String channeltype,String mode,String recontype,String mappingtablename) {
+	public List<JSONObject> joinopt(String clientid, String channeltype,String tmode,String recontype,String tablenames, String table1name, String table2name, String joincond) {
 		// TODO Auto-generated method stub
 		StoredProcedureQuery query1 = entityManager.createStoredProcedureQuery("spjointables");
 		query1.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
@@ -10452,20 +10452,26 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query1.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
 		query1.registerStoredProcedureParameter(4, String.class, ParameterMode.IN);
 		query1.registerStoredProcedureParameter(5, String.class, ParameterMode.IN);
-		query1.registerStoredProcedureParameter(6, String.class, ParameterMode.REF_CURSOR);
+		query1.registerStoredProcedureParameter(6, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(7, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(8, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(9, String.class, ParameterMode.REF_CURSOR);
 		query1.setParameter(1, clientid);
 		query1.setParameter(2, channeltype);
-		query1.setParameter(3, mode);
+		query1.setParameter(3, tmode);
 		query1.setParameter(4, recontype);
-		query1.setParameter(5, mappingtablename);
+		query1.setParameter(5, tablenames);
+		query1.setParameter(6, table1name);
+		query1.setParameter(7, table2name);
+		query1.setParameter(8, joincond);
 		query1.execute();
 		List<Object[]> result = query1.getResultList();
 		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
 		for (Object record : result) {
 			Object[] fields = (Object[]) record;
 			JSONObject obj = new JSONObject();
-			obj.put("tMode", fields[0]);
-			obj.put("MatchingColumn", fields[1]);
+			obj.put("MatchedTables", fields[0]);
+			obj.put("joindString", fields[1]);
 			JSONObjects.add(obj);
 		}
 		return JSONObjects;

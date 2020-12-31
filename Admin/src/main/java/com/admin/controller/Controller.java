@@ -1463,14 +1463,14 @@ public class Controller {
 	
 	
 
-	@GetMapping("joinopt/{clientid}/{channeltype}/{mode}/{recontype}/{mappingtablename}")
+	@GetMapping("joinopt/{clientid}/{channeltype}/{tmode}/{recontype}/{tablenames}/{table1name}/{table2name}/{joincond}")
 	public List<JSONObject> joinopt(@PathVariable("clientid") String clientid,
-			@PathVariable("channeltype") String channeltype, @PathVariable("mode") String mode,
+			@PathVariable("channeltype") String channeltype, @PathVariable("tmode") String tmode,
 			@PathVariable("recontype") String recontype,
-
-			@PathVariable("mappingtablename") String mappingtablename) {
-		System.out.println("mappingtablename" + mappingtablename);
-		return traceService.joinopt(clientid, channeltype, mode, recontype, mappingtablename);
+			@PathVariable("tablenames") String tablenames,@PathVariable("table1name")String table1name,
+			@PathVariable("table2name")String table2name,@PathVariable("joincond")String joincond) {
+		System.out.println("tablenames" + tablenames);
+		return traceService.joinopt(clientid, channeltype, tmode, recontype, tablenames,table1name,table2name,joincond);
 	}
 
 	@PostMapping("getinfofromjointables/{clientid}/{channelid}/{tmode}/{recontype}/{fileNameList}/{colNameList}")
@@ -1485,5 +1485,8 @@ public class Controller {
 		return traceService.getinfofromjointables(clientid,channelid,tmode,recontype,fileNameList,colNameList,createdBy);
 
 	}
+	
+	
+	
 
 }
