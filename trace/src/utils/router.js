@@ -30,6 +30,7 @@ import DispenseSummaryReport from '../page/DispenseSummaryReport';
 import MatchedTxnsReport from '../page/MatchedTxnsReport';
 import UnmatchedTxnsReport from '../page/UnmatchedTxnsReport';
 import ReversalTxnsReport from '../page/ReversalTxnsReport';
+import JoinRuleConfiguration from '../page/JoinRuleConfiguration';
 const AppRouter = props => {
 
     return (
@@ -62,6 +63,7 @@ const AppRouter = props => {
             <Route path="/MatchedTxnsReport" component={MatchedTxnsReport}/>
             <Route path="/UnmatchedTxnsReport" component={UnmatchedTxnsReport}/>
             <Route path="/ReversalTxnsReport" component={ReversalTxnsReport}/>
+            <Route path="/JoinRuleConfiguration" component={JoinRuleConfiguration}/>
 
         </Switch>
 )

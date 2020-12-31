@@ -139,7 +139,7 @@ const onDisplayClientNameList = async () => {
     const response = await axios.get(`AddUser/${values.clientId}/${values.FirstName}/${values.LastName}/${values.UserId}/${values.EmailID}/${values.RoleType}/${values.Password}/${values.ConfirmPassword}/${values.BranchID}/${values.ContactNo}`);
     console.log(response.data)
       
-    if(JSON.stringify(response.data) === 'Save')
+    if(JSON.stringify(response.data) === '[Save]')
     {
       alert("user added successfully");
     }
@@ -186,7 +186,7 @@ const onDisplayClientNameList = async () => {
                     label="First Name"
                     name="FirstName"
                     rules={[{ required: true, message: 'Please input your First name!' }]}>
-                   <Input/>
+                   <Input  size="large"/>
                     </Form.Item>    
                     
             </b></Col>
@@ -194,7 +194,7 @@ const onDisplayClientNameList = async () => {
                 <Form.Item 
                     label="Last Name"
                     name="LastName"
-                    rules={[{ required: true, message: 'Please input your last name!' }]}><Input/></Form.Item>    
+                    rules={[{ required: true, message: 'Please input your last name!' }]}><Input  size="large"/></Form.Item>    
             </b></Col>  
         </Row>            
         <Row gutter={8}>
@@ -203,14 +203,14 @@ const onDisplayClientNameList = async () => {
                     label="User ID"
                     name="UserId"
                     rules={[{ required: true, message: 'Please input your User ID!' }]}>
-                    <Input/> 
+                    <Input  size="large"/> 
                     </Form.Item>          
             </b></Col>
             <Col xs={2} sm={16} md={12} lg={8} xl={10}><b>
                 <Form.Item 
                     label="Email ID"
                     name="EmailID"
-                    rules={[{ required: false, message: 'Please input your Email!' }]}><Input/></Form.Item>    
+                    rules={[{ required: false, message: 'Please input your Email!' }]}><Input  size="large"/></Form.Item>    
             </b></Col>  
         </Row>
         <Row gutter={8}>
@@ -219,7 +219,7 @@ const onDisplayClientNameList = async () => {
                     label="Role Type"
                     name="RoleType"
                     rules={[{ required: true, message: 'Please input your Role Type!' }]}>
-                    <Select onChange={onChange} >
+                    <Select onChange={onChange}  size="large" >
                     {roledata}
                   </Select>
                     </Form.Item>    
@@ -229,7 +229,7 @@ const onDisplayClientNameList = async () => {
                     label="Branch Name"
                     name="BranchID"
                     rules={[{ required: true, message: 'Please input your Branch Name!' }]}>
-                    <Select onChange={onChange}>
+                    <Select onChange={onChange}  size="large">
                         {branchdata}
                     </Select>                    
                 </Form.Item>    
@@ -241,14 +241,14 @@ const onDisplayClientNameList = async () => {
                     label="Password"
                     name="Password"
                     rules={[{ required: true, message: 'Please input your Password!' }]}>
-                    <Password/> 
+                    <Password  size="large"/> 
                     </Form.Item>    
                 </b></Col>
             <Col xs={2} sm={16} md={12} lg={8} xl={10}><b>
                 <Form.Item 
                     label="Confirm Password"
                     name="ConfirmPassword"
-                    rules={[{ required: true, message: 'Please input your Confirm Password!' }]}><Password/></Form.Item>    
+                    rules={[{ required: true, message: 'Please input your Confirm Password!' }]}><Password  size="large"/></Form.Item>    
             </b></Col>  
         </Row>
 
@@ -258,13 +258,13 @@ const onDisplayClientNameList = async () => {
                 <Form.Item 
                     label="Contact No"
                     name="ContactNo"
-                    ><Input/></Form.Item>    
+                    ><Input  size="large"/></Form.Item>    
             </b></Col>  
         </Row>
         <Row>
               <Form.Item>
-                   <Button onClick={onAddUser}>Submit</Button>             
-                   <Button  style={{ margin: '0 8px' }} onClick={props.history.goBack} >Back</Button>           
+                   <Button onClick={onAddUser} size="large">Submit</Button>             
+                   <Button  style={{ margin: '0 8px' }} onClick={props.history.goBack} size="large">Back</Button>           
               </Form.Item>         
         </Row>
       </Form>

@@ -179,34 +179,24 @@ const RoleDetails = props => {
               <Card title="Role Details" bordered={false} style={{ width: 800 }}>
 
                 <Form
-                  labelCol={{
-                    span: 4,
-                  }}
-                  wrapperCol={{
-                    span: 5,
-                  }}
+                  
                   layout="vertical"
-                  initialValues={{
-
-                    size: componentSize
-                  }}
-                  onValuesChange={onFormLayoutChange}
-                  size={componentSize}
+                  
                   form={form}
                 >
                   <Form.Item label="Client Name" name="clientID" >
-                    <Select defaultValue="--select--" style={{ width: 200 }} onChange={onChange}>
+                    <Select defaultValue="--select--" style={{ width: 400 }} size="large" onChange={onChange}>
                      {clientdata}
                     </Select>                     
                   </Form.Item>
                   <Form.Item label="Role Name" name="roleName" rules={[{ required: true, message: "Role Name required" }]}>
-                    <Input />
+                    <Input  style={{ width: 400 }} size="large" />
                   </Form.Item>
                   <Form.Item label="Default Page" name="homePage" >
-                    <Input />
+                    <Input  style={{ width: 400 }} size="large"/>
                   </Form.Item>
                   <Form.Item>
-                    <Button onClick={addRole}>Submit</Button>
+                    <Button onClick={addRole} size={"large"}>Submit</Button>
                   </Form.Item>
                 </Form>
               </Card>

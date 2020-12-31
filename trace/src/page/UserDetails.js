@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import 'antd/dist/antd.css';
-import { Button } from 'react-bootstrap';
+//import { Button } from 'react-bootstrap';
 import axios from '../utils/axios';
 import {
   Form,
@@ -13,6 +13,7 @@ import {
   Space,
   Checkbox,
   Table,
+  Button,
 } from 'antd';
 import MenuSideBar from './menuSideBar';
 import Title from 'antd/lib/typography/Title';
@@ -55,6 +56,8 @@ const UserDetails = (props) => {
         <Option value={item.id} key={index}>{item.clientNameList}
         </Option>
         )
+
+
 
 
         setClientData(clientNameList);
@@ -114,6 +117,7 @@ const UserDetails = (props) => {
         userID: item.userID,
         roleName: item.roleName,
         BranchName: item.BranchName,
+        branchcode: item.branchcode,
         EmailID: item.EmailID,
         key: index
       })
@@ -157,8 +161,8 @@ const UserDetails = (props) => {
   },
   {
     title: 'Branch code',
-    dataIndex: '',
-    key: '',
+    dataIndex: 'branchcode',
+    key: 'branchcode',
     
   },
   {
@@ -271,48 +275,36 @@ const UserDetails = (props) => {
             <Skeleton active={loader} loading={loader}>
               <Card title="User Details" bordered={false} style={{ width: 800 }}>
                 <Form
-                  labelCol={{
-                    span: 4,
-                  }}
-                  wrapperCol={{
-                    span: 5,
-                  }}
+                  
                   layout="vertical"
-                  initialValues={{
-                    size: componentSize
-                  }}
+                 
 
-                  onValuesChange={onFormLayoutChange}
-                  size={componentSize}
+                 
                   form={form}
                 >
                   <Form.Item label="Client Name" name="clientID" >
-                    <Select defaultValue="" style={{ width: 200 }} onChange={onChange}>
-                    {clientdata}
+                    <Select  style={{ width: 400 }} onChange={onChange} size="large">
+                         {clientdata}
                     </Select>                     
                   </Form.Item>
                   <Form.Item label="Role Type" name="roleType">
-                    <Select onChange={onChangeRole} >
+                    <Select onChange={onChangeRole} size="large" style={{width:400}} >
                       {roledata}
                     </Select>
                   </Form.Item>
                   <Form.Item label="Branch Name" name="branchName">
-                    <Select>
+                    <Select size="large" style={{width:400}}>
                       {branchdata}
                     </Select>
                   </Form.Item>
                   <Form.Item label="User ID" name="UserId">
-                    <Input />
+                    <Input size="large" style={{width:400}} />
                   </Form.Item>
-                  <Form.Item>
-                    <Button type="primary" onClick={getUser}>
-                      Search
-                    </Button>
-                    <Button style={{ margin: '0 8px' }} onClick={addUser} >
-                      Add User
-                  {/* <NavLink to={"/addUser"}>Add User</NavLink> */}
-                    </Button>
-                  </Form.Item>
+                  <Form.Item >
+                  <Button  style={{backgroundColor:'#52c41a'}} onClick={getUser} size="large" >Search</Button>
+                  <Button  style={{ margin: '0 10px'}} onClick={addUser} size="large" type={"primary"}>Add User</Button>
+                  </Form.Item> 
+                  
                 </Form>
                 <Table dataSource={data} columns={columns}   rowSelection={{
                   type: selectionType,

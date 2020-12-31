@@ -247,13 +247,15 @@ const FieldIdentificationConfiguration = props => {
            const response = await axios.post(`addfieldconfig/${values.P_CLIENTID}/${values.P_VENDORID}/${formatIDData}/${schannelID}`,formDataTerminal);
            //,values.P_BINNO,values.P_ACQUIRERID,values.P_REVCODE1,values.P_REVCODE2,values.P_REVTYPE,values.P_REVENTRY,values.P_TXNDATETIME,values.P_TXNVALUEDATETIME,values.P_TXNPOSTDATETIME,values.P_ATMTYPE,values.P_POSTYPE,values.P_ECOMTYPE,values.P_IMPSTYPE,values.P_UPITYPE,values.P_MICROATMTYPE,values.P_MOBILERECHARGETYPE,values.P_DEPOSIT,values.P_BALENQ,values.P_MINISTATEMENT,values.P_PINCHANGE,values.P_CHEQUEBOOKREQ,values.P_RESPCODE1,values.P_RESPCODE2,values.P_RESPTPE,values.P_EODCODE,values.P_OFFLINECODE,values.P_DEBITCODE,values.P_CREDITCODE
           console.log(response.data)
+          var fieldResp=response.data;
+          var fieldData=fieldResp.map((item,index)=>item.status) 
 
-           /* if (JSON.stringify(response.data) === 'Save') {
-                alert("user added successfully");
+            if (JSON.stringify(fieldData) === '[Save]') {
+                alert("Added successfully");
             }
             else {
                 alert("already exist");
-            }*/
+            }
             //props.history.push("/AddUser",response.data)
         } catch (e) {
             console.log(e)
