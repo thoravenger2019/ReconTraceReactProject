@@ -13,6 +13,8 @@ import java.nio.file.Files;
 import java.sql.Blob;
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -100,14 +102,10 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		byte[] bytes = csvFile.getBytes();
 		String completeData = new String(bytes);
 		String[] rows = completeData.split(",");
-		// String[] columns = rows[0].split(",");
 		ArrayList arList = null;
 		ArrayList al = null;
 		arList = new ArrayList();
 		System.out.println("completeData  " + completeData.length());
-//        for(int i=0;i<rows.length;i++) {  
-//        	System.out.println(rows[i]);
-//        }
 		BufferedReader br;
 		List<String> result = new ArrayList<>();
 		try {
@@ -120,7 +118,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 				String strar[] = line.split("\\" + "|");
 				al = new ArrayList<>();
 				for (int i = 0; i < strar.length; i++) {
-//					System.out.println(strar[i]);
 					al.add(strar[i]);
 				}
 				arList.add(al);
@@ -129,64 +126,18 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
 		}
-
-//		ArrayList arList = null;
-//		ArrayList al = null;
-//		String thisLine=null;
-//		int count = 0;
 		File convFile = new File(csvFile.getOriginalFilename());
 		convFile.createNewFile();
-//		File convFile1 = new File(csvFile.getOriginalFilename());
-//		convFile.createNewFile();
-////		 Path pathToFile = Paths.get(convFile.getPath());
-////		FileInputStream fis = new FileInputStream(convFile);
-////		BufferedReader br = new BufferedReader(new InputStreamReader(fis,));
-////		FileInputStream fis = new FileInputStream(convFile);
-////		DataInputStream myInput = new DataInputStream(fis);
-////		String line = br.readLine();
-//		
-//		int i = 0;
-//		arList = new ArrayList();
-//		FileReader fr=new FileReader(convFile);
-//		BufferedReader br=new BufferedReader(fr);
-//		StringBuffer sb=new StringBuffer();
-////		while ((thisLine = myInput.readLine()) != null) {
-////			al = new ArrayList();
-////			String strar[] = thisLine.split(sepratorType);
-////			for (int j = 0; j < strar.length; j++) {
-////				al.add(strar[j]);
-////			}
-////			arList.add(al);
-////			System.out.println();
-////			i++;
-////		}
-//		while( (thisLine=br.readLine())!=null )
-//		{
-//			sb.append(thisLine);
-//			al = new ArrayList();
-//			String temp=sb.toString();
-//			String strar[] = temp.split(sepratorType);
-//			for (int j = 0; j < strar.length; j++) {
-//				al.add(strar[j]);
-//				System.out.println(strar[j]);
-//			}
-//			arList.add(al);
-//			
-//		}
-//
 		try {
 			XSSFWorkbook hwb = new XSSFWorkbook();
 			XSSFSheet sheet = hwb.createSheet("new sheet");
 			for (int k = 0; k < arList.size(); k++) {
 				ArrayList ardata = (ArrayList) arList.get(k);
-//				System.out.println("ardata " + ardata.size());
 				XSSFRow row = sheet.createRow((short) 0 + k);
 				for (int p = 0; p < ardata.size(); p++) {
-//					System.out.print(ardata.get(p));
 					XSSFCell cell = row.createCell((short) p);
 					cell.setCellValue(ardata.get(p).toString());
 				}
-//				System.out.println();
 			}
 			FileOutputStream fileOut = new FileOutputStream(convFile);
 			FileOutputStream fileOut1 = new FileOutputStream("C:\\Users\\suyog.mate.MAXIMUS\\Desktop\\azizi\\s1.xls");
@@ -212,10 +163,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		String FullTime = "00";
 		String yyyyHHmmss = null;
 		String yyyy = null;
-//		String splitFormatString=strDate.replaceAll("\\p{Punct}", "");
-//		String splitFormatString1=format.replaceAll("\\p{Punct}", "");
-//		char[] ch = new char[splitFormatString.length()]; 
-//		char[] ch1 = new char[format.length()]; 
 		String[] split = format.split(" ?(?<!\\G)((?<=[^\\p{Punct}])(?=\\p{Punct})|\\b) ?");
 		String[] split1 = strDate.split(" ?(?<!\\G)((?<=[^\\p{Punct}])(?=\\p{Punct})|\\b) ?");
 
@@ -231,7 +178,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 				MM = split1[i];
 			}
 			if (split[i].equals("MMM")) {
-//				SimpleDateFormat simpleformat = new SimpleDateFormat("MMM");
 				Date date = new SimpleDateFormat("MMM", Locale.ENGLISH).parse(split1[i]);
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(date);
@@ -291,11 +237,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		if (ss == null) {
 			ss = "00";
 		}
-		System.out.println(HH);
-//		if (Integer.parseInt(HH) <= 12 && Integer.parseInt(FullTime) <= 12) {
 		if (HHmmss != null) {
 			String tempstr = dd + MM + yyyy + HHmmss;
-			System.out.println("tempstr: " + tempstr);
 			DateFormat formatter = new SimpleDateFormat("ddMMyyyyHHmmss");
 			Date tempDate = formatter.parse(tempstr);
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -307,35 +250,26 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			d = sdf.format(tempDate);
 		}
-
-//		}
-		System.out.println("d   " + d);
 		return d;
 	}
 
 	@Override
-	public List<User> getData(String username, String password) {
-
+	public List<User> getData(String username, String password, String clientcode) {
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("splogindetails");
-
 		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(4, String.class, ParameterMode.REF_CURSOR);
-
 		query.setParameter(1, username);
 		query.setParameter(2, password);
-		query.setParameter(3, "1");
-
+		query.setParameter(3, clientcode);
 		query.execute();
-
 		List<Object[]> res = query.getResultList();
 		List<User> list = new ArrayList<User>();
 		Iterator it = res.iterator();
 		while (it.hasNext()) {
 			Object[] line = (Object[]) it.next();
 			User eq = new User();
-
 			eq.setUsername(String.valueOf(line[0]));
 			eq.setPassword(String.valueOf(line[1]));
 			eq.setRoleID(String.valueOf(line[2]));
@@ -348,6 +282,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		return list;
 	}
 
+	@Override
 	public String getMenuData(String userName, String roleID, String clientID) {
 
 		MenuModel menu = null;
@@ -487,7 +422,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	}
 
 	@Override
-	public String getRoleMaster(String roleName, String homePage, String mode, String roleID, String clientID) {
+	public String getRoleMaster(String roleName, String homePage, String mode, String roleID, String clientID,
+			String createdby) {
 
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("sprolemaster");
 		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
@@ -503,7 +439,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query.setParameter(3, Integer.parseInt(clientID));
 		query.setParameter(4, String.valueOf(roleName));
 		query.setParameter(5, String.valueOf(homePage));
-		query.setParameter(6, "ROY");
+		query.setParameter(6, createdby);
 		query.execute();
 
 		String rowsInserted = null;
@@ -616,20 +552,18 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	}
 
 	@Override
-	public String getUserDetails(String username, String clientID, String branchID, String roleID) {
+	public String getUserDetails(String clientID, String branchID, String roleID) {
 
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("spgetuserdetails");
 
-		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
-		query.registerStoredProcedureParameter(2, Integer.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
-		query.registerStoredProcedureParameter(4, String.class, ParameterMode.IN);
-		query.registerStoredProcedureParameter(5, String.class, ParameterMode.REF_CURSOR);
+		query.registerStoredProcedureParameter(4, String.class, ParameterMode.REF_CURSOR);
 
-		query.setParameter(1, username);
-		query.setParameter(2, Integer.parseInt(clientID));
-		query.setParameter(3, branchID);
-		query.setParameter(4, roleID);
+		query.setParameter(1, Integer.parseInt(clientID));
+		query.setParameter(2, branchID);
+		query.setParameter(3, roleID);
 
 		query.execute();
 
@@ -653,6 +587,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			roleObject.put("clientName", String.valueOf(line[6]));
 			roleObject.put("clientID", String.valueOf(line[7]));
 			roleObject.put("isLocked", String.valueOf(line[8]));
+			roleObject.put("branchcode", String.valueOf(line[9]));
 
 			roleArray.add(roleObject);
 
@@ -1424,14 +1359,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 					if (row.getRowNum() == 0) {
 						continue;
 					} else {
-//						branchID = row.getCell(0).toString();
-//						Float f = Float.parseFloat(branchID);
-//						int branchInNum = f.intValue();
-//						System.out.println("branchid" + branchID + " " + f);
 						status = false;
-//						clientID = row.getCell(1).toString();
-//						Float cid = Float.parseFloat(clientID);
-//						int clientInNum = f.intValue();
 						if (hr.getCell(0) == null) {
 							branchCode = null;
 						} else {
@@ -1463,18 +1391,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						} else {
 							concernPerson = row.getCell(4).toString();
 						}
-
-//						StoredProcedureQuery query = entityManager.createStoredProcedureQuery("SPBRANCHMARSTERFILEOPT");
-//						query.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
-//						query.registerStoredProcedureParameter(2, Integer.class, ParameterMode.IN);
-//						query.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
-//						query.registerStoredProcedureParameter(4, String.class, ParameterMode.IN);
-//						query.registerStoredProcedureParameter(5, String.class, ParameterMode.IN);
-//						query.registerStoredProcedureParameter(6, String.class, ParameterMode.IN);
-//						query.registerStoredProcedureParameter(7, String.class, ParameterMode.IN);
-//						query.registerStoredProcedureParameter(8, String.class, ParameterMode.IN);
-//						query.registerStoredProcedureParameter(9, String.class, ParameterMode.IN);
-//						query.registerStoredProcedureParameter(10, String.class, ParameterMode.REF_CURSOR);
 						stmt.setInt(1, Integer.parseInt(clientid));
 						stmt.setString(2, branchName);
 						stmt.setString(3, address);
@@ -1486,22 +1402,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 						stmt.addBatch();
 						stmt.executeBatch();
-
-//						System.out.println();
-//						List<Object[]> resultxls = query.getResultList();
-//						if (resultxls.toString().equalsIgnoreCase("2")) {
-//							xlsList.add(branchName);
-//							xlsList.add(clientInNum);
-//							xlsList.add(branchName);
-//							xlsList.add(address);
-//							xlsList.add(contactNO);
-//							xlsList.add(emailID);
-//							xlsList.add(concernPerson);
-//							xlsList.add(branchCode);
-//							xlsList.add(user);
-//							xlsList.add("||");
-//
-//						}
 
 					}
 
@@ -1568,18 +1468,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							concernPerson = row.getCell(4).toString();
 						}
 
-//						StoredProcedureQuery query = entityManager.createStoredProcedureQuery("SPBRANCHMARSTERFILEOPT");
-//						query.registerStoredProcedureParameter(1, Integer.class, ParameterMode.IN);
-//						query.registerStoredProcedureParameter(2, Integer.class, ParameterMode.IN);
-//						query.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
-//						query.registerStoredProcedureParameter(4, String.class, ParameterMode.IN);
-//						query.registerStoredProcedureParameter(5, String.class, ParameterMode.IN);
-//						query.registerStoredProcedureParameter(6, String.class, ParameterMode.IN);
-//						query.registerStoredProcedureParameter(7, String.class, ParameterMode.IN);
-//						query.registerStoredProcedureParameter(8, String.class, ParameterMode.IN);
-//						query.registerStoredProcedureParameter(9, String.class, ParameterMode.IN);
-//						query.registerStoredProcedureParameter(10, String.class, ParameterMode.REF_CURSOR);
-
 						stmt.setInt(1, Integer.parseInt(clientid));
 						stmt.setString(2, branchName);
 						stmt.setString(3, address);
@@ -1591,19 +1479,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 						stmt.addBatch();
 						stmt.executeBatch();
-//						List<Object[]> xlsxresult = query.getResultList();
-//
-//						if (xlsxresult.toString().equalsIgnoreCase("[2]")) {
-//							xlsxList.add(branchID);
-//							xlsxList.add(clientID);
-//							xlsxList.add(branchName);
-//							xlsxList.add(address);
-//							xlsxList.add(contactNO);
-//							xlsxList.add(emailID);
-//							xlsxList.add(concernPerson);
-//							xlsxList.add(branchCode);
-//							xlsxList.add(user);
-//						}
 					}
 
 				}
@@ -3476,7 +3351,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							TerminalID = contentData.substring(contentData.indexOf(":") + 1).trim();
 
 						}
-						if (contentData.contains("REF NO") || contentData.contains("RRN NO")) {
+						if (contentData.contains("REF NO") || contentData.contains("RRN NO")
+								|| contentData.contains("RRN")) {
 							ReferenceNumber = contentData.substring(contentData.indexOf(":") + 1).trim();
 
 						}
@@ -3487,7 +3363,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							TxnsTime = contentData.substring(contentData.indexOf(":") + 1);
 
 						}
-						if (contentData.contains("CARD NO")) {
+						if (contentData.contains("CARD NO") || contentData.contains("CARD NUMBER")
+								|| contentData.contains("CARD:")) {
 							CardNumber = contentData.substring(contentData.indexOf(":") + 1);
 
 						}
@@ -3495,11 +3372,12 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							CustAccountNo = contentData.substring(contentData.indexOf(":") + 1);
 
 						}
-						if (contentData.contains("TRANSTYPE")) {
+						if (contentData.contains("TRANSTYPE") || contentData.contains("TRANSACTION   :")) {
 							TxnsSubType = contentData.substring(contentData.indexOf(":") + 1);
 
 						}
-						if (contentData.contains("RESP CODE")) {
+						if (contentData.contains("RESP CODE") || contentData.contains("RSP CODE")
+								|| contentData.contains("RSP_CODE")) {
 							ResponseCodeRaw = contentData.substring(contentData.indexOf(":") + 1);
 
 						}
@@ -3525,7 +3403,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 						}
 
-						if (contentData.contains("TRANS SEQ NUMBER")) {
+						if (contentData.contains("TRANS SEQ NUMBER") || contentData.contains("SEQ NUM")) {
 							TransSeqNo = contentData.substring(contentData.indexOf("[")).trim();
 
 						}
@@ -9238,7 +9116,6 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	@Override
 	public List<JSONObject> getunmatchedtxnreport(String clientid, String channelid, String modeid, String terminalid,
 			String fromdatetxns, String todatetxns, String txntype) {
-		// TODO Auto-generated method stub
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("spunmatchedtxnsreport");
 		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
@@ -9629,6 +9506,1077 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		List<JSONObject> cbsIdentificationfileformatxml = getcbsswitchejIdentificationfileformatxml(clientid,
 				fileTypeName, "." + extFile);
 		System.out.println(cbsIdentificationfileformatxml);
+
+		String atmId = null, rrnNo = null, date = null, time = null, cardNo = null, accNo = null, TxnsSubType = null,
+				ChannelType = null, seqNo = null, respCode = null, txnAmt = null, bal = null, TxnsDateTime = null,
+				TxnsPostDateTime = null, AcquirerID = null, ReversalCode1 = null, ReversalCode2 = null,
+				ResponseCode1 = null, ResponseCode2 = null, DrCrType = null, CardType = null, CustAccountNo = null,
+				InterchangeAccountNo = null, Amount1 = null, Amount2 = null, Amount3 = null, TxnsNumber = null,
+				TxnsPerticulars = null, TxnsValueDateTime = null, AuthCode = null, ProcessingCode = null,
+				FeeAmount = null, CurrencyCode = null, CustBalance = null, InterchangeBalance = null, BranchCode = null,
+				Opcode = null, ResultCode = null, TCode = null, TCode1 = null, FunctionId = null, Amount = null,
+				Denomination = null, ReqCount = null, DispenseCount = null, RemainCount = null, PickupCount = null,
+				RejectCount = null, Cassette1 = null, Cassette2 = null, Cassette3 = null, Cassette4 = null,
+				ReserveField1 = null, ReserveField2 = null, ReserveField3 = null, ReserveField4 = null,
+				ReserveField5 = null;
+		Boolean ejStatus = false;
+		int incr = 0;
+		try {
+			Connection con = datasource.getConnection();
+			CallableStatement stmt = con.prepareCall(
+					"{call SPINSERTEJDATA(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
+			File convFile = new File(ej.getOriginalFilename());
+			convFile.createNewFile();
+			FileOutputStream fos = new FileOutputStream(convFile);
+			fos.write(ej.getBytes());
+			fos.close();
+			content = Files.readAllLines(convFile.toPath());
+
+			int firstIndex = 0, endIndex = 0;
+
+			for (int i = 0; i < content.size(); i++) {
+				int indexForAtmID = content.get(i).indexOf("ATM ID");
+				int endIndexforDash = content.get(i).indexOf("------------------------------------", indexForAtmID);
+				if (indexForAtmID < endIndexforDash) {
+					count++;
+				}
+			}
+
+			for (int i = 0; i < content.size(); i++) {
+				int indexForAtmID = content.get(i).indexOf("ATM ID");
+				int endIndexforDash = content.get(i).indexOf("------------------------------------", indexForAtmID);
+
+				if (indexForAtmID < endIndexforDash) {
+					String finalStr = content.get(i).substring(indexForAtmID, endIndexforDash).trim();
+					String[] finalStr1 = finalStr.split("a");
+
+					for (int k = 0; k < finalStr1.length; k++) {
+						ejStatus = false;
+						if (finalStr1[k].contains("ATM ID")) {
+							try {
+								String[] SplitStr = finalStr1[k].split(":");
+								String[] temp = SplitStr[1].split("\\s+");
+								atmId = temp[0];
+							} catch (Exception e) {
+								atmId = null;
+							}
+						}
+						if (finalStr1[k].contains("REF NO") || finalStr1[k].contains("RRN NO.")) {
+							try {
+								String[] SplitStr = finalStr1[k].split(":");
+								String[] temp = SplitStr[1].split("\\s+");
+								rrnNo = temp[0];
+							} catch (Exception e) {
+								rrnNo = null;
+							}
+						}
+						if (finalStr1[k].contains("DATE")) {
+							try {
+								String[] SplitStr = finalStr1[k].split(":");
+								String[] temp = SplitStr[1].split("\\s+");
+								date = temp[0];
+							} catch (Exception e) {
+								date = null;
+							}
+						}
+						if (finalStr1[k].contains("TIME")) {
+							try {
+								String SplitStr = finalStr1[k].substring(finalStr1[k].length() - 9,
+										finalStr1[k].length());
+								time = SplitStr;
+							} catch (Exception e) {
+								time = null;
+							}
+						}
+
+//						 string Timeout = result;
+//                         TxnsTime = Timeout.Substring(6, 8).Trim();
+
+						if (finalStr1[k].contains("CARD NO")) {
+							try {
+								String[] SplitStr = finalStr1[k].split(":");
+								String[] temp = SplitStr[1].split("\\s+");
+								cardNo = temp[0];
+							} catch (Exception e) {
+								cardNo = null;
+							}
+						}
+						if (finalStr1[k].contains("A/C NO")) {
+							try {
+								String[] SplitStr = finalStr1[k].split(":");
+								String[] temp = SplitStr[1].split("\\s+");
+								accNo = temp[0];
+							} catch (Exception e) {
+								accNo = null;
+							}
+						}
+						if (finalStr1[k].contains("TRANSTYPE")) {
+							try {
+								String[] SplitStr = finalStr1[k].split(":");
+								String[] temp = SplitStr[1].split("\\s+");
+								TxnsSubType = temp[0];
+							} catch (Exception e) {
+								TxnsSubType = null;
+							}
+						}
+						if (finalStr1[k].contains("SEQ NO.")) {
+							try {
+								String[] SplitStr = finalStr1[k].split(":");
+								String[] temp = SplitStr[1].split("\\s+");
+								seqNo = temp[0];
+							} catch (Exception e) {
+								seqNo = null;
+							}
+						}
+
+						if (finalStr1[k].contains("RESP CODE") || finalStr1[k].contains("RESP CD")) {
+							try {
+								String[] SplitStr = finalStr1[k].split(":");
+								String[] temp = SplitStr[1].split("\\s+");
+								respCode = temp[0];
+							} catch (Exception e) {
+								respCode = null;
+							}
+						}
+						if (finalStr1[k].contains("TRANS AMOUNT") || finalStr1[k].contains("WDL AMT")
+								|| finalStr1[k].contains("AMT")) {
+							try {
+
+								String[] SplitStr = finalStr1[k].split(": ");
+								String[] temp = SplitStr[1].split("\\s+");
+								txnAmt = temp[0];
+							} catch (Exception e) {
+								txnAmt = null;
+							}
+						}
+						if (finalStr1[k].contains("BALANCE") && !finalStr1[k].contains("BALANCEENQUIRY")) {
+							try {
+								String[] SplitStr = finalStr1[k].split(": ");
+								String[] temp = SplitStr[1].split("\\s+");
+								bal = temp[0];
+							} catch (Exception e) {
+								bal = null;
+							}
+							System.out.println("Bal    " + bal);
+							System.out.println("i   " + i);
+						}
+					}
+
+					Boolean card = false;
+					Boolean Terminal = false;
+					Boolean Acquirer = false;
+					Boolean Rev1 = false;
+					Boolean Rev2 = false;
+					Boolean ATM = false;
+					Boolean CDM = false;
+					Boolean POS = false;
+					Boolean ECOM = false;
+					Boolean IMPS = false;
+					Boolean UPI = false;
+					Boolean MicroATM = false;
+					Boolean MobileRecharge = false;
+					Boolean BAL = false;
+					Boolean MS = false;
+					Boolean PC = false;
+					Boolean CB = false;
+					Boolean RCA1 = false;
+					Boolean RCA2 = false;
+					Boolean MC = false;
+					Boolean VC = false;
+					Boolean OC = false;
+					Boolean D = false;
+					Boolean C = false;
+					Boolean RevFlag = false;
+					String ModeID = null;
+					String TxnsSubTypeMain = null;
+					String TxnsType = null;
+					String TxnsEntryType = null;
+					String DebitCreditType = null;
+					String TxnsDateTimeMain = null, TxnsPostDateTimeMain = null;
+					String ChannelID = null;
+					String ResponseCode = null;
+					String TxnsStatus = null;
+					JSONObject cbsxmlFormatDescription = cbsIdentificationfileformatxml.get(0);
+
+					String txnDateTimeFormat = null;
+					if (cbsxmlFormatDescription.get("TxnDateTime") == null) {
+
+					} else {
+						txnDateTimeFormat = cbsxmlFormatDescription.get("TxnDateTime").toString();
+					}
+					String txnPostDateTimeFormat = null;
+
+					if (cbsxmlFormatDescription.get("TxnPostDateTime") == null) {
+
+					} else {
+						txnPostDateTimeFormat = cbsxmlFormatDescription.get("TxnPostDateTime").toString();
+					}
+					String terminalCode = null;
+
+					if (cbsxmlFormatDescription.get("TerminalCode") == null) {
+
+					} else {
+						terminalCode = cbsxmlFormatDescription.get("TerminalCode").toString();
+					}
+					String acqID = null;
+
+					if (cbsxmlFormatDescription.get("AcquirerID") == null) {
+
+					} else {
+						acqID = cbsxmlFormatDescription.get("AcquirerID").toString();
+					}
+					String binNum = null;
+
+					if (cbsxmlFormatDescription.get("BIN_No") == null) {
+
+					} else {
+						binNum = cbsxmlFormatDescription.get("BIN_No").toString();
+					}
+					String reversaltype = null;
+
+					if (cbsxmlFormatDescription.get("ReversalType") == null) {
+
+					} else {
+						reversaltype = cbsxmlFormatDescription.get("ReversalType").toString();
+					}
+					String reversalcode1 = null;
+
+					if (cbsxmlFormatDescription.get("ReversalCode1") == null) {
+
+					} else {
+						reversalcode1 = cbsxmlFormatDescription.get("ReversalCode1").toString();
+					}
+					String reversalcode2 = null;
+
+					if (cbsxmlFormatDescription.get("ReversalCode2") == null) {
+
+					} else {
+						reversalcode2 = cbsxmlFormatDescription.get("ReversalCode2").toString();
+					}
+					String CDMType = null;
+
+					if (cbsxmlFormatDescription.get("CDMType") == null) {
+
+					} else {
+						CDMType = cbsxmlFormatDescription.get("CDMType").toString();
+					}
+					String atmType = null;
+
+					if (cbsxmlFormatDescription.get("ATMType") == null) {
+
+					} else {
+						atmType = cbsxmlFormatDescription.get("ATMType").toString();
+					}
+					String microAtmType = null;
+
+					if (cbsxmlFormatDescription.get("MicroATMType") == null) {
+
+					} else {
+						microAtmType = cbsxmlFormatDescription.get("MicroATMType").toString();
+					}
+					String posType = null;
+
+					if (cbsxmlFormatDescription.get("POSType") == null) {
+
+					} else {
+						posType = cbsxmlFormatDescription.get("POSType").toString();
+					}
+					String ecomType = null;
+
+					if (cbsxmlFormatDescription.get("ECOMType") == null) {
+
+					} else {
+						ecomType = cbsxmlFormatDescription.get("ECOMType").toString();
+					}
+					String impType = null;
+
+					if (cbsxmlFormatDescription.get("IMPType") == null) {
+
+					} else {
+						impType = cbsxmlFormatDescription.get("IMPType").toString();
+					}
+					String upiType = null;
+
+					if (cbsxmlFormatDescription.get("UPIType") == null) {
+
+					} else {
+						upiType = cbsxmlFormatDescription.get("UPIType").toString();
+					}
+
+					String mobileRecharge = null;
+
+					if (cbsxmlFormatDescription.get("MobileRechargeType") == null) {
+
+					} else {
+						mobileRecharge = cbsxmlFormatDescription.get("MobileRechargeType").toString();
+					}
+					String balanceInq = null;
+
+					if (cbsxmlFormatDescription.get("BalanceEnquiry") == null) {
+
+					} else {
+						balanceInq = cbsxmlFormatDescription.get("BalanceEnquiry").toString();
+					}
+					String miniStatement = null;
+
+					if (cbsxmlFormatDescription.get("MiniStatement") == null) {
+
+					} else {
+						miniStatement = cbsxmlFormatDescription.get("MiniStatement").toString();
+					}
+					String pinChange = null;
+
+					if (cbsxmlFormatDescription.get("PinChange") == null) {
+
+					} else {
+						pinChange = cbsxmlFormatDescription.get("PinChange").toString();
+					}
+					String checkBookReq = null;
+
+					if (cbsxmlFormatDescription.get("ChequeBookReq") == null) {
+
+					} else {
+						checkBookReq = cbsxmlFormatDescription.get("ChequeBookReq").toString();
+					}
+					String responseType = null;
+
+					if (cbsxmlFormatDescription.get("ResponseType") == null) {
+
+					} else {
+						responseType = cbsxmlFormatDescription.get("ResponseType").toString();
+					}
+					String responsecode1 = null;
+
+					if (cbsxmlFormatDescription.get("ResponseCode1") == null) {
+
+					} else {
+						responsecode1 = cbsxmlFormatDescription.get("ResponseCode1").toString();
+					}
+					String responsecode2 = null;
+
+					if (cbsxmlFormatDescription.get("ResponseCode2") == null) {
+
+					} else {
+						responsecode2 = cbsxmlFormatDescription.get("ResponseCode2").toString();
+					}
+					String debitCode = null;
+
+					if (cbsxmlFormatDescription.get("DebitCode") == null) {
+
+					} else {
+						debitCode = cbsxmlFormatDescription.get("DebitCode").toString();
+					}
+					String creditCode = null;
+
+					if (cbsxmlFormatDescription.get("CreditCode") == null) {
+
+					} else {
+						creditCode = cbsxmlFormatDescription.get("CreditCode").toString();
+					}
+
+					try {
+						if (date != null && time != null) {
+							if (txnDateTimeFormat.isEmpty() || txnDateTimeFormat == null) {
+
+							} else {
+								String concatTxnDateTime = date + " " + time;
+								TxnsDateTimeMain = checkDateFormat(txnDateTimeFormat, concatTxnDateTime);
+								System.out.println("TxnsDateTimeMain  " + TxnsDateTimeMain);
+							}
+						}
+					} catch (ParseException p) {
+						arr[0] = count;
+						arr[1] = 2;
+						arr[3] = incr++;
+						return arr;
+					}
+					if (txnDateTimeFormat != null && TxnsDateTime != null) {
+
+						TxnsDateTimeMain = checkDateFormat(txnDateTimeFormat, TxnsDateTime);
+//						System.out.println("TxnsDateTimeMain  " + TxnsDateTimeMain);
+					}
+					if (txnPostDateTimeFormat != null && TxnsPostDateTime != null) {
+
+						TxnsPostDateTimeMain = checkDateFormat(txnPostDateTimeFormat, TxnsPostDateTime);
+					}
+					if (terminalCode != null && atmId != null) {
+						if (atmId.contains(terminalCode)) {
+							Terminal = true;
+//							System.out.println("Terminal:  " + Terminal);
+						}
+					}
+					if (acqID != null && AcquirerID != null) {
+						if (acqID.equals(AcquirerID)) {
+							Acquirer = true;
+//							System.out.println("Acquirer:  " + Acquirer);
+						}
+					}
+
+					if (binNum != null && cardNo != null) {
+						if (binNum.equals(cardNo.substring(0, 6))) {
+							card = true;
+//							System.out.println("card:  " + card);
+						}
+					}
+					if (reversaltype != null) {
+						if (reversaltype.equals("1") && reversalcode1 != null && ReversalCode1 != null) {
+							if (reversalcode1.equals(ReversalCode1)) {
+								Rev1 = true;
+							}
+						}
+
+						if (reversaltype.equals("2") && reversalcode1 != null && reversalcode2 != null
+								&& ReversalCode1 != null) {
+							if (reversalcode1.equals(ReversalCode1)) {
+								Rev1 = true;
+							}
+							if (reversalcode2.equals(ReversalCode2)) {
+								Rev2 = true;
+							}
+						}
+					}
+
+					if (ChannelType == null && TxnsSubType != null) {
+						if (CDMType != null) {
+							if (CDMType.equals(TxnsSubType)) {
+								CDM = true;
+							}
+						}
+						if (atmType != null) {
+//							&& TerminalID.substring(0, 2) != microAtmType)
+							Boolean isFound = atmType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true && atmId.substring(0, 2) != microAtmType) {
+								ATM = true;
+							}
+						}
+						if (posType != null) {
+							Boolean isFound = posType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true) {
+								POS = true;
+							}
+						}
+						if (ecomType != null) {
+							Boolean isFound = ecomType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true) {
+								ECOM = true;
+							}
+						}
+						if (impType != null) {
+							Boolean isFound = impType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true) {
+								IMPS = true;
+							}
+						}
+						if (upiType != null) {
+							Boolean isFound = upiType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true) {
+								UPI = true;
+							}
+						}
+						if (microAtmType != null) {
+							Boolean isFound = microAtmType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true || atmId.substring(0, 2).equals(microAtmType)) {
+								MicroATM = true;
+							}
+						}
+						if (mobileRecharge != null) {
+							Boolean isFound = mobileRecharge.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true) {
+								MobileRecharge = true;
+							}
+						}
+					} else if (ChannelType != null) {
+						if (CDMType != null) {
+							Boolean isFound = CDMType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound == true) {
+								CDM = true;
+							}
+						}
+						if (atmType != null) {
+							Boolean isFound = atmType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound == true && atmId.substring(0, 2) != microAtmType) {
+								ATM = true;
+							}
+						}
+						if (posType != null) {
+							Boolean isFound = posType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound == true) {
+								POS = true;
+							}
+						}
+						if (ecomType != null) {
+							Boolean isFound = ecomType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound == true) {
+								ECOM = true;
+							}
+						}
+						if (impType != null) {
+							Boolean isFound = impType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound == true) {
+								IMPS = true;
+							}
+						}
+						if (upiType != null) {
+							Boolean isFound = upiType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound == true) {
+								UPI = true;
+							}
+						}
+						if (microAtmType != null) {
+							Boolean isFound = microAtmType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound = true || atmId.substring(0, 2).equals(microAtmType)) {
+								MicroATM = true;
+							}
+						}
+						if (mobileRecharge != null) {
+							Boolean isFound = mobileRecharge.indexOf(ChannelType.trim()) != -1 ? true : false;
+							if (isFound = true) {
+								MobileRecharge = true;
+							}
+						}
+
+//						if (Integer.parseInt(clientid) == 12) {
+//							if (Terminal == true && card == true) {
+//								ATM = true;
+//							} else if (Terminal == true && card == false) {
+//								ATM = true;
+//							} else if (Terminal == false && card == true) {
+//								ATM = true;
+//							}
+//						}
+					}
+					if (TxnsSubType != null) {
+						if (balanceInq != null) {
+							Boolean isFound = balanceInq.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true) {
+								BAL = true;
+							}
+						}
+						if (miniStatement != null) {
+							Boolean isFound = miniStatement.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true) {
+								MS = true;
+							}
+						}
+						if (pinChange != null) {
+							Boolean isFound = pinChange.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true) {
+								PC = true;
+							}
+						}
+						if (checkBookReq != null) {
+							Boolean isFound = checkBookReq.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							if (isFound == true) {
+								CB = true;
+							}
+						}
+					}
+
+					if (responseType.equals("1") && responsecode1 != null && ResponseCode1 != null) {
+						if (responsecode1.equals(ResponseCode1)) {
+							RCA1 = true;
+						}
+					}
+					if (responseType.equals("2") && responsecode1 != null && responsecode2 != null
+							&& ResponseCode2 != null) {
+						if (responsecode1.equals(ResponseCode1)) {
+							RCA1 = true;
+						}
+						if (responsecode2.equals(ResponseCode2)) {
+							RCA2 = true;
+						}
+					}
+					if (ResponseCode1 == null) {
+						RCA1 = true;
+					}
+
+					if (debitCode != null) {
+						if (DrCrType != null) {
+							if (debitCode.equals(DrCrType)) {
+								D = true;
+							}
+						}
+					}
+
+					if (creditCode != null) {
+						if (DrCrType != null) {
+							if (creditCode.equals(DrCrType)) {
+								C = true;
+							}
+						}
+					}
+					if (AcquirerID == null || acqID == null) {
+						if (Terminal == true && card == true) {
+							ModeID = "1";
+						}
+						if (Terminal == true && card == false) {
+							ModeID = "2";
+						}
+						if (Terminal == false && card == true) {
+							ModeID = "3";
+						}
+					} else {
+						if (Acquirer == true && card == true) {
+							ModeID = "1";
+						}
+						if (Acquirer == true && card == false) {
+							ModeID = "2";
+						}
+						if (Acquirer == false && card == true) {
+							ModeID = "3";
+						}
+					}
+
+					if (Rev1 == true || Rev1 == true && Rev2 == true) {
+						RevFlag = true;
+					} else {
+						RevFlag = false;
+					}
+
+					if (ATM) {
+						TxnsSubTypeMain = "Withdrawal";
+						ChannelID = "1";
+					}
+					if (CDM) {
+						TxnsSubTypeMain = "Deposit";
+						ChannelID = "1";
+					}
+					if (POS) {
+						ChannelID = "2";
+						TxnsSubTypeMain = "Purchase";
+					}
+					if (ECOM) {
+						ChannelID = "2";
+						TxnsSubTypeMain = "Purchase";
+					}
+					if (IMPS) {
+						ChannelID = "4";
+						TxnsSubTypeMain = "Transfer";
+					}
+					if (MicroATM) {
+						ChannelID = "5";
+						TxnsSubTypeMain = "Withdrawal";
+					}
+					if (MobileRecharge) {
+						ChannelID = "6";
+						TxnsSubTypeMain = "Transfer";
+					}
+					if (UPI) {
+						ChannelID = "7";
+						TxnsSubTypeMain = "Transfer";
+					}
+					if (RCA1 == true || RCA1 == true && RCA2 == true) {
+						ResponseCode = "00";
+						TxnsStatus = "Sucessfull";
+					} else {
+						ResponseCode = ResponseCode1;
+						TxnsStatus = "Unsucessfull";
+					}
+
+					if (BAL) {
+						TxnsSubTypeMain = "Balance enquiry";
+					}
+
+					if (MS) {
+						TxnsSubTypeMain = "Mini statement";
+					}
+
+					if (PC) {
+						TxnsSubTypeMain = "Pin change";
+					}
+
+					if (CB) {
+						TxnsSubTypeMain = "Cheque book request";
+					}
+					if (BAL || MS || PC || CB) {
+						TxnsType = "Non-Financial";
+					} else {
+						TxnsType = "Financial";
+					}
+					if (OC) {
+						TxnsEntryType = "Manual";
+					} else {
+						TxnsEntryType = "Auto";
+					}
+					if (D) {
+						DebitCreditType = "D";
+					}
+
+					if (C) {
+						DebitCreditType = "C";
+					}
+
+					String E_CardNumber = null;
+					if (cardNo != "") {
+						E_CardNumber = cardNo;
+					}
+
+//					 if (RemoveAdditionalChars(ErrorLines[ErrorMessage].ToString()).Contains("BILLS DISPENSED:"))
+//                     {
+//                         ErrorCode = RemoveAdditionalChars(ErrorLines[ErrorMessage].ToString()).Split(':').Last();
+//                         string[] NotDispense = ErrorCode.Split(' ').Where(x => !string.IsNullOrEmpty(x)).ToArray();
+//
+//                         bool Iserror = false;
+//                         for (int i = 0; i < NotDispense.Length - 1; i++)
+//                         {
+//                             if (NotDispense[i].Contains("00"))
+//                             {
+//                                 Iserror = false;
+//                             }
+//                             else
+//                             {
+//                                 Iserror = true;
+//                                 break;
+//                             }
+//
+//                         }
+//                         //if (ErrorCode.Contains("I/O ERROR") && (ResponseCode != "00"))
+//                         //{
+//                         //    ErrorCode = ErrorCode + " " + "Unsuccessful";
+//                         //    TxnsType = "Unsuccessful";
+//                         //}
+//                         //else if (ErrorCode.Contains("I/O ERROR") && (ResponseCode == "00"))
+//                         //{
+//                         //    ErrorCode = ErrorCode + " " + "successful";
+//                         //    TxnsType = "successful";
+//                         //}
+//                         //else
+//                         if (Iserror == false)
+//                         {
+//                             ErrorCode = ErrorCode + " " + "Unsuccessful";
+//                             TxnsType = "Unsuccessful";
+//                         }
+//                         else
+//                         {
+//                             ErrorCode = ErrorCode + " " + "Successful";
+//                             TxnsType = "Successful";
+//                         }
+//                     }
+//                     else
+//                     {
+//                         ErrorCode = RemoveAdditionalChars(ErrorLines[ErrorMessage].ToString()).Split('#').Last();
+//                         if (ErrorCode.Contains("POWER"))
+//                         // if (ErrorCode.Contains("I/O ERROR") && (ResponseCode != "00"))
+//                         {
+//                             ErrorCode = ErrorCode + " " + "Suspect";
+//                             TxnsType = "Suspect";
+//                         }
+//                         //if (ErrorCode.Contains("I/O ERROR") && (ResponseCode != "00"))
+//                         //{
+//                         //    ErrorCode = ErrorCode + " " + "Unsuccessful";
+//                         //    TxnsType = "Unsuccessful";
+//                         //}
+//                         //else if (ErrorCode.Contains("I/O ERROR") && (ResponseCode == "00"))
+//                         //{
+//                         //    ErrorCode = ErrorCode + " " + "successful";
+//                         //    TxnsType = "successful";
+//                         //}
+//
+//                     }
+//                     if (ErrorCode == "")
+//                     {
+//                         if (!ErrorCode.Contains("M-00") && (result.Contains("POWER")))
+//                         {
+//                             if (ErrorCode.Trim() == "")
+//                             {
+//                                 ErrorCode = result + " " + "Suspect";
+//                             }
+//                             else
+//                             {
+//                                 ErrorCode = ErrorCode + " " + "Suspect";
+//                             }
+//                             TxnsType = "Suspect";
+//                         }
+//                         else if (!ErrorCode.Contains("M-00") && (result.Contains("2*E") && result.Contains("M-18") || result.Contains("2*E") && result.Contains("M-14") || result.Contains("2*E") && result.Contains("1*3") || result.Contains("D*9") && result.Contains("M-84") || result.Contains("D*9") && result.Contains("M-81") || result.Contains("E*2") && result.Contains("M-03") || result.Contains("E*2") || result.Contains("M-") || result.Contains("E*2") || result.Contains("DECLINED OFFLINE")))
+//                         {
+//                             ErrorCode = result;
+//                             // TxnsType = "Suspect";
+//                         }
+//                     }
+
+					stmt.setString(1, clientid);
+					stmt.setString(2, ChannelID);
+					stmt.setString(3, ModeID);
+					stmt.setString(4, atmId);
+					stmt.setString(5, rrnNo);
+					stmt.setString(6, E_CardNumber);
+					stmt.setString(7, CardType);
+					stmt.setString(8, accNo);
+					stmt.setString(9, InterchangeAccountNo);
+					stmt.setString(10, null);// atmaccnumber
+					stmt.setString(11, TxnsDateTimeMain);
+					stmt.setString(12, txnAmt);
+					stmt.setString(13, Amount1);
+					stmt.setString(14, Amount2);
+					stmt.setString(15, Amount3);
+					stmt.setString(16, TxnsStatus);
+					stmt.setString(17, TxnsType);
+					stmt.setString(18, TxnsSubTypeMain);
+					stmt.setString(19, TxnsEntryType);
+					stmt.setString(20, TxnsNumber);
+					stmt.setString(21, TxnsPerticulars);
+					stmt.setString(22, DebitCreditType);
+					stmt.setString(23, respCode);
+					stmt.setString(24, RevFlag.toString());
+					stmt.setString(25, TxnsPostDateTimeMain);
+					stmt.setString(26, TxnsValueDateTime);
+					stmt.setString(27, AuthCode);
+					stmt.setString(28, ProcessingCode);
+					stmt.setString(29, FeeAmount);
+					stmt.setString(30, CurrencyCode);
+					stmt.setString(31, CustBalance);
+					stmt.setString(32, InterchangeBalance);
+					stmt.setString(33, bal);
+					stmt.setString(34, BranchCode);
+					stmt.setString(35, seqNo);
+					stmt.setString(36, Opcode);
+					stmt.setString(37, ResultCode);
+					stmt.setString(38, null);// errorcode
+					stmt.setString(39, TCode);
+					stmt.setString(40, TCode1);
+					stmt.setString(41, FunctionId);
+					stmt.setString(42, Amount);
+					stmt.setString(43, Denomination);
+					stmt.setString(44, ReqCount);
+					stmt.setString(45, DispenseCount);
+					stmt.setString(46, RemainCount);
+					stmt.setString(47, PickupCount);
+					stmt.setString(48, RejectCount);
+					stmt.setString(49, Cassette1);
+					stmt.setString(50, Cassette2);
+					stmt.setString(51, Cassette3);
+					stmt.setString(52, Cassette4);
+					stmt.setString(53, ReserveField1);
+					stmt.setString(54, ReserveField2);
+					stmt.setString(55, ReserveField3);
+					stmt.setString(56, ReserveField4);
+					stmt.setString(57, ReserveField5);
+					stmt.setString(58, null);
+					stmt.setString(59, "0");
+					stmt.setString(60, ej.getOriginalFilename());
+					stmt.setString(61, null);
+					stmt.setString(62, null);
+					stmt.setString(63, null);
+					stmt.setString(64, null);
+					stmt.setString(65, null);
+					stmt.setString(66, createdby);
+					stmt.setString(67, null);
+					stmt.addBatch();
+					incr++;
+					System.out.println("add batch");
+					System.out.println(incr + "       " + content.size());
+
+					stmt.executeBatch();
+					System.out.println("exec batch");
+					ejStatus = true;
+				}
+
+			}
+			if (ejStatus == true || incr == count) {
+//				obj1.put("EJFILESTATUS", "EJ_FILE_UPLOADED");
+//				importFileEJStatus.add(obj1);
+//				return importFileEJStatus;
+				arr[0] = incr;
+				arr[1] = 1;
+				arr[2] = count;
+				return arr;
+			} else {
+//				obj1.put("EJFILESTATUS", "EJ_FILE_INTRRRUPTED");
+//				importFileEJStatus.add(obj1);
+//				return importFileEJStatus;
+				arr[0] = incr;
+				arr[1] = 2;
+				arr[2] = count;
+				return arr;
+			}
+
+		} catch (Exception e) {
+			arr[0] = incr;
+			arr[1] = 2;
+			arr[2] = count;
+			return arr;
+		}
+	}
+
+	@Override
+	public String getuserclientcode(String user_name, String password) {
+		// TODO Auto-generated method stub
+		StoredProcedureQuery query1 = entityManager.createStoredProcedureQuery("spclientcodedetails");
+		query1.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(3, String.class, ParameterMode.REF_CURSOR);
+		query1.setParameter(1, user_name);
+		query1.setParameter(2, password);
+		query1.execute();
+		List<Object[]> result = query1.getResultList();
+		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
+		for (Object record : result) {
+			Object[] fields = (Object[]) record;
+			JSONObject obj = new JSONObject();
+			obj.put("clientcode", fields[0]);
+			obj.put("clientName", fields[1]);
+			JSONObjects.add(obj);
+		}
+		JSONObject jsonObj = JSONObjects.get(0);
+		String clientCode = jsonObj.get("clientcode").toString();
+		System.out.println("clientcode" + clientCode);
+		return clientCode;
+	}
+
+	@Override
+	public List<JSONObject> getfiletypes(String channeltype) {
+		// TODO Auto-generated method stub
+		StoredProcedureQuery query1 = entityManager.createStoredProcedureQuery("SPGETFILELIST");
+		query1.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(2, String.class, ParameterMode.REF_CURSOR);
+		query1.setParameter(1, channeltype);
+		query1.execute();
+		List<Object[]> result = query1.getResultList();
+		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
+		for (Object record : result) {
+			Object[] fields = (Object[]) record;
+			JSONObject obj = new JSONObject();
+			obj.put("channel", fields[0]);
+			obj.put("fileList", fields[1]);
+			JSONObjects.add(obj);
+		}
+		return JSONObjects;
+	}
+
+	@Override
+	public List<JSONObject> joinopt(String clientid, String channeltype,String tmode,String recontype,String tablenames, String table1name, String table2name, String joincond) {
+		// TODO Auto-generated method stub
+		StoredProcedureQuery query1 = entityManager.createStoredProcedureQuery("spjointables");
+		query1.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(4, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(5, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(6, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(7, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(8, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(9, String.class, ParameterMode.REF_CURSOR);
+		query1.setParameter(1, clientid);
+		query1.setParameter(2, channeltype);
+		query1.setParameter(3, tmode);
+		query1.setParameter(4, recontype);
+		query1.setParameter(5, tablenames);
+		query1.setParameter(6, table1name);
+		query1.setParameter(7, table2name);
+		query1.setParameter(8, joincond);
+		query1.execute();
+		List<Object[]> result = query1.getResultList();
+		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
+		for (Object record : result) {
+			Object[] fields = (Object[]) record;
+			JSONObject obj = new JSONObject();
+			obj.put("MatchedTables", fields[0]);
+			obj.put("joindString", fields[1]);
+			JSONObjects.add(obj);
+		}
+		return JSONObjects;
+	}
+
+	@Override
+	public List<JSONObject> getinfofromjointables(String clientid, String channelid, String tmode, String recontype,
+			String fileNameList, String colNameList, String createdBy) {
+		// TODO Auto-generated method stub
+		StoredProcedureQuery query1 = entityManager.createStoredProcedureQuery("SPSTOREJOINDETAILS");
+		query1.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(3, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(4, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(5, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(6, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(7, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(8, String.class, ParameterMode.REF_CURSOR);
+		query1.setParameter(1, clientid);
+		query1.setParameter(2, channelid);
+		query1.setParameter(3, tmode);
+		query1.setParameter(4, recontype);
+		query1.setParameter(5, fileNameList);
+		query1.setParameter(6, colNameList);
+		query1.setParameter(7, createdBy);
+		query1.execute();
+		List<Object[]> result = query1.getResultList();
+		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
+		for (Object record : result) {
+			/* Object[] fields = (Object[]) record; */
+			JSONObject obj = new JSONObject();
+			obj.put("Status", result.get(0));
+			JSONObjects.add(obj);
+		}
+		return JSONObjects;
+	}
+
+	@Override
+	public List<JSONObject> getFileDataCol(String fileName) {
+		// TODO Auto-generated method stub
+	String glcbstemp="GLCBSTEMP";
+	String switchtemp="SWITCHTEMP";
+	String npciiss="NPCI_ISSUER_ATM_TEMP";
+		try
+		{
+			Connection con= datasource.getConnection();
+			
+			
+			if(fileName.equalsIgnoreCase("GL"))
+			{
+					PreparedStatement stmt=con.prepareStatement("SELECT DISTINCT table_name,column_name FROM all_tab_cols WHERE table_name = ?");
+					stmt.setString(1,glcbstemp);
+					ResultSet res=stmt.executeQuery();
+					List<JSONObject> JSONObjects = new ArrayList<JSONObject>(res.getFetchSize());
+					while(res.next())
+					{
+						JSONObject obj = new JSONObject();
+						obj.put("tableName", res.getString("table_name"));
+						obj.put("columnName", res.getString("column_name"));
+						JSONObjects.add(obj);
+					}
+					stmt.close();
+					con.close();
+					return JSONObjects;
+			}
+			else if(fileName.equalsIgnoreCase("SWITCH"))
+			{
+				PreparedStatement stmt=con.prepareStatement("SELECT DISTINCT table_name,column_name  FROM all_tab_cols WHERE table_name = ?");
+				stmt.setString(1,switchtemp);
+				ResultSet res=stmt.executeQuery();
+				List<JSONObject> JSONObjects = new ArrayList<JSONObject>(res.getFetchSize());
+				while(res.next())
+				{
+					JSONObject obj = new JSONObject();
+					obj.put("tableName", res.getString("table_name"));
+					obj.put("columnName", res.getString("column_name"));
+					JSONObjects.add(obj);
+				}
+				stmt.close();
+				con.close();
+				return JSONObjects;
+			}
+			else if(fileName.equalsIgnoreCase("NPCIISS"))
+			{
+				PreparedStatement stmt=con.prepareStatement("SELECT DISTINCT table_name,column_name FROM all_tab_cols WHERE table_name =?");
+				stmt.setString(1,npciiss);
+				ResultSet res=stmt.executeQuery();
+				List<JSONObject> JSONObjects = new ArrayList<JSONObject>(res.getFetchSize());
+				while(res.next())
+				{
+					JSONObject obj = new JSONObject();
+					obj.put("tableName", res.getString("table_name"));
+					obj.put("columnName", res.getString("column_name"));
+					JSONObjects.add(obj);
+				}
+				stmt.close();
+				con.close();
+				return JSONObjects;
+			}
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+		}
 		return null;
+		
+		
 	}
 }

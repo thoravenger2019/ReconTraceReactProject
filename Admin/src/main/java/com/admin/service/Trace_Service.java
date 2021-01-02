@@ -13,7 +13,7 @@ import com.admin.model.User;
 
 public interface Trace_Service {
 
-	public List<User> getData(String useername, String password);
+	public List<User> getData(String useername, String password, String clientcode);
 
 	public String getMenuData(String username, String roleID, String clientId);
 
@@ -21,7 +21,7 @@ public interface Trace_Service {
 
 	public String getRoleDetails(String clientID);
 
-	public String getRoleMaster(String roleName, String homePage, String mode, String roleID, String clientID);
+	public String getRoleMaster(String roleName, String homePage, String mode, String roleID, String clientID, String createdby);
 
 	public String getRoleAccessRights(String roleID, String clientID);
 
@@ -29,7 +29,7 @@ public interface Trace_Service {
 
 	public String getBranchDetails(String clientID, String branchID);
 
-	public String getUserDetails(String username, String clientID, String branchID, String roleID);
+	public String getUserDetails(String username, String clientID, String branchID);
 
 	public String resetPassword();
 
@@ -221,5 +221,16 @@ public interface Trace_Service {
 			String clientid);
 
 	public List<JSONObject> ejtxndetails(String referencenumber, String terminalid, String clientid);
+
+	public String getuserclientcode(String user_name, String password);
+
+	public List<JSONObject> getfiletypes(String channeltype);
+
+	public List<JSONObject> joinopt(String clientid, String channeltype,String tmode,String recontype,String tablenames, String table1name, String table2name, String joincond);
+
+	public List<JSONObject> getinfofromjointables(String clientid, String channelid, String tmode, String recontype,
+			String fileNameList, String colNameList, String createdBy);
+
+	public List<JSONObject> getFileDataCol(String fileName);
 
 }
