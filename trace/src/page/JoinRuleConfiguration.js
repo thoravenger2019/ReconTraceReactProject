@@ -40,6 +40,11 @@ const JoinRuleConfiguration = props => {
 
   const [selectionType, setSelectionType] = useState('');
   const [searchText, setSearchText] = useState('');
+  const [filecheck,setCheckFilename]=useState([]);
+  const [switchCheck,setCheckFilenameSwitch]=useState([]);
+  const [glCheck,setCheckFilenameGL]=useState([])
+  const [npciiisCheck,setCheckFilenameNPCIISS]=useState([])
+
 
 //   const [branchdata, setBranchData] = useState([])
    const [loader, setLoader] = useState(true)
@@ -48,6 +53,7 @@ const JoinRuleConfiguration = props => {
 
 console.log("switch tbl data",tblColSw);
 console.log("gl tbl data",tblColGl);
+
 useEffect(() => {
 //   onDisplayUserRole();
 //   onDisplayChannel();
@@ -71,6 +77,7 @@ const onDisplayClientNameList = async () => {
 
   } catch (e) {
     console.log(e)
+
   }
 };
   const onGetChannelDetails = async (value) => {
@@ -144,7 +151,7 @@ const getFileList = async (value) => {
             alert(ruletype);
             if(splitresult.includes("SWITCH") && splitresult.includes("GL") && splitresult.includes("NPCIISS")){
                 alert("ej gl");
-                var finalListFile=<div><Checkbox value={splitresult[4]}  key={1} onChange={onChangeColumnName}>{splitresult[4]}</Checkbox><Checkbox value={splitresult[3]}  key={2} onChange={onChangeColumnName}>{splitresult[3]}</Checkbox><Checkbox value={splitresult[2]}  key={3} onChange={onChangeColumnName}>{splitresult[2]}</Checkbox></div>
+                var finalListFile=<div><Checkbox value={splitresult[4]}  key={1} onChange={onChangeColumnNameSwitch}>{splitresult[4]}</Checkbox><Checkbox value={splitresult[3]}  key={2} onChange={onChangeColumnNameGL}>{splitresult[3]}</Checkbox><Checkbox value={splitresult[2]}  key={3} onChange={onChangeColumnNameNPCIISS}>{splitresult[2]}</Checkbox></div>
                 // +
                 // <Checkbox value={splitresult[3]}  key={2} onChange={onChangeColumnName}>{splitresult[3]}</Checkbox>
                 // // +
@@ -217,21 +224,27 @@ const fiterSelectedRows = tblColSw.filter(row => {
 const addJoinRuleDetails = async () => {
 
     try {
+        console.log(switchCheck);
+        console.log(glCheck);
         const validateFields = await form.validateFields();
         const values = form.getFieldsValue();
-        console.log(values)
-        //clientid}/{columnname}/{channelid}/{modeid}/{ruletype}")
-        ///addfieldconfig/{}/{P_VENDORID}/{P_FORMATID}/{P_TERMINALCODE}/{}/{}/{}/{}/{}/{}/{}/{}/{}/{}/ 
-        //@GetMapping("joinopt/{clientid}/{channeltype}/{mappingtablename}")                                                                                                                                                                                                                                            {}/{}/{}/{}/{}/{}/{}/{}/{}/{}/{}/                                                                                                                                                                                                               {}/{}/{}/{}/{}/{}/{}
-       const response = await axios.get(`joinopt/${clientid}/${channelid}/${modeid}/${ruletype}/${columnname}`);
-       console.log(response.data);
-       const colResult=response.data;
-       const dataAll=colResult.map((item,index)=>({
-           colName : item.MatchingColumn,
-           key: index
-       }));
-       setColtblData(dataAll);
-    //    const responseAddRule=response.data;
+        console.log(values);
+      // console.log(filecheck)  
+       if(switchCheck=='SWITCH' && glCheck=='GL')   {
+           alert("hii... ");
+           console.log(selectionType);
+        const response = await axios.get(`joinopt/${clientid}/${channelid}/${modeid}/${ruletype}/${switchCheck+','+glCheck}/${'GLCBSTEMP'}/${'SWITCHTEMP'}/${selectionType}`);
+        console.log(response.data);
+       }                                                                                                                               
+
+      
+    //    const colResult=response.data;
+    //    const dataAll=colResult.map((item,index)=>({
+    //        colName : item.MatchingColumn,
+    //        key: index
+    //    }));
+    //    setColtblData(dataAll);
+    // //    const responseAddRule=response.data;
     //    const rdata = responseAddRule.map((item, index) => item.Status );
     //     console.log(rdata);
     //     const abc=JSON.stringify(rdata); 
@@ -253,15 +266,49 @@ const addJoinRuleDetails = async () => {
   const menuData = props.location.state;
   console.log(menuData);
 
-  function onChangeColName(e) {
-    console.log(`checked = ${e.target.checked}`);
-  }
+  function onChangeColumnNameSwitch(e) {
+    console.log(`checked = ${e.target.value}`);
+    const filelistCheck=`${e.target.value}`;
+    setCheckFilenameSwitch(filelistCheck);
+    alert(filelistCheck);
+    if(filelistCheck=='SWITCH'){
+        getFileDataCol(filelistCheck);
+        setSWtbl(true);
+    }
+}
 
+
+function onChangeColumnNameGL(e) {
+    console.log(`checked = ${e.target.value}`);
+    const filelistCheck=`${e.target.value}`;
+    setCheckFilenameGL(filelistCheck);
+    alert(filelistCheck);
+    if(filelistCheck=='GL'){
+        getFileDataCol(filelistCheck);
+        setGLtbl(true);
+    }
+}
+
+
+function onChangeColumnNameNPCIISS(e) {
+    console.log(`checked = ${e.target.value}`);
+    const filelistCheck=`${e.target.value}`;
+    setCheckFilenameNPCIISS(filelistCheck);
+    alert(filelistCheck);
+    if(filelistCheck=='NPCIISS'){
+        getFileDataCol(filelistCheck);
+    }
+}
   function onChangeColumnName(e) {
     console.log(`checked = ${e.target.value}`);
     const filelistCheck=`${e.target.value}`;
+    setCheckFilename(filelistCheck);
     console.log(filelistCheck);
     // setCOlumnName(checkedValues);
+    var arrayofcheckfilename=[];
+    arrayofcheckfilename.push(filelistCheck);
+    console.log(arrayofcheckfilename);
+
     if(filelistCheck=='GL'){
         getFileDataCol(filelistCheck);
         setGLtbl(true);
@@ -367,6 +414,7 @@ const addJoinRuleDetails = async () => {
     else{
         alert("nooo");
 
+
     }
   }
   console.log(selectionType);
@@ -419,7 +467,7 @@ const addJoinRuleDetails = async () => {
     console.log(values);
     //@PostMapping("getinfofromjointables/{clientid}/{channelid}/{tmode}/{recontype}/{fileNameList}/{colNameList}")
     const response = await axios.post(`getinfofromjointables/${clientid}/${channelid}/${modeid}/${ruletype}/${columnname}/${selectionType}`);
-    console.log(response.data)
+    console.log(response.data);
       
     // if(JSON.stringify(response.data) === 'Save')
     // {
