@@ -13,6 +13,7 @@ import {
   Layout,
   Avatar,
   Table,
+  Alert,
 } from 'antd';
 import Title from 'antd/lib/typography/Title';
 import Highlighter from "react-highlight-words";
@@ -35,8 +36,15 @@ const JoinRuleConfiguration = props => {
   const [tblCol,setColtblData]=useState([])
   const [tblColSw,setSWColtblData]=useState([])
   const [tblColGl,setGLColtblData]=useState([])
+  const [tblColNPCIISS,setNPCIISSColtblData]=useState([])
   const [tblcoltest,setSelectedRows]=useState([])
   const [matchtbl,setMatchtblData]=useState([])
+  const [matchtblnpcidata,setMatchtblDataNew]=useState([])
+  const [switchTempName,setNameSwitchTempTable]=useState('')
+  const [NPCIISSTempName,setNameNPCIISSTempTable]=useState('')
+  const [glTempName,setNameGLTempTable]=useState('')
+
+  const [matchtblnpciiss,setMatchWithNpciss]=useState(false)
 
   const [selectionType, setSelectionType] = useState('');
   const [searchText, setSearchText] = useState('');
@@ -44,15 +52,19 @@ const JoinRuleConfiguration = props => {
   const [switchCheck,setCheckFilenameSwitch]=useState([]);
   const [glCheck,setCheckFilenameGL]=useState([])
   const [npciiisCheck,setCheckFilenameNPCIISS]=useState([])
-
-
+  const [columnnamematch,setMatchedTablesName]=useState('')
+  const [joincondition,setJoinCond]=useState('')
 //   const [branchdata, setBranchData] = useState([])
    const [loader, setLoader] = useState(true)
    const [gltblloader,setGLtbl]=useState(false)
    const [swtblloader,setSWtbl]=useState(false)
+   const [npciiss,setNPCIISS]=useState(false)
+   const [matchtblloader,setMatchtbl]=useState(false);
+   const [matchtblNew,setMatchtblNew]=useState(false);
+   const [joinCondLoader,setJoinCondLoader]=useState(false);
 
-console.log("switch tbl data",tblColSw);
-console.log("gl tbl data",tblColGl);
+// console.log("switch tbl data",tblColSw);
+// console.log("gl tbl data",tblColGl);
 
 useEffect(() => {
 //   onDisplayUserRole();
@@ -182,24 +194,55 @@ const getFileDataCol= async (value) => {
         const fileResponse = await axios.get(`getFileDataCol/${value}`);
         console.log(fileResponse.data)
         const colResult=fileResponse.data;
+        const columnNamess=colResult[0];
+        console.log(columnNamess);
+        const tempFileName=colResult[1]
+        console.log(tempFileName)
         setLoader(false);
         if(value=="SWITCH"){
-            const dataAll=colResult.map((item,index)=>({
+            const dataAll=columnNamess.map((item,index)=>({
                 colName : item.columnName,
                 chosen: true,
                 key: index
             }));
             setSWColtblData(dataAll);
+            const tblNameSwitch=tempFileName.map((item,index)=>item.tableName);
+            console.log(tblNameSwitch)
+            setNameSwitchTempTable(tblNameSwitch[0]);
+        //    alert(tblNameSwitch[0])
         }
         if(value=="GL"){
-            console.log(tblcoltest);
-            const dataAll=colResult.map((item,index)=>({
+           // console.log(tblcoltest);
+            const columnNamess=colResult[0];
+            console.log(columnNamess);
+            const tempFileName=colResult[1]
+            console.log(tempFileName)
+            const dataAll=columnNamess.map((item,index)=>({
                 colName : item.columnName,
                 chosen: false,
                 key: index
             }));
             setGLColtblData(dataAll);
+            const tblNameGL=tempFileName.map((item,index)=>item.tableName);
+            setNameGLTempTable(tblNameGL[0]);
 
+           // console.log(tblcoltest);
+        }
+
+        if(value=="NPCIISS"){
+            //console.log(tblcoltest);
+            const columnNamess=colResult[0];
+            console.log(columnNamess);
+            const tempFileName=colResult[1]
+            console.log(tempFileName)
+            const dataAll=columnNamess.map((item,index)=>({
+                colName : item.columnName,
+                chosen: false,
+                key: index
+            }));
+            setNPCIISSColtblData(dataAll);
+            const tblNameNPCIISS=tempFileName.map((item,index)=>item.tableName);
+            setNameNPCIISSTempTable(tblNameNPCIISS[0]);
             console.log(tblcoltest);
         }
 
@@ -222,7 +265,6 @@ const fiterSelectedRows = tblColSw.filter(row => {
 
 
 const addJoinRuleDetails = async () => {
-
     try {
         console.log(switchCheck);
         console.log(glCheck);
@@ -231,13 +273,49 @@ const addJoinRuleDetails = async () => {
         console.log(values);
       // console.log(filecheck)  
        if(switchCheck=='SWITCH' && glCheck=='GL')   {
-           alert("hii... ");
-           console.log(selectionType);
-        const response = await axios.get(`joinopt/${clientid}/${channelid}/${modeid}/${ruletype}/${switchCheck+','+glCheck}/${'GLCBSTEMP'}/${'SWITCHTEMP'}/${selectionType}`);
+           //alert("hii... ");
+          // console.log(selectionType);
+        const response = await axios.get(`joinopt/${clientid}/${channelid}/${modeid}/${ruletype}/${switchCheck+','+glCheck}/${switchTempName}/${glTempName}/${selectionType}`);
         console.log(response.data);
+        var matchtableresp=response.data;
+        var MatchedTablesName=matchtableresp.map((item,index)=>item.MatchedTables);
+        var joinCond=matchtableresp.map((item,index)=>item.joindString);
+        console.log(MatchedTablesName);
+        setMatchedTablesName(MatchedTablesName[0]);
+        setJoinCond(joinCond[0])
+        if(matchtableresp!=""){
+            alert("workin not equal");
+            setGLtbl(false);
+            setSWtbl(false);
+            setMatchtbl(false);
+            setMatchWithNpciss(false);
+            setMatchtblNew(true);
+            setJoinCondLoader(true);
+        }
        }                                                                                                                               
 
-      
+    if(npciiisCheck=='NPCIISS')   {
+        //alert("hii... ");
+       // console.log(selectionType);
+     const response = await axios.get(`joinopt/${clientid}/${channelid}/${modeid}/${ruletype}/${npciiisCheck}/${glTempName+"-"+switchTempName}/${NPCIISSTempName}/${selectionType}`);
+     console.log(response.data);
+     var matchtableresp=response.data;
+     var MatchedTablesName=matchtableresp.map((item,index)=>item.MatchedTables);
+     var joinCond=matchtableresp.map((item,index)=>item.joindString);
+     console.log(MatchedTablesName);
+     setMatchedTablesName(MatchedTablesName[0]);
+     setJoinCond(joinCond[0])
+     if(matchtableresp!=""){
+         alert("workin not equal");
+         setGLtbl(false);
+         setSWtbl(false);
+         setMatchtbl(false);
+         setMatchWithNpciss(false);
+         setMatchtblNew(true);
+         setJoinCondLoader(true);
+     }
+    }                                                                                                                               
+
     //    const colResult=response.data;
     //    const dataAll=colResult.map((item,index)=>({
     //        colName : item.MatchingColumn,
@@ -274,6 +352,7 @@ const addJoinRuleDetails = async () => {
     if(filelistCheck=='SWITCH'){
         getFileDataCol(filelistCheck);
         setSWtbl(true);
+        setMatchtblNew(false);
     }
 }
 
@@ -286,6 +365,7 @@ function onChangeColumnNameGL(e) {
     if(filelistCheck=='GL'){
         getFileDataCol(filelistCheck);
         setGLtbl(true);
+        setMatchtblNew(false);
     }
 }
 
@@ -297,6 +377,10 @@ function onChangeColumnNameNPCIISS(e) {
     alert(filelistCheck);
     if(filelistCheck=='NPCIISS'){
         getFileDataCol(filelistCheck);
+        setNPCIISS(true);
+        setCheckFilenameGL('');
+        setCheckFilenameSwitch('');
+       
     }
 }
   function onChangeColumnName(e) {
@@ -364,8 +448,19 @@ function onChangeColumnNameNPCIISS(e) {
         setSearchText(selectedList[i]);
       }
       console.log('0th ===',selectedList[0]);
-      checkWithGL(selectedList);
+
+      if(switchCheck=='SWITCH' && glCheck=='GL' )   
+      {
+        checkWithGL(selectedList);
+      }
+      console.log(columnnamematch);
+      if(/*columnnamematch=='GLCBSTEMP = SWITCHTEMP'*/ npciiisCheck=='NPCIISS' )
+      {
+        checkMatchtableWithNPCI(selectedList);
+      }
+
     },
+
   
     // getCheckboxProps: record => ({
     //   enabled : record.isActivie === 'Disabled User', // Column configuration not to be checked
@@ -375,33 +470,68 @@ function onChangeColumnNameNPCIISS(e) {
    
   };
 
-  const rowSelectiongl = {
+//   const rowSelectiongl = {
 
-    onChange:(selectedRowKeys, selectedRows) => {
-    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-      //const selectedRole = selectedRowKeys.data;
-        console.log(selectedRows);
-        setSelectedRows(selectedRows);
-        const selectedList = selectedRows.map((item, index) => item.colName)
-        console.log(selectedList)
-        //setData(selectedList);
-     //setSelectedCOl(selectedList);
-      setSelectionType(selectedList);
-      checkWithGL(selectedList);
-    },
-  };
+//     onChange:(selectedRowKeys, selectedRows) => {
+//     console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+//       //const selectedRole = selectedRowKeys.data;
+//         console.log(selectedRows);
+//         setSelectedRows(selectedRows);
+//         const selectedList = selectedRows.map((item, index) => item.colName)
+//         console.log(selectedList)
+//         //setData(selectedList);
+//      //setSelectedCOl(selectedList);
+//       setSelectionType(selectedList);
+//       checkWithGL(selectedList);
+//     },
+//   };
 
 
   const checkWithGL=(selectedList)=>{
-    //alert(selectedList[0]);
-    console.log(tblColGl);
+    alert("checkWithGL");
+    //console.log(tblColGl);
     // var serchString=selectedList.map((item,index)=>item);
     var glnamess=tblColGl.map((item,index)=>item.colName);
     var swnamess=tblColSw.map((item,index)=>item.colName);
-    console.log("sw:==",swnamess);
-    console.log(selectedList[0]);
-    console.log(glnamess);
+   // console.log("sw:==",swnamess);
+    //console.log(selectedList[0]);
+    //console.log(glnamess);
     if(glnamess.includes(selectedList[0])){
+    alert("yes");
+    //console.log("matched data",selectedList);
+    const dataAll=selectedList.map((item,index)=>({
+        colName : item,
+        key: index
+    }));
+  //  setSWColtblData(dataAll);
+       
+       setMatchtblData(dataAll);
+       setMatchtbl(true);
+      
+      // setMatchtblNew(true);
+    }
+    else{
+        alert("nooo");
+    }
+
+  }
+
+  
+  const checkMatchtableWithNPCI=(selectedList)=>{
+      alert("checkMatchtableWithNPCI");
+    //alert(selectedList[0]);
+    //console.log(tblColGl);
+    var serchString=selectedList.map((item,index)=>item);
+    // var glnamess=tblColGl.map((item,index)=>item.colName);
+    // var swnamess=tblColSw.map((item,index)=>item.colName);
+    var npciissnamess=tblColNPCIISS.map((item,index)=>item.colName);
+    // console.log(selectedList);
+     console.log(npciissnamess);
+    // console.log(matchtbl);
+    // console.log("sw:==",swnamess);
+     console.log(selectedList[0]);
+    // console.log(glnamess);
+    if(npciissnamess.includes(selectedList[0])){
     alert("yes");
     console.log("matched data",selectedList);
     const dataAll=selectedList.map((item,index)=>({
@@ -409,7 +539,11 @@ function onChangeColumnNameNPCIISS(e) {
         key: index
     }));
   //  setSWColtblData(dataAll);
-       setMatchtblData(dataAll);
+       setMatchtblDataNew(dataAll);
+       //setMatchtbl(true);
+       setMatchWithNpciss(true);
+
+      // setMatchtblNew(true);
     }
     else{
         alert("nooo");
@@ -417,6 +551,9 @@ function onChangeColumnNameNPCIISS(e) {
 
     }
   }
+
+
+  
   console.log(selectionType);
  // debugger;
   const columns = [
@@ -447,14 +584,48 @@ function onChangeColumnNameNPCIISS(e) {
     }
  ];
 
+ 
+ const columnsnpciiss = [
+    {
+      title: 'NPCI Column Name',
+      dataIndex: 'colName',
+      key: 'index',
+    //   width: '5%',
+
+    }
+ ];
+
  const columnsmatch = [
     {
-      title: 'match Column Name',
+      title: 'match Column Name gl with switch',
       dataIndex: 'colName',
       key: 'index',
     //   width: '5%',
     }
  ];
+
+
+ 
+
+
+ const columnsmatchwithNPCIISS = [
+    {
+      title: 'match Column Name with npciiss',
+      dataIndex: 'colName',
+      key: 'index',
+    //   width: '5%',
+    }
+ ];
+
+ const columnsmatchnew = [
+    {
+      title: 'new match gl switch',
+      dataIndex: 'colName',
+      key: 'index',
+    //   width: '5%',
+    }
+ ];
+ 
 
 
   const [form] = Form.useForm()
@@ -569,7 +740,10 @@ function onChangeColumnNameNPCIISS(e) {
                    <Button  style={{ margin: '0 8px' }} onClick={props.history.goBack} >Back</Button>           
               </Form.Item>         
     </Row>
-
+    {joinCondLoader?(
+         <Alert message={joincondition} type="info" />
+    ):("")}
+   
 <Row gutter={[16, 16]}>
   <Col span={4}>
   {swtblloader?(
@@ -596,9 +770,13 @@ function onChangeColumnNameNPCIISS(e) {
     />
 ):("")}
   </Col>
-  <Col span={6}>
-  <Table dataSource={matchtbl} columns={columnsmatch} />
+  
+{matchtblloader?(
+    <Col span={6}>
+ <Table dataSource={matchtbl} columns={columnsmatch} />
   </Col>
+):("")}
+ 
   <Col span={6} />
 </Row>
 {/* {gltblloader?(
@@ -612,7 +790,87 @@ function onChangeColumnNameNPCIISS(e) {
     />
 ):("")} */}
        
-    <Button size="large" type={"primary"} onClick={getinfofromjointables}>Save</Button> 
+    {/* <Button size="large" type={"primary"} onClick={getinfofromjointables}>Save</Button>  */}
+
+    <Row gutter={[16, 16]}>
+  <Col span={4}>
+  {matchtblNew?(
+                <Table dataSource={matchtbl} columns={columnsmatch}   rowSelection={{
+                    type: selectionType,
+                    ...rowSelection,
+                    }}
+                    pagination={false}
+                    style={{width:'25%'}}
+                    bordered
+                />
+            ):("")}
+  </Col>
+  <Col span={4}>
+  {npciiss?(
+            <Table dataSource={tblColNPCIISS} columns={columnsnpciiss}   rowSelection={{
+                type: selectionType,
+                ...rowSelection,
+                }}
+                pagination={false}
+                style={{width:'25%'}}
+                bordered
+            />
+        ):("")}
+  </Col>
+  <Col span={2} />
+  {matchtblnpciiss?(
+            <Col span={6} >
+              <Table dataSource={matchtblnpcidata} columns={columnsmatchwithNPCIISS}   
+                style={{width:'25%'}}
+                bordered
+                pagination={false}
+            />
+               </Col>
+        ):("")}
+     
+</Row>
+{/*------------------------------------------------------------------------------------*/}
+
+{/* 
+
+    <Row gutter={[16, 16]}>
+        <Col span={4}>
+                    {matchtblNew?(
+                <Table dataSource={matchtbl} columns={columnsmatch}   rowSelection={{
+                    type: selectionType,
+                    ...rowSelection,
+                    }}
+                    pagination={false}
+                    style={{width:'25%'}}
+                    bordered
+                />
+            ):("")}
+        </Col>
+        <Col span={4} >
+        {npciiss?(
+            <Table dataSource={tblColNPCIISS} columns={columnsnpciiss}   rowSelection={{
+                type: selectionType,
+                ...rowSelection,
+                }}
+                pagination={false}
+                style={{width:'25%'}}
+                bordered
+            />
+        ):("")}
+        </Col>
+        
+        {matchtblnpciiss?(
+            <Col span={6} >
+              <Table dataSource={matchtblnpcidata} columns={columnsmatchwithNPCIISS}   
+                pagination={false}
+                style={{width:'25%'}}
+                bordered
+            />
+               </Col>
+        ):("")}
+     
+        <Col span={6} />
+      </Row> */}
       </Form>
       </Card>
       </Content>
