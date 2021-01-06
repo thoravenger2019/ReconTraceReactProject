@@ -1454,9 +1454,9 @@ public class Controller {
 	
 	
 	@GetMapping("getFileDataCol/{fileName}")
-	public List<JSONObject> getFileDataCol(@PathVariable("fileName")String fileName)
+	public List[] getFileDataCol(@PathVariable("fileName")String fileName)
 	{
-		List<JSONObject> getFileDataCol = traceService.getFileDataCol(fileName);
+		List[] getFileDataCol = traceService.getFileDataCol(fileName);
 		System.out.println(getFileDataCol);
 		return getFileDataCol;
 	}

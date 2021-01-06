@@ -27,6 +27,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.persistence.EntityManager;
 import javax.persistence.ParameterMode;
@@ -10510,7 +10512,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	}
 
 	@Override
-	public List<JSONObject> getFileDataCol(String fileName) {
+	public List[] getFileDataCol(String fileName) {
 		// TODO Auto-generated method stub
 	String glcbstemp="GLCBSTEMP";
 	String switchtemp="SWITCHTEMP";
@@ -10525,51 +10527,67 @@ public class Trace_DAO_Imp implements Trace_DAO {
 					PreparedStatement stmt=con.prepareStatement("SELECT DISTINCT table_name,column_name FROM all_tab_cols WHERE table_name = ?");
 					stmt.setString(1,glcbstemp);
 					ResultSet res=stmt.executeQuery();
-					List<JSONObject> JSONObjects = new ArrayList<JSONObject>(res.getFetchSize());
+					JSONObject obj1 = new JSONObject();
+					List<JSONObject> JSONObjects1 = new ArrayList<JSONObject>(res.getFetchSize());
+					List<JSONObject> JSONObjects2 = new ArrayList<JSONObject>(res.getFetchSize());
 					while(res.next())
 					{
 						JSONObject obj = new JSONObject();
-						obj.put("tableName", res.getString("table_name"));
+//						obj.put("tableName", res.getString("table_name"));
 						obj.put("columnName", res.getString("column_name"));
-						JSONObjects.add(obj);
+						JSONObjects1.add(obj);
 					}
+					obj1.put("tableName",glcbstemp);
+					JSONObjects2.add(obj1);
 					stmt.close();
 					con.close();
-					return JSONObjects;
+					return new List[] { JSONObjects1, JSONObjects2 };
 			}
 			else if(fileName.equalsIgnoreCase("SWITCH"))
 			{
 				PreparedStatement stmt=con.prepareStatement("SELECT DISTINCT table_name,column_name  FROM all_tab_cols WHERE table_name = ?");
 				stmt.setString(1,switchtemp);
 				ResultSet res=stmt.executeQuery();
-				List<JSONObject> JSONObjects = new ArrayList<JSONObject>(res.getFetchSize());
+				List<JSONObject> JSONObjects1 = new ArrayList<JSONObject>(res.getFetchSize());
+				List<JSONObject> JSONObjects2 = new ArrayList<JSONObject>(res.getFetchSize());
+				JSONObject obj1 = new JSONObject();
 				while(res.next())
 				{
 					JSONObject obj = new JSONObject();
-					obj.put("tableName", res.getString("table_name"));
+//					obj.put("tableName", res.getString("table_name"));
 					obj.put("columnName", res.getString("column_name"));
-					JSONObjects.add(obj);
+					JSONObjects1.add(obj);
 				}
+				obj1.put("tableName",switchtemp);
+				JSONObjects2.add(obj1);
+//				List<JSONObject> JSONObjects = Stream.concat(JSONObjects1.stream(), JSONObjects2.stream())
+//                        .collect(Collectors.toList());
 				stmt.close();
 				con.close();
-				return JSONObjects;
+				return new List[] { JSONObjects1, JSONObjects2 };
 			}
 			else if(fileName.equalsIgnoreCase("NPCIISS"))
 			{
 				PreparedStatement stmt=con.prepareStatement("SELECT DISTINCT table_name,column_name FROM all_tab_cols WHERE table_name =?");
 				stmt.setString(1,npciiss);
 				ResultSet res=stmt.executeQuery();
-				List<JSONObject> JSONObjects = new ArrayList<JSONObject>(res.getFetchSize());
+				List<JSONObject> JSONObjects1 = new ArrayList<JSONObject>(res.getFetchSize());
+				List<JSONObject> JSONObjects2 = new ArrayList<JSONObject>(res.getFetchSize());
+				JSONObject obj1 = new JSONObject();
 				while(res.next())
 				{
 					JSONObject obj = new JSONObject();
-					obj.put("tableName", res.getString("table_name"));
+//					obj.put("tableName", res.getString("table_name"));
 					obj.put("columnName", res.getString("column_name"));
-					JSONObjects.add(obj);
+					JSONObjects1.add(obj);
 				}
+				obj1.put("tableName",npciiss);
+				JSONObjects2.add(obj1);
+//				List<JSONObject> JSONObjects = Stream.concat(JSONObjects1.stream(), JSONObjects2.stream())
+//                        .collect(Collectors.toList());
 				stmt.close();
 				con.close();
-				return JSONObjects;
+				return new List[] { JSONObjects1, JSONObjects2 };
 			}
 		}
 		catch (Exception e) {

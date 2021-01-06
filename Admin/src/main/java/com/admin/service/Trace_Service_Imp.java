@@ -2032,7 +2032,7 @@ public class Trace_Service_Imp implements Trace_Service {
 	}
 
 	@Override
-	public List<JSONObject> getFileDataCol(String fileName) {
+	public List[] getFileDataCol(String fileName) {
 		// TODO Auto-generated method stub
 		return traceDao.getFileDataCol(fileName);
 	}
