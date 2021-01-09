@@ -1470,7 +1470,9 @@ public class Controller {
 			@PathVariable("tablenames") String tablenames,@PathVariable("table1name")String table1name,
 			@PathVariable("table2name")String table2name,@PathVariable("joincond")String joincond) {
 		System.out.println("tablenames" + tablenames);
-		return traceService.joinopt(clientid, channeltype, tmode, recontype, tablenames,table1name,table2name,joincond);
+				List<JSONObject> joinopt=traceService.joinopt(clientid, channeltype, tmode, recontype, tablenames,table1name,table2name,joincond);
+				System.out.println("joinopt"+joinopt);
+				return joinopt;
 	}
 
 	@PostMapping("getinfofromjointables/{clientid}/{channelid}/{tmode}/{recontype}/{fileNameList}/{colNameList}")
