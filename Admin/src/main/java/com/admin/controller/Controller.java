@@ -1456,6 +1456,7 @@ public class Controller {
 	@GetMapping("getFileDataCol/{fileName}")
 	public List[] getFileDataCol(@PathVariable("fileName")String fileName)
 	{
+		System.out.println("fileName+"+fileName);
 		List[] getFileDataCol = traceService.getFileDataCol(fileName);
 		System.out.println(getFileDataCol);
 		return getFileDataCol;
@@ -1470,6 +1471,9 @@ public class Controller {
 			@PathVariable("tablenames") String tablenames,@PathVariable("table1name")String table1name,
 			@PathVariable("table2name")String table2name,@PathVariable("joincond")String joincond) {
 		System.out.println("tablenames" + tablenames);
+		System.out.println("table1name" + table1name);
+		System.out.println("table1name" + table2name);
+		System.out.println("table1name" + joincond);
 				List<JSONObject> joinopt=traceService.joinopt(clientid, channeltype, tmode, recontype, tablenames,table1name,table2name,joincond);
 				System.out.println("joinopt"+joinopt);
 				return joinopt;
