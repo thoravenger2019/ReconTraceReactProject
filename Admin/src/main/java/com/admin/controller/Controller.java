@@ -438,6 +438,11 @@ public class Controller {
 			@PathVariable("channelid") String channelid, @PathVariable("modeid") String modeid) {
 		String user = username.getUsername();
 		String terminalid = "0";
+		System.out.println(clientid);
+		System.out.println(fromdate);
+		System.out.println(todate);
+		System.out.println(channelid);
+		System.out.println(modeid);
 		List<JSONObject> runreconall = traceService.runreconall(clientid, fromdate, todate, channelid, user, modeid,
 				terminalid);
 		return runreconall;

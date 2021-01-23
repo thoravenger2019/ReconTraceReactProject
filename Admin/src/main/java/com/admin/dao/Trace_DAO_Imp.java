@@ -3980,11 +3980,13 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							ModeID = "3";
 						}
 					}
-
+String reversalflag=null;
 					if (Rev1 == true || Rev1 == true && Rev2 == true) {
 						RevFlag = true;
+						reversalflag="1";
 					} else {
 						RevFlag = false;
+						reversalflag="0";
 					}
 
 					if (ATM) {
@@ -4131,7 +4133,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 					stmt.setString(21, TxnsPerticulars);
 					stmt.setString(22, DebitCreditType);
 					stmt.setString(23, ResponseCode);
-					stmt.setString(24, RevFlag.toString());
+					stmt.setString(24, reversalflag);
 					stmt.setString(25, TxnsPostDateTimeMain);
 					stmt.setString(26, TxnsValueDateTime);
 					stmt.setString(27, AuthCode);
@@ -5882,14 +5884,26 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									withoutFormatConvertDate = true;
 
 								} catch (Exception ex) {
-									TxnsDate = row
-											.getCell(
-													Integer.parseInt(jsonObj.getJSONArray("TxnsDate").getString(0)) - 1)
-											.toString();
-									withoutFormatConvertDate = false;
+
+									try {
+										TxnsDate = row.getCell(
+												Integer.parseInt(jsonObj.getJSONArray("TxnsDate").getString(0)) - 1)
+												.toString();
+										DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+										Date tempTxnsDate = DateUtil.getJavaDate(Double.parseDouble(TxnsDate));
+
+										TxnsDate = df.format(tempTxnsDate);
+										withoutFormatConvertDate = true;
+									} catch (Exception e) {
+										TxnsDate = row.getCell(
+												Integer.parseInt(jsonObj.getJSONArray("TxnsDate").getString(0)) - 1)
+												.toString();
+										withoutFormatConvertDate = false;
+									}
+
 								}
 							}
-							System.out.println("TxnsDate1" + TxnsDate);
+							System.out.println("TxnsDate1suyog  " + TxnsDate);
 						}
 
 						if (jsonObj.getJSONArray("TxnsTime").getString(0).equals("0")) {
@@ -5898,10 +5912,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 									Integer.parseInt(jsonObj.getJSONArray("TxnsTime").getString(0)) - 1) == null) {
 								TxnsTime = null;
 							} else {
-								System.out.println(
-										"Integer.parseInt(jsonObj.getJSONArray(\"TxnsTime\").getString(0)) - 1)"
-												+ (Integer.parseInt(jsonObj.getJSONArray("TxnsTime").getString(0))
-														- 1));
+
 								Cell cell = row
 										.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsTime").getString(0)) - 1);
 								try {
@@ -6731,6 +6742,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			}
 
 		} catch (Exception e) {
+			System.out.println(e.toString());
 			arr[0] = 0;
 			arr[1] = 2;
 			arr[2] = 0;
@@ -7845,11 +7857,14 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						ModeID = "3";
 					}
 				}
-
+				String reversalflag = null;
 				if (Rev1 == true || Rev1 == true && Rev2 == true) {
 					RevFlag = true;
+					reversalflag = "1";
+
 				} else {
 					RevFlag = false;
+					reversalflag = "0";
 				}
 
 				if (ATM) {
@@ -7954,7 +7969,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 				stmt.setString(21, TxnsPerticulars);
 				stmt.setString(22, DebitCreditType);
 				stmt.setString(23, ResponseCode);
-				stmt.setString(24, RevFlag.toString());
+				stmt.setString(24, reversalflag);
 				stmt.setString(25, TxnsPostDateTimeMain);
 				stmt.setString(26, TxnsValueDateTime);
 				stmt.setString(27, AuthCode);
@@ -9216,6 +9231,14 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	@Override
 	public List<JSONObject> getunmatchedtxnreport(String clientid, String channelid, String modeid, String terminalid,
 			String fromdatetxns, String todatetxns, String txntype) {
+		
+		System.out.println(clientid);
+		System.out.println(channelid);
+		System.out.println(modeid);
+		System.out.println(terminalid);
+		System.out.println(fromdatetxns);
+		System.out.println(todatetxns);
+		System.out.println(txntype);
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("spunmatchedtxnsreport");
 		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
@@ -9252,6 +9275,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			obj.put("nwstatus", fields[10]);
 			obj.put("glstatus", fields[11]);
 			obj.put("TxnsSubType", fields[12]);
+			obj.put("TXNREMARKS", fields[13]);
 			JSONObjects.add(obj);
 		}
 		return JSONObjects;
@@ -9297,6 +9321,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			obj.put("nwstatus", fields[10]);
 			obj.put("glstatus", fields[11]);
 			obj.put("TxnsSubType", fields[12]);
+			obj.put("TXNREMARKS", fields[13]);
 			JSONObjects.add(obj);
 		}
 		return JSONObjects;
@@ -9342,6 +9367,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			obj.put("nwstatus", fields[10]);
 			obj.put("glstatus", fields[11]);
 			obj.put("TxnsSubType", fields[12]);
+			obj.put("TXNREMARKS", fields[13]);
 			JSONObjects.add(obj);
 		}
 		return JSONObjects;
@@ -10614,17 +10640,17 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	@Override
 	public List[] getFileDataCol(String fileName) {
 		// TODO Auto-generated method stub
-		String glcbstemp = "GLCBSTEMP";
-		String switchtemp = "SWITCHTEMP";
-		String npciiss = "NPCI_ISSUER_ATM_TEMP";
-		String npciacq = "NPCI_ACQ_ATM_TEMP";
-		String ejtemp = "EJTEMP";
+		String glcbstemp = "TEMP_GLDATA";
+		String switchtemp = "TEMP_SWITCHDATA";
+		String npciiss = "TEMP_NPCIISSUERATM";
+		String npciacq = "TEMP_NPCIACQATM";
+		String ejtemp = "TEMP_EJDATA";
 		try {
 			Connection con = datasource.getConnection();
 
 			if (fileName.equalsIgnoreCase("GL")) {
 				PreparedStatement stmt = con.prepareStatement(
-						"SELECT DISTINCT table_name,column_name FROM all_tab_cols WHERE table_name = ?");
+						"SELECT DISTINCT table_name,column_name FROM SYS.USER_TAB_COLS WHERE table_name = ?");
 				stmt.setString(1, glcbstemp);
 				ResultSet res = stmt.executeQuery();
 				JSONObject obj1 = new JSONObject();
@@ -10643,7 +10669,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 				return new List[] { JSONObjects1, JSONObjects2 };
 			} else if (fileName.equalsIgnoreCase("SWITCH")) {
 				PreparedStatement stmt = con.prepareStatement(
-						"SELECT DISTINCT table_name,column_name  FROM all_tab_cols WHERE table_name = ?");
+						"SELECT DISTINCT table_name,column_name  FROM SYS.USER_TAB_COLS WHERE table_name = ?");
 				stmt.setString(1, switchtemp);
 				ResultSet res = stmt.executeQuery();
 				List<JSONObject> JSONObjects1 = new ArrayList<JSONObject>(res.getFetchSize());
@@ -10661,7 +10687,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 				return new List[] { JSONObjects1, JSONObjects2 };
 			} else if (fileName.equalsIgnoreCase("NPCIISS")) {
 				PreparedStatement stmt = con.prepareStatement(
-						"SELECT DISTINCT table_name,column_name FROM all_tab_cols WHERE table_name =?");
+						"SELECT DISTINCT table_name,column_name FROM SYS.USER_TAB_COLS WHERE table_name =?");
 				stmt.setString(1, npciiss);
 				ResultSet res = stmt.executeQuery();
 				List<JSONObject> JSONObjects1 = new ArrayList<JSONObject>(res.getFetchSize());
@@ -10682,7 +10708,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 				return new List[] { JSONObjects1, JSONObjects2 };
 			} else if (fileName.equalsIgnoreCase("NPCIACQ")) {
 				PreparedStatement stmt = con.prepareStatement(
-						"SELECT DISTINCT table_name,column_name FROM all_tab_cols WHERE table_name =?");
+						"SELECT DISTINCT table_name,column_name FROM SYS.USER_TAB_COLS WHERE table_name =?");
 				stmt.setString(1, npciacq);
 				ResultSet res = stmt.executeQuery();
 				List<JSONObject> JSONObjects1 = new ArrayList<JSONObject>(res.getFetchSize());
