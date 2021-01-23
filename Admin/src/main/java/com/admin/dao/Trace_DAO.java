@@ -308,7 +308,7 @@ public interface Trace_DAO {
 
 	public List<JSONObject> getfiletypes(String channeltype);
 
-	public List<JSONObject> joinopt(String clientid, String channeltype,String tmode, String recontype,String tablenames, String table1name, String table2name, String joincond);
+	public List<JSONObject> joinopt(String clientid, String channeltype,String tmode, String recontype,String tablenames, String table1name, String table2name, String joincond, String referenceNo, String cardNo, String terminalID);
 
 	public List<JSONObject> getinfofromjointables(String clientid, String channelid, String tmode, String recontype,
 			String fileNameList, String colNameList, String createdBy);

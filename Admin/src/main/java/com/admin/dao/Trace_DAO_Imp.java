@@ -10571,7 +10571,7 @@ String reversalflag=null;
 
 	@Override
 	public List<JSONObject> joinopt(String clientid, String channeltype, String tmode, String recontype,
-			String tablenames, String table1name, String table2name, String joincond) {
+			String tablenames, String table1name, String table2name, String joincond,String referenceNo, String cardNo, String terminalID) {
 		// TODO Auto-generated method stub
 		StoredProcedureQuery query1 = entityManager.createStoredProcedureQuery("spjointables");
 		query1.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
@@ -10582,7 +10582,10 @@ String reversalflag=null;
 		query1.registerStoredProcedureParameter(6, String.class, ParameterMode.IN);
 		query1.registerStoredProcedureParameter(7, String.class, ParameterMode.IN);
 		query1.registerStoredProcedureParameter(8, String.class, ParameterMode.IN);
-		query1.registerStoredProcedureParameter(9, String.class, ParameterMode.REF_CURSOR);
+		query1.registerStoredProcedureParameter(9, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(10, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(11, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(12, String.class, ParameterMode.REF_CURSOR);
 		query1.setParameter(1, clientid);
 		query1.setParameter(2, channeltype);
 		query1.setParameter(3, tmode);
@@ -10591,6 +10594,9 @@ String reversalflag=null;
 		query1.setParameter(6, table1name);
 		query1.setParameter(7, table2name);
 		query1.setParameter(8, joincond);
+		query1.setParameter(9, referenceNo);
+		query1.setParameter(10, cardNo);
+		query1.setParameter(11, terminalID);
 		query1.execute();
 		List<Object[]> result = query1.getResultList();
 		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());

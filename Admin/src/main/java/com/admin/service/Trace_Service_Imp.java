@@ -2019,9 +2019,9 @@ public class Trace_Service_Imp implements Trace_Service {
 	}
 
 	@Override
-	public List<JSONObject> joinopt(String clientid, String channeltype,String tmode,String recontype,String tablenames, String table1name, String table2name, String joincond) {
+	public List<JSONObject> joinopt(String clientid, String channeltype,String tmode,String recontype,String tablenames, String table1name, String table2name, String joincond, String referenceNo, String cardNo, String terminalID) {
 		// TODO Auto-generated method stub
-		return traceDao.joinopt(clientid, channeltype, tmode, recontype, tablenames,table1name,table2name,joincond);
+		return traceDao.joinopt(clientid, channeltype, tmode, recontype, tablenames,table1name,table2name,joincond,referenceNo,cardNo,terminalID);
 	}
 
 	@Override
