@@ -24,7 +24,8 @@ public interface Trace_DAO {
 
 	public String getRoleDetails(String clientID);
 
-	public String getRoleMaster(String roleName, String homePage, String mode, String roleID, String clientID, String createdby);
+	public String getRoleMaster(String roleName, String homePage, String mode, String roleID, String clientID,
+			String createdby);
 
 	public String getRoleAccessRights(String roleID, String clientID);
 
@@ -180,8 +181,7 @@ public interface Trace_DAO {
 
 	public int[] importEJFileDataNCR(MultipartFile ej, String clientid, String createdby, String fileTypeName);
 
-	public int[] importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby,
-			String fileTypeName);
+	public int[] importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby, String fileTypeName);
 
 	public int[] importSwitchFile(MultipartFile sw, String clientid, String createdby, String fileTypeName);
 
@@ -196,8 +196,8 @@ public interface Trace_DAO {
 			String acquirer_settlement_processing_fee, String transaction_Acquirer_Conversion_Rate, String forceMatch,
 			String clientid, String cycle, String fileDate, String createdby) throws ParseException;
 
-	public Boolean ntsAtmFile(String description, String noOftxn, String credit, String debit, String remark, MultipartFile file,
-			String date, String clientid, String createdby);
+	public Boolean ntsAtmFile(String description, String noOftxn, String credit, String debit, String remark,
+			MultipartFile file, String date, String clientid, String createdby);
 
 //	public List<JSONObject> getchannelmodeinfo(String clientid);
 
@@ -308,7 +308,9 @@ public interface Trace_DAO {
 
 	public List<JSONObject> getfiletypes(String channeltype);
 
-	public List<JSONObject> joinopt(String clientid, String channeltype,String tmode, String recontype,String tablenames, String table1name, String table2name, String joincond, String referenceNo, String cardNo, String terminalID);
+	public List<JSONObject> joinopt(String clientid, String channeltype, String tmode, String recontype,
+			String tablenames, String table1name, String table2name, String joincond, String referenceNo, String cardNo,
+			String terminalID);
 
 	public List<JSONObject> getinfofromjointables(String clientid, String channelid, String tmode, String recontype,
 			String fileNameList, String colNameList, String createdBy);

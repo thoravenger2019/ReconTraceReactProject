@@ -3980,13 +3980,13 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							ModeID = "3";
 						}
 					}
-String reversalflag=null;
+					String reversalflag = null;
 					if (Rev1 == true || Rev1 == true && Rev2 == true) {
 						RevFlag = true;
-						reversalflag="1";
+						reversalflag = "1";
 					} else {
 						RevFlag = false;
-						reversalflag="0";
+						reversalflag = "0";
 					}
 
 					if (ATM) {
@@ -9231,7 +9231,7 @@ String reversalflag=null;
 	@Override
 	public List<JSONObject> getunmatchedtxnreport(String clientid, String channelid, String modeid, String terminalid,
 			String fromdatetxns, String todatetxns, String txntype) {
-		
+
 		System.out.println(clientid);
 		System.out.println(channelid);
 		System.out.println(modeid);
@@ -10571,7 +10571,8 @@ String reversalflag=null;
 
 	@Override
 	public List<JSONObject> joinopt(String clientid, String channeltype, String tmode, String recontype,
-			String tablenames, String table1name, String table2name, String joincond,String referenceNo, String cardNo, String terminalID) {
+			String tablenames, String table1name, String table2name, String joincond, String referenceNo, String cardNo,
+			String terminalID) {
 		// TODO Auto-generated method stub
 		StoredProcedureQuery query1 = entityManager.createStoredProcedureQuery("spjointables");
 		query1.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);

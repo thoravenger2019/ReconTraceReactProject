@@ -1477,7 +1477,7 @@ public class Controller {
 		System.out.println("table1name" + table2name);
 		System.out.println("table1name" + joincond);
 		List<JSONObject> joinopt = traceService.joinopt(clientid, channeltype, tmode, recontype, tablenames, table1name,
-				table2name, joincond,ReferenceNo,CardNo,TerminalID);
+				table2name, joincond, ReferenceNo, CardNo, TerminalID);
 		System.out.println("joinopt" + joinopt);
 		return joinopt;
 	}
