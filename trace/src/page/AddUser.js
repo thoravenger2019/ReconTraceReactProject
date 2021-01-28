@@ -252,7 +252,7 @@ const onDisplayClientNameList = async () => {
             </b></Col>  
         </Row>
 
-        <Row gutter={8}>
+        <Row gutter={8}>                                                                                                                    
             
             <Col xs={2} sm={16} md={12} lg={8} xl={10}><b>
                 <Form.Item 

@@ -491,7 +491,7 @@ const ongetModeType = async (value) => {
     const unmatchedReporttbl=unmatchedReport.data;
     if(JSON.stringify(unmatchedReporttbl)=="[]"){
       alert("No data found..!")
-      window.location.reload(false);
+      //window.location.reload(false);
     }else{
     const dataAll = unmatchedReporttbl.map((item, index) => ({
       ChannelName: item.ChannelName,
