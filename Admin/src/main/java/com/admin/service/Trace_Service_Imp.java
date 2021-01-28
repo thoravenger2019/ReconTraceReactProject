@@ -169,7 +169,7 @@ public class Trace_Service_Imp implements Trace_Service {
 	}
 
 	@Override
-	public List<User> getData(String username, String password,String clientcode) {
+	public List<User> getData(String username, String password, String clientcode) {
 
 		return traceDao.getData(username, password, clientcode);
 	}
@@ -199,9 +199,10 @@ public class Trace_Service_Imp implements Trace_Service {
 	}
 
 	@Override
-	public String getRoleMaster(String roleName, String homePage, String mode, String roleID, String clientID,String createdby) {
+	public String getRoleMaster(String roleName, String homePage, String mode, String roleID, String clientID,
+			String createdby) {
 
-		return traceDao.getRoleMaster(roleName, homePage, mode, roleID, clientID,createdby);
+		return traceDao.getRoleMaster(roleName, homePage, mode, roleID, clientID, createdby);
 	}
 
 	@Override
@@ -553,7 +554,7 @@ public class Trace_Service_Imp implements Trace_Service {
 				List<JSONObject> npcifileformatxml = traceDao.getformatfileinxml(clientid, 2);
 				JSONObject xmlFormatDescription = npcifileformatxml.get(0);
 				String tempStr = xmlFormatDescription.get("FormatDescriptionXml").toString();
-				
+
 				DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 				DocumentBuilder db = dbf.newDocumentBuilder();
 				Document doc = db.parse(new InputSource(new StringReader(tempStr)));
@@ -2009,7 +2010,7 @@ public class Trace_Service_Imp implements Trace_Service {
 	@Override
 	public String getuserclientcode(String user_name, String password) {
 		// TODO Auto-generated method stub
-		return traceDao.getuserclientcode(user_name,password);
+		return traceDao.getuserclientcode(user_name, password);
 	}
 
 	@Override
@@ -2019,20 +2020,24 @@ public class Trace_Service_Imp implements Trace_Service {
 	}
 
 	@Override
-	public List<JSONObject> joinopt(String clientid, String channeltype,String tmode,String recontype,String tablenames, String table1name, String table2name, String joincond) {
+	public List<JSONObject> joinopt(String clientid, String channeltype, String tmode, String recontype,
+			String tablenames, String table1name, String table2name, String joincond, String referenceNo, String cardNo,
+			String terminalID) {
 		// TODO Auto-generated method stub
-		return traceDao.joinopt(clientid, channeltype, tmode, recontype, tablenames,table1name,table2name,joincond);
+		return traceDao.joinopt(clientid, channeltype, tmode, recontype, tablenames, table1name, table2name, joincond,
+				referenceNo, cardNo, terminalID);
 	}
 
 	@Override
 	public List<JSONObject> getinfofromjointables(String clientid, String channelid, String tmode, String recontype,
 			String fileNameList, String colNameList, String createdBy) {
 		// TODO Auto-generated method stub
-		return traceDao.getinfofromjointables(clientid,channelid,tmode,recontype,fileNameList,colNameList,createdBy);
+		return traceDao.getinfofromjointables(clientid, channelid, tmode, recontype, fileNameList, colNameList,
+				createdBy);
 	}
 
 	@Override
-	public List<JSONObject> getFileDataCol(String fileName) {
+	public List[] getFileDataCol(String fileName) {
 		// TODO Auto-generated method stub
 		return traceDao.getFileDataCol(fileName);
 	}

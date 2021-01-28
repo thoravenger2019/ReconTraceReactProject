@@ -57,6 +57,7 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.tomcat.jni.Time;
 import org.hibernate.SessionFactory;
 import org.hibernate.type.BlobType;
 import org.json.simple.JSONArray;
@@ -149,6 +150,48 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		} catch (Exception ex) {
 		}
 		return convFile;
+	}
+
+	public static String convertSimpleDateFormat(String sdate) {
+		String[] formats = { "yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd'T'HH:mm:ssZ", "yyyy-MM-dd'T'HH:mm:ss",
+				"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", "yyyy-MM-dd'T'HH:mm:ss.SSSZ", "yyyy-MM-dd HH:mm:ss",
+				"MM/dd/yyyy HH:mm:ss", "MM/dd/yyyy'T'HH:mm:ss.SSS'Z'", "MM/dd/yyyy'T'HH:mm:ss.SSSZ",
+				"MM/dd/yyyy'T'HH:mm:ss.SSS", "MM/dd/yyyy'T'HH:mm:ssZ", "MM/dd/yyyy'T'HH:mm:ss", "yyyy:MM:dd HH:mm:ss",
+				"yyyyMMdd", "yyyy/MM/dd", "dd-MMM-yyyy" };
+		String tempParse = null;
+		if (sdate != null) {
+			for (String parse : formats) {
+				SimpleDateFormat sdf = new SimpleDateFormat(parse);
+				try {
+					sdf.parse(sdate);
+					tempParse = parse;
+					System.out.println("Printing the value of " + parse);
+				} catch (ParseException e) {
+
+				}
+			}
+		}
+		System.out.println(tempParse);
+		return tempParse;
+	}
+
+	public static String convertSimpleTimeFormat(String sTime) {
+		String[] formats = { "HHmmss", "HH:mm:ss", "hh:mm:ss", "hhmmss" };
+		String tempParse = null;
+		if (sTime != null) {
+			for (String parse : formats) {
+				SimpleDateFormat sdf = new SimpleDateFormat(parse);
+				try {
+					sdf.parse(sTime);
+					tempParse = parse;
+					System.out.println("Printing the value of " + parse);
+				} catch (ParseException e) {
+
+				}
+			}
+		}
+		System.out.println(tempParse);
+		return tempParse;
 	}
 
 	public static String checkDateFormat(String format, String strDate) throws ParseException {
@@ -3937,11 +3980,13 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							ModeID = "3";
 						}
 					}
-
+					String reversalflag = null;
 					if (Rev1 == true || Rev1 == true && Rev2 == true) {
 						RevFlag = true;
+						reversalflag = "1";
 					} else {
 						RevFlag = false;
+						reversalflag = "0";
 					}
 
 					if (ATM) {
@@ -4088,7 +4133,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 					stmt.setString(21, TxnsPerticulars);
 					stmt.setString(22, DebitCreditType);
 					stmt.setString(23, ResponseCode);
-					stmt.setString(24, RevFlag.toString());
+					stmt.setString(24, reversalflag);
 					stmt.setString(25, TxnsPostDateTimeMain);
 					stmt.setString(26, TxnsValueDateTime);
 					stmt.setString(27, AuthCode);
@@ -5288,11 +5333,13 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							ModeID = "3";
 						}
 					}
-
+					String reversalflag = null;
 					if (Rev1 == true || Rev1 == true && Rev2 == true) {
 						RevFlag = true;
+						reversalflag = "1";
 					} else {
 						RevFlag = false;
+						reversalflag = "0";
 					}
 
 					if (ATM) {
@@ -5395,7 +5442,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 					stmt.setString(21, TxnsPerticulars);
 					stmt.setString(22, DebitCreditType);
 					stmt.setString(23, ResponseCode);
-					stmt.setString(24, RevFlag.toString());
+					stmt.setString(24, reversalflag);
 					stmt.setString(25, TxnsPostDateTimeMain);
 					stmt.setString(26, TxnsValueDateTime);
 					stmt.setString(27, AuthCode);
@@ -5490,10 +5537,14 @@ public class Trace_DAO_Imp implements Trace_DAO {
 				String ChannelType = null;
 				String DrCrType = null;
 				String TxnsPerticulars = null;
+				Boolean withoutFormatConvertDate = false;
+				Boolean withoutFormatConvertTime = false;
 				Iterator<Row> itr = sheet.iterator();
 				HSSFRow temprow = null;
 				int incr = actualRowPosition, batchSize = 30000;
 				long start = System.currentTimeMillis();
+				System.out.println("actualRowPosition" + actualRowPosition);
+
 				while (itr.hasNext()) {
 					glcbsStatus = false;
 					Row row = itr.next();
@@ -5814,38 +5865,83 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							}
 
 						}
+
 						if (jsonObj.getJSONArray("TxnsDate").getString(0).equals("0")) {
 						} else {
 							if (temprow.getCell(
 									Integer.parseInt(jsonObj.getJSONArray("TxnsDate").getString(0)) - 1) == null) {
 								TxnsDate = null;
 							} else {
-								TxnsDate = row
-										.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsDate").getString(0)) - 1)
-										.toString();
-								System.out.println("TxnsDate1" + TxnsDate);
+								try {
+									Cell cell = row.getCell(
+											Integer.parseInt(jsonObj.getJSONArray("TxnsDate").getString(0)) - 1);
+									String parseFormat = convertSimpleDateFormat(cell.toString());
+									SimpleDateFormat timeFormat = new SimpleDateFormat(parseFormat);
+									SimpleDateFormat converttimeFormat = new SimpleDateFormat("yyyy-MM-dd");
+									Date dtempTxnsTime = timeFormat.parse(cell.toString());
+									TxnsDate = converttimeFormat.format(dtempTxnsTime);
+									System.out.println("date" + dtempTxnsTime);
+									withoutFormatConvertDate = true;
+
+								} catch (Exception ex) {
+
+									try {
+										TxnsDate = row.getCell(
+												Integer.parseInt(jsonObj.getJSONArray("TxnsDate").getString(0)) - 1)
+												.toString();
+										DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+										Date tempTxnsDate = DateUtil.getJavaDate(Double.parseDouble(TxnsDate));
+
+										TxnsDate = df.format(tempTxnsDate);
+										withoutFormatConvertDate = true;
+									} catch (Exception e) {
+										TxnsDate = row.getCell(
+												Integer.parseInt(jsonObj.getJSONArray("TxnsDate").getString(0)) - 1)
+												.toString();
+										withoutFormatConvertDate = false;
+									}
+
+								}
 							}
+							System.out.println("TxnsDate1suyog  " + TxnsDate);
 						}
+
 						if (jsonObj.getJSONArray("TxnsTime").getString(0).equals("0")) {
 						} else {
 							if (temprow.getCell(
 									Integer.parseInt(jsonObj.getJSONArray("TxnsTime").getString(0)) - 1) == null) {
 								TxnsTime = null;
 							} else {
-								System.out.println(
-										"Integer.parseInt(jsonObj.getJSONArray(\"TxnsTime\").getString(0)) - 1)"
-												+ (Integer.parseInt(jsonObj.getJSONArray("TxnsTime").getString(0))
-														- 1));
+
 								Cell cell = row
 										.getCell(Integer.parseInt(jsonObj.getJSONArray("TxnsTime").getString(0)) - 1);
-								if (DateUtil.isCellDateFormatted(cell)) {
-									SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss");
-									String tempTxnsTime = timeFormat.format(cell.getDateCellValue());
-									System.out.println("date" + tempTxnsTime);
-									TxnsTime = tempTxnsTime;
-								} else {
-									TxnsTime = String.valueOf(row.getCell(
-											Integer.parseInt(jsonObj.getJSONArray("TxnsTime").getString(0)) - 1));
+								try {
+
+									if (DateUtil.isCellDateFormatted(cell)) {
+										SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss");
+										String tempTxnsTime = timeFormat.format(cell.getDateCellValue());
+										System.out.println("date" + tempTxnsTime);
+										TxnsTime = tempTxnsTime;
+										withoutFormatConvertTime = true;
+									} else {
+										TxnsTime = String.valueOf(row.getCell(
+												Integer.parseInt(jsonObj.getJSONArray("TxnsTime").getString(0)) - 1));
+										withoutFormatConvertTime = false;
+									}
+								} catch (Exception ex) {
+									if (cell.toString().contains(":")) {
+										TxnsTime = String.valueOf(row.getCell(
+												Integer.parseInt(jsonObj.getJSONArray("TxnsTime").getString(0)) - 1));
+										withoutFormatConvertTime = false;
+									} else {
+										String parseFormat = convertSimpleTimeFormat(cell.toString());
+										System.out.println("parseFormat");
+										SimpleDateFormat timeFormat = new SimpleDateFormat(parseFormat);
+										SimpleDateFormat converttimeFormat = new SimpleDateFormat("hh:mm:ss");
+										Date dtempTxnsTime = timeFormat.parse(cell.toString());
+										TxnsTime = converttimeFormat.format(dtempTxnsTime);
+										withoutFormatConvertTime = true;
+									}
 								}
 								TxnsTime = TxnsTime.replace("AM", "").replace("PM", "");
 
@@ -6198,7 +6294,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 //				;
 					System.out.println("reversaltype:  " + reversaltype);
 
-					if (TxnsDate != null && TxnsTime != null) {
+					if (TxnsDate != null && TxnsTime != null && withoutFormatConvertDate == false
+							&& withoutFormatConvertTime == false) {
 						if (txnDateTimeFormat.isEmpty() || txnDateTimeFormat == null) {
 
 						} else {
@@ -6207,6 +6304,18 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							System.out.println("TxnsDateTimeMain  " + TxnsDateTimeMain);
 						}
 					}
+
+					if (TxnsDate != null && TxnsTime != null && withoutFormatConvertDate == true
+							&& withoutFormatConvertTime == true) {
+						if (txnDateTimeFormat.isEmpty() || txnDateTimeFormat == null) {
+
+						} else {
+							String concatTxnDateTime = TxnsDate + " " + TxnsTime;
+							TxnsDateTimeMain = checkDateFormat("yyyy-MM-dd hh:mm:ss", concatTxnDateTime);
+							System.out.println("TxnsDateTimeMain  " + TxnsDateTimeMain);
+						}
+					}
+
 					if (txnDateTimeFormat != null && TxnsDateTime != null) {
 
 						TxnsDateTimeMain = checkDateFormat(txnDateTimeFormat, TxnsDateTime);
@@ -6468,11 +6577,13 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							ModeID = "3";
 						}
 					}
-
+					String reversalflag = null;
 					if (Rev1 == true || Rev1 == true && Rev2 == true) {
 						RevFlag = true;
+						reversalflag = "1";
 					} else {
 						RevFlag = false;
+						reversalflag = "0";
 					}
 
 					if (ATM) {
@@ -6575,7 +6686,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 					stmt.setString(21, TxnsPerticulars);
 					stmt.setString(22, DebitCreditType);
 					stmt.setString(23, ResponseCode);
-					stmt.setString(24, RevFlag.toString());
+					stmt.setString(24, reversalflag);
 					stmt.setString(25, TxnsPostDateTimeMain);
 					stmt.setString(26, TxnsValueDateTime);
 					stmt.setString(27, AuthCode);
@@ -6631,6 +6742,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			}
 
 		} catch (Exception e) {
+			System.out.println(e.toString());
 			arr[0] = 0;
 			arr[1] = 2;
 			arr[2] = 0;
@@ -7745,11 +7857,14 @@ public class Trace_DAO_Imp implements Trace_DAO {
 						ModeID = "3";
 					}
 				}
-
+				String reversalflag = null;
 				if (Rev1 == true || Rev1 == true && Rev2 == true) {
 					RevFlag = true;
+					reversalflag = "1";
+
 				} else {
 					RevFlag = false;
+					reversalflag = "0";
 				}
 
 				if (ATM) {
@@ -7854,7 +7969,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 				stmt.setString(21, TxnsPerticulars);
 				stmt.setString(22, DebitCreditType);
 				stmt.setString(23, ResponseCode);
-				stmt.setString(24, RevFlag.toString());
+				stmt.setString(24, reversalflag);
 				stmt.setString(25, TxnsPostDateTimeMain);
 				stmt.setString(26, TxnsValueDateTime);
 				stmt.setString(27, AuthCode);
@@ -9116,6 +9231,14 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	@Override
 	public List<JSONObject> getunmatchedtxnreport(String clientid, String channelid, String modeid, String terminalid,
 			String fromdatetxns, String todatetxns, String txntype) {
+
+		System.out.println(clientid);
+		System.out.println(channelid);
+		System.out.println(modeid);
+		System.out.println(terminalid);
+		System.out.println(fromdatetxns);
+		System.out.println(todatetxns);
+		System.out.println(txntype);
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("spunmatchedtxnsreport");
 		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
@@ -9152,6 +9275,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			obj.put("nwstatus", fields[10]);
 			obj.put("glstatus", fields[11]);
 			obj.put("TxnsSubType", fields[12]);
+			obj.put("TXNREMARKS", fields[13]);
 			JSONObjects.add(obj);
 		}
 		return JSONObjects;
@@ -9197,6 +9321,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			obj.put("nwstatus", fields[10]);
 			obj.put("glstatus", fields[11]);
 			obj.put("TxnsSubType", fields[12]);
+			obj.put("TXNREMARKS", fields[13]);
 			JSONObjects.add(obj);
 		}
 		return JSONObjects;
@@ -9242,6 +9367,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			obj.put("nwstatus", fields[10]);
 			obj.put("glstatus", fields[11]);
 			obj.put("TxnsSubType", fields[12]);
+			obj.put("TXNREMARKS", fields[13]);
 			JSONObjects.add(obj);
 		}
 		return JSONObjects;
@@ -10444,7 +10570,9 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	}
 
 	@Override
-	public List<JSONObject> joinopt(String clientid, String channeltype,String tmode,String recontype,String tablenames, String table1name, String table2name, String joincond) {
+	public List<JSONObject> joinopt(String clientid, String channeltype, String tmode, String recontype,
+			String tablenames, String table1name, String table2name, String joincond, String referenceNo, String cardNo,
+			String terminalID) {
 		// TODO Auto-generated method stub
 		StoredProcedureQuery query1 = entityManager.createStoredProcedureQuery("spjointables");
 		query1.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
@@ -10455,7 +10583,10 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query1.registerStoredProcedureParameter(6, String.class, ParameterMode.IN);
 		query1.registerStoredProcedureParameter(7, String.class, ParameterMode.IN);
 		query1.registerStoredProcedureParameter(8, String.class, ParameterMode.IN);
-		query1.registerStoredProcedureParameter(9, String.class, ParameterMode.REF_CURSOR);
+		query1.registerStoredProcedureParameter(9, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(10, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(11, String.class, ParameterMode.IN);
+		query1.registerStoredProcedureParameter(12, String.class, ParameterMode.REF_CURSOR);
 		query1.setParameter(1, clientid);
 		query1.setParameter(2, channeltype);
 		query1.setParameter(3, tmode);
@@ -10464,6 +10595,9 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query1.setParameter(6, table1name);
 		query1.setParameter(7, table2name);
 		query1.setParameter(8, joincond);
+		query1.setParameter(9, referenceNo);
+		query1.setParameter(10, cardNo);
+		query1.setParameter(11, terminalID);
 		query1.execute();
 		List<Object[]> result = query1.getResultList();
 		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
@@ -10474,6 +10608,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			obj.put("joindString", fields[1]);
 			JSONObjects.add(obj);
 		}
+		System.out.println("JSONObjects" + JSONObjects.toString());
 		return JSONObjects;
 	}
 
@@ -10510,73 +10645,121 @@ public class Trace_DAO_Imp implements Trace_DAO {
 	}
 
 	@Override
-	public List<JSONObject> getFileDataCol(String fileName) {
+	public List[] getFileDataCol(String fileName) {
 		// TODO Auto-generated method stub
-	String glcbstemp="GLCBSTEMP";
-	String switchtemp="SWITCHTEMP";
-	String npciiss="NPCI_ISSUER_ATM_TEMP";
-		try
-		{
-			Connection con= datasource.getConnection();
-			
-			
-			if(fileName.equalsIgnoreCase("GL"))
-			{
-					PreparedStatement stmt=con.prepareStatement("SELECT DISTINCT table_name,column_name FROM all_tab_cols WHERE table_name = ?");
-					stmt.setString(1,glcbstemp);
-					ResultSet res=stmt.executeQuery();
-					List<JSONObject> JSONObjects = new ArrayList<JSONObject>(res.getFetchSize());
-					while(res.next())
-					{
-						JSONObject obj = new JSONObject();
-						obj.put("tableName", res.getString("table_name"));
-						obj.put("columnName", res.getString("column_name"));
-						JSONObjects.add(obj);
-					}
-					stmt.close();
-					con.close();
-					return JSONObjects;
-			}
-			else if(fileName.equalsIgnoreCase("SWITCH"))
-			{
-				PreparedStatement stmt=con.prepareStatement("SELECT DISTINCT table_name,column_name  FROM all_tab_cols WHERE table_name = ?");
-				stmt.setString(1,switchtemp);
-				ResultSet res=stmt.executeQuery();
-				List<JSONObject> JSONObjects = new ArrayList<JSONObject>(res.getFetchSize());
-				while(res.next())
-				{
+		String glcbstemp = "TEMP_GLDATA";
+		String switchtemp = "TEMP_SWITCHDATA";
+		String npciiss = "TEMP_NPCIISSUERATM";
+		String npciacq = "TEMP_NPCIACQATM";
+		String ejtemp = "TEMP_EJDATA";
+		try {
+			Connection con = datasource.getConnection();
+
+			if (fileName.equalsIgnoreCase("GL")) {
+				PreparedStatement stmt = con.prepareStatement(
+						"SELECT DISTINCT table_name,column_name FROM SYS.USER_TAB_COLS WHERE table_name = ?");
+				stmt.setString(1, glcbstemp);
+				ResultSet res = stmt.executeQuery();
+				JSONObject obj1 = new JSONObject();
+				List<JSONObject> JSONObjects1 = new ArrayList<JSONObject>(res.getFetchSize());
+				List<JSONObject> JSONObjects2 = new ArrayList<JSONObject>(res.getFetchSize());
+				while (res.next()) {
 					JSONObject obj = new JSONObject();
-					obj.put("tableName", res.getString("table_name"));
+//						obj.put("tableName", res.getString("table_name"));
 					obj.put("columnName", res.getString("column_name"));
-					JSONObjects.add(obj);
+					JSONObjects1.add(obj);
 				}
+				obj1.put("tableName", glcbstemp);
+				JSONObjects2.add(obj1);
 				stmt.close();
 				con.close();
-				return JSONObjects;
-			}
-			else if(fileName.equalsIgnoreCase("NPCIISS"))
-			{
-				PreparedStatement stmt=con.prepareStatement("SELECT DISTINCT table_name,column_name FROM all_tab_cols WHERE table_name =?");
-				stmt.setString(1,npciiss);
-				ResultSet res=stmt.executeQuery();
-				List<JSONObject> JSONObjects = new ArrayList<JSONObject>(res.getFetchSize());
-				while(res.next())
-				{
+				return new List[] { JSONObjects1, JSONObjects2 };
+			} else if (fileName.equalsIgnoreCase("SWITCH")) {
+				PreparedStatement stmt = con.prepareStatement(
+						"SELECT DISTINCT table_name,column_name  FROM SYS.USER_TAB_COLS WHERE table_name = ?");
+				stmt.setString(1, switchtemp);
+				ResultSet res = stmt.executeQuery();
+				List<JSONObject> JSONObjects1 = new ArrayList<JSONObject>(res.getFetchSize());
+				List<JSONObject> JSONObjects2 = new ArrayList<JSONObject>(res.getFetchSize());
+				JSONObject obj1 = new JSONObject();
+				while (res.next()) {
 					JSONObject obj = new JSONObject();
-					obj.put("tableName", res.getString("table_name"));
 					obj.put("columnName", res.getString("column_name"));
-					JSONObjects.add(obj);
+					JSONObjects1.add(obj);
 				}
+				obj1.put("tableName", switchtemp);
+				JSONObjects2.add(obj1);
 				stmt.close();
 				con.close();
-				return JSONObjects;
+				return new List[] { JSONObjects1, JSONObjects2 };
+			} else if (fileName.equalsIgnoreCase("NPCIISS")) {
+				PreparedStatement stmt = con.prepareStatement(
+						"SELECT DISTINCT table_name,column_name FROM SYS.USER_TAB_COLS WHERE table_name =?");
+				stmt.setString(1, npciiss);
+				ResultSet res = stmt.executeQuery();
+				List<JSONObject> JSONObjects1 = new ArrayList<JSONObject>(res.getFetchSize());
+				List<JSONObject> JSONObjects2 = new ArrayList<JSONObject>(res.getFetchSize());
+				JSONObject obj1 = new JSONObject();
+				while (res.next()) {
+					JSONObject obj = new JSONObject();
+//					obj.put("tableName", res.getString("table_name"));
+					obj.put("columnName", res.getString("column_name"));
+					JSONObjects1.add(obj);
+				}
+				obj1.put("tableName", npciiss);
+				JSONObjects2.add(obj1);
+//				List<JSONObject> JSONObjects = Stream.concat(JSONObjects1.stream(), JSONObjects2.stream())
+//                        .collect(Collectors.toList());
+				stmt.close();
+				con.close();
+				return new List[] { JSONObjects1, JSONObjects2 };
+			} else if (fileName.equalsIgnoreCase("NPCIACQ")) {
+				PreparedStatement stmt = con.prepareStatement(
+						"SELECT DISTINCT table_name,column_name FROM SYS.USER_TAB_COLS WHERE table_name =?");
+				stmt.setString(1, npciacq);
+				ResultSet res = stmt.executeQuery();
+				List<JSONObject> JSONObjects1 = new ArrayList<JSONObject>(res.getFetchSize());
+				List<JSONObject> JSONObjects2 = new ArrayList<JSONObject>(res.getFetchSize());
+				JSONObject obj1 = new JSONObject();
+				while (res.next()) {
+					JSONObject obj = new JSONObject();
+//					obj.put("tableName", res.getString("table_name"));
+					obj.put("columnName", res.getString("column_name"));
+					JSONObjects1.add(obj);
+				}
+				obj1.put("tableName", npciacq);
+				JSONObjects2.add(obj1);
+//				List<JSONObject> JSONObjects = Stream.concat(JSONObjects1.stream(), JSONObjects2.stream())
+//                        .collect(Collectors.toList());
+				stmt.close();
+				con.close();
+				return new List[] { JSONObjects1, JSONObjects2 };
+			} else if (fileName.equalsIgnoreCase("EJ")) {
+				PreparedStatement stmt = con.prepareStatement(
+						"SELECT DISTINCT table_name,column_name FROM all_tab_cols WHERE table_name =?");
+				stmt.setString(1, ejtemp);
+				ResultSet res = stmt.executeQuery();
+				List<JSONObject> JSONObjects1 = new ArrayList<JSONObject>(res.getFetchSize());
+				List<JSONObject> JSONObjects2 = new ArrayList<JSONObject>(res.getFetchSize());
+				JSONObject obj1 = new JSONObject();
+				while (res.next()) {
+					JSONObject obj = new JSONObject();
+//					obj.put("tableName", res.getString("table_name"));
+					obj.put("columnName", res.getString("column_name"));
+					JSONObjects1.add(obj);
+				}
+				obj1.put("tableName", ejtemp);
+				JSONObjects2.add(obj1);
+//				List<JSONObject> JSONObjects = Stream.concat(JSONObjects1.stream(), JSONObjects2.stream())
+//                        .collect(Collectors.toList());
+				stmt.close();
+				con.close();
+				return new List[] { JSONObjects1, JSONObjects2 };
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			// TODO: handle exception
 		}
 		return null;
-		
-		
+
 	}
 }
