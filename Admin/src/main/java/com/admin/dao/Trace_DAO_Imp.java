@@ -1977,7 +1977,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 	@Override
 	public List<JSONObject> getFileFormatHistory(String p_VendorType, String p_ClientID, String p_ChannelID,
-			String p_ModeID, String p_VendorID, String filePrefix) {
+			String p_ModeID, String p_VendorID,String fileType,String fileExt, String filePrefix) {
 		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("spGetFileFormatHistory1");
 		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(2, Integer.class, ParameterMode.IN);
@@ -1985,13 +1985,17 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query.registerStoredProcedureParameter(4, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(5, Integer.class, ParameterMode.IN);
 		query.registerStoredProcedureParameter(6, String.class, ParameterMode.IN);
-		query.registerStoredProcedureParameter(7, String.class, ParameterMode.REF_CURSOR);
+		query.registerStoredProcedureParameter(7, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(8, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(9, String.class, ParameterMode.REF_CURSOR);
 		query.setParameter(1, p_VendorType);
 		query.setParameter(2, Integer.parseInt(p_ClientID));
 		query.setParameter(3, Integer.parseInt(p_ChannelID));
 		query.setParameter(4, Integer.parseInt(p_ModeID));
 		query.setParameter(5, Integer.parseInt(p_VendorID));
-		query.setParameter(6, filePrefix);
+		query.setParameter(6, fileType);
+		query.setParameter(7, fileExt);
+		query.setParameter(8, filePrefix);
 		query.execute();
 		List<Object[]> result = query.getResultList();
 		String tempStr = result.toString();

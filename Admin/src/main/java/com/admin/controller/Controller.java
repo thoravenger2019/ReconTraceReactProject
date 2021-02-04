@@ -600,15 +600,16 @@ public class Controller {
 		return getbranchname;
 	}
 
-	@GetMapping("getFileFormatHistory/{p_VendorType}/{p_ClientID}/{p_ChannelID}/{p_ModeID}/{p_VendorID}/{filePrefix}")
+	@GetMapping("getFileFormatHistory/{p_VendorType}/{p_ClientID}/{p_ChannelID}/{p_ModeID}/{p_VendorID}/{fileType}/{fileExt}/{filePrefix}")
 	public List<JSONObject> getFileFormatHistory(@PathVariable("p_VendorType") String p_VendorType,
 			@PathVariable("p_ClientID") String p_ClientID, @PathVariable("p_ChannelID") String p_ChannelID,
 			@PathVariable("p_ModeID") String p_ModeID, @PathVariable("p_VendorID") String p_VendorID,
+			@PathVariable("fileType") String fileType,@PathVariable("fileExt")  String fileExt,
 			@PathVariable("filePrefix") String filePrefix) throws Exception {
 		List<JSONObject> getFileFormatHistory = traceService.getFileFormatHistory(p_VendorType, p_ClientID, p_ChannelID,
-				p_ModeID, p_VendorID, filePrefix);
-
-		System.out.println("getFileFormatHistory:  " + getFileFormatHistory);
+				p_ModeID, p_VendorID, fileType, fileExt, filePrefix);
+		System.out.println("fileType"+fileType);
+		System.out.println("fileExt:  " + fileExt);
 		String statusInstr = "";
 		JSONObject status = getFileFormatHistory.get(0);
 		try {
@@ -618,7 +619,7 @@ public class Controller {
 		}
 		System.out.println("statusInstr:  " + statusInstr);
 		if (statusInstr.equals("[not exist]") && p_VendorType.equalsIgnoreCase("NETWORK")
-				&& p_ModeID.equalsIgnoreCase("2")) {
+				&& p_ModeID.equalsIgnoreCase("2")  && fileType.equalsIgnoreCase("plaintext")) {
 			String line = "", str = "";
 			StringBuffer result = new StringBuffer();
 			String link = "C:\\Users\\suyog.mate.MAXIMUS\\git\\SpringReactProject\\Admin\\src\\main\\xmlFiles\\acq_ATM_NPCI.xml";
@@ -663,7 +664,7 @@ public class Controller {
 			}
 			return JSONObjects;
 		} else if (statusInstr.equals("[not exist]") && p_VendorType.equalsIgnoreCase("NETWORK")
-				&& p_ModeID.equalsIgnoreCase("3")) {
+				&& p_ModeID.equalsIgnoreCase("3") && fileType.equalsIgnoreCase("plaintext")) {
 			String line = "", str = "";
 			StringBuffer result = new StringBuffer();
 			String link = "C:\\Users\\suyog.mate.MAXIMUS\\git\\SpringReactProject\\Admin\\src\\main\\xmlFiles\\iss_atm_npci.xml";

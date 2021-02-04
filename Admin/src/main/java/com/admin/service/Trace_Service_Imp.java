@@ -1475,9 +1475,9 @@ public class Trace_Service_Imp implements Trace_Service {
 
 	@Override
 	public List<JSONObject> getFileFormatHistory(String p_VendorType, String p_ClientID, String p_ChannelID,
-			String p_ModeID, String p_VendorID, String filePrefix) {
+			String p_ModeID, String p_VendorID,String fileType,String fileExt ,String filePrefix) {
 
-		return traceDao.getFileFormatHistory(p_VendorType, p_ClientID, p_ChannelID, p_ModeID, p_VendorID, filePrefix);
+		return traceDao.getFileFormatHistory(p_VendorType, p_ClientID, p_ChannelID, p_ModeID, p_VendorID,fileType,fileExt, filePrefix);
 	}
 
 	@Override

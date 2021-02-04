@@ -117,7 +117,7 @@ public interface Trace_Service {
 			throws IOException, EncryptedDocumentException, InvalidFormatException, Exception;
 
 	public List<JSONObject> getFileFormatHistory(String p_VendorType, String p_ClientID, String p_ChannelID,
-			String p_ModeID, String p_VendorID, String filePrefix);
+			String p_ModeID, String p_VendorID, String fileType, String fileExt, String filePrefix);
 
 	public List<JSONObject> getfileformat(String p_VENDORID, String p_CLIENTID, String p_FILEPREFIX, String p_FILEEXT,
 			String p_SEPARATORTYPE, String p_MODEID, String p_CHANNELID);
