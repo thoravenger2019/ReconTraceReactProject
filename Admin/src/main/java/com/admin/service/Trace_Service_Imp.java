@@ -36,6 +36,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellReference;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -2021,11 +2022,28 @@ public class Trace_Service_Imp implements Trace_Service {
 
 	@Override
 	public List<JSONObject> joinopt(String clientid, String channeltype, String tmode, String recontype,
-			String tablenames, String table1name, String table2name, String joincond, String referenceNo, String cardNo,
-			String terminalID) {
+			String tablenames, String table1name, String table2name, String joincond, String jsonstring) {
 		// TODO Auto-generated method stub
-		return traceDao.joinopt(clientid, channeltype, tmode, recontype, tablenames, table1name, table2name, joincond,
-				referenceNo, cardNo, terminalID);
+		
+		
+		System.out.println(joincond);
+		System.out.println(jsonstring);
+		String name = null,url = null,len = null;
+		
+//		JSONArray jsonarray = new JSONArray(jsonstring);
+//		for (int i = 0; i < jsonarray.length(); i++) {
+//		    org.json.JSONObject jsonobject = jsonarray.getJSONObject(i);
+//		    name = jsonobject.getString("name");
+//		    url = jsonobject.getString("idx");
+//		    len =jsonobject.getString("len");
+//		}
+		
+		System.out.println(name);
+		System.out.println(url);
+		System.out.println(len);
+//		org.json.JSONObject jsonRef=new org.json.JSONObject("")
+	
+		return traceDao.joinopt(clientid, channeltype, tmode, recontype, tablenames, table1name, table2name, joincond, jsonstring);
 	}
 
 	@Override

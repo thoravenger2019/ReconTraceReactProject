@@ -4031,6 +4031,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 					if (BAL) {
 						TxnsSubTypeMain = "Balance enquiry";
+						
 					}
 
 					if (MS) {
@@ -4254,6 +4255,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			List<JSONObject> cbsfileformatxml = getcbsswitchformatfileinxml(clientid, fileTypeName, "." + extFile);
 			List<JSONObject> cbsIdentificationfileformatxml = getcbsswitchejIdentificationfileformatxml(clientid,
 					fileTypeName, "." + extFile);
+			System.out.println(clientid + "   " + fileTypeName + "   " + extFile);
 			System.out.println("cbsfileformatxml====" + cbsfileformatxml.toString());
 			System.out.println("cbsIdentificationfileformatxml====" + cbsIdentificationfileformatxml.toString());
 
@@ -5958,10 +5960,10 @@ public class Trace_DAO_Imp implements Trace_DAO {
 										.toString();
 							}
 
-							if (ReferenceNumber.length() < 6) {
-								String concatStr = "000000000000" + ReferenceNumber;
-								ReferenceNumber = concatStr.substring(concatStr.length() - 12);
-							}
+//							if (ReferenceNumber.length() < 6) {
+//								String concatStr = "000000000000" + ReferenceNumber;
+//								ReferenceNumber = concatStr.substring(concatStr.length() - 12);
+//							}
 						}
 						if (jsonObj.getJSONArray("CardNumber").getString(0).equals("0")) {
 						} else {
@@ -6373,7 +6375,11 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							}
 						}
 						if (atmType != null) {
-							Boolean isFound = atmType.indexOf(TxnsSubType.trim()) != -1 ? true : false;
+							Boolean isFound;
+							if (atmType.contentEquals(TxnsSubType.trim()))
+								isFound = true;
+							else
+								isFound = false;
 							if (isFound == true && TerminalID.substring(0, 2) != microAtmType) {
 								ATM = true;
 							}
@@ -6422,7 +6428,11 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							}
 						}
 						if (atmType != null) {
-							Boolean isFound = atmType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							Boolean isFound;
+							if (atmType.contentEquals(ChannelType.trim()))
+								isFound = true;
+							else
+								isFound = false;
 							if (isFound == true && TerminalID.substring(0, 2) != microAtmType) {
 								ATM = true;
 							}
@@ -6452,7 +6462,11 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							}
 						}
 						if (microAtmType != null) {
-							Boolean isFound = microAtmType.indexOf(ChannelType.trim()) != -1 ? true : false;
+							Boolean isFound;
+							if (microAtmType.contentEquals(ChannelType.trim()))
+								isFound = true;
+							else
+								isFound = false;
 							if (isFound == true || TerminalID.substring(0, 2).equals(microAtmType)) {
 								MicroATM = true;
 							}
@@ -6556,27 +6570,42 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							C = true;
 						}
 					}
-					if (AcquirerID == null || acqID == null) {
-						if (Terminal == true && card == true) {
-							ModeID = "1";
-						}
-						if (Terminal == true && card == false) {
+
+					if (TxnsSubType != null) {
+						if (TxnsSubType.equalsIgnoreCase("ACQUIRER")) {
 							ModeID = "2";
 						}
-						if (Terminal == false && card == true) {
+						if (TxnsSubType.equalsIgnoreCase("ISSUER")) {
 							ModeID = "3";
+						}
+						if (TxnsSubType.equalsIgnoreCase("ONUS")) {
+							ModeID = "1";
 						}
 					} else {
-						if (Acquirer == true && card == true) {
-							ModeID = "1";
+						if (AcquirerID == null || acqID == null) {
+							if (Terminal == true && card == true) {
+								ModeID = "1";
+							}
+							if (Terminal == true && card == false) {
+								ModeID = "2";
+							}
+							if (Terminal == false && card == true) {
+								ModeID = "3";
+							}
+						} else {
+							if (Acquirer == true && card == true) {
+								ModeID = "1";
+							}
+							if (Acquirer == true && card == false) {
+								ModeID = "2";
+							}
+							if (Acquirer == false && card == true) {
+								ModeID = "3";
+							}
 						}
-						if (Acquirer == true && card == false) {
-							ModeID = "2";
-						}
-						if (Acquirer == false && card == true) {
-							ModeID = "3";
-						}
+
 					}
+
 					String reversalflag = null;
 					if (Rev1 == true || Rev1 == true && Rev2 == true) {
 						RevFlag = true;
@@ -7229,18 +7258,20 @@ public class Trace_DAO_Imp implements Trace_DAO {
 								Integer.parseInt(jsonObj.getJSONArray("ReferenceNumber").getString(0)) - 1) == null) {
 							ReferenceNumber = null;
 						} else {
-							ReferenceNumber = row
-									.getCell(Integer.parseInt(jsonObj.getJSONArray("ReferenceNumber").getString(0)) - 1)
-									.toString();
+
+							Cell cell = row.getCell(
+									Integer.parseInt(jsonObj.getJSONArray("ReferenceNumber").getString(0)) - 1);
+							ReferenceNumber = cell.toString();
 						}
 
-						if (ReferenceNumber != null) {
-							if (ReferenceNumber.length() < 6) {
-
-								String concatStr = "000000000000" + ReferenceNumber;
-								ReferenceNumber = concatStr.substring(concatStr.length() - 12);
-							}
-						}
+//						if (ReferenceNumber != null) {
+//							if (ReferenceNumber.length() <= 6) {
+//
+//								String concatStr = "000000000000" + ReferenceNumber;
+//								ReferenceNumber = concatStr.substring(concatStr.length() - 12);
+//							}
+//						}
+						System.out.println("ReferenceNumber" + ReferenceNumber);
 
 					}
 					if (jsonObj.getJSONArray("CardNumber").getString(0).equals("0")) {
@@ -10571,8 +10602,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 	@Override
 	public List<JSONObject> joinopt(String clientid, String channeltype, String tmode, String recontype,
-			String tablenames, String table1name, String table2name, String joincond, String referenceNo, String cardNo,
-			String terminalID) {
+			String tablenames, String table1name, String table2name, String joincond, String jsonstring) {
 		// TODO Auto-generated method stub
 		StoredProcedureQuery query1 = entityManager.createStoredProcedureQuery("spjointables");
 		query1.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
@@ -10584,9 +10614,8 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query1.registerStoredProcedureParameter(7, String.class, ParameterMode.IN);
 		query1.registerStoredProcedureParameter(8, String.class, ParameterMode.IN);
 		query1.registerStoredProcedureParameter(9, String.class, ParameterMode.IN);
-		query1.registerStoredProcedureParameter(10, String.class, ParameterMode.IN);
-		query1.registerStoredProcedureParameter(11, String.class, ParameterMode.IN);
-		query1.registerStoredProcedureParameter(12, String.class, ParameterMode.REF_CURSOR);
+		query1.registerStoredProcedureParameter(10, String.class, ParameterMode.REF_CURSOR);
+
 		query1.setParameter(1, clientid);
 		query1.setParameter(2, channeltype);
 		query1.setParameter(3, tmode);
@@ -10595,10 +10624,10 @@ public class Trace_DAO_Imp implements Trace_DAO {
 		query1.setParameter(6, table1name);
 		query1.setParameter(7, table2name);
 		query1.setParameter(8, joincond);
-		query1.setParameter(9, referenceNo);
-		query1.setParameter(10, cardNo);
-		query1.setParameter(11, terminalID);
+		query1.setParameter(9, jsonstring);
+
 		query1.execute();
+
 		List<Object[]> result = query1.getResultList();
 		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
 		for (Object record : result) {

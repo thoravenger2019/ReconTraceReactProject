@@ -35,6 +35,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.admin.model.FileUploadModel;
+import com.admin.model.LenghtOfidx;
 import com.admin.model.User;
 import com.admin.model.XmlClass;
 import com.admin.service.Trace_Service;
@@ -1465,21 +1466,21 @@ public class Controller {
 		return getFileDataCol;
 	}
 
-	@GetMapping("joinopt/{clientid}/{channeltype}/{tmode}/{recontype}/{tablenames}/{table1name}/{table2name}/{joincond}/{ReferenceNo}/{CardNo}/{TerminalID}")
-	public List<JSONObject> joinopt(@PathVariable("clientid") String clientid,
-			@PathVariable("channeltype") String channeltype, @PathVariable("tmode") String tmode,
-			@PathVariable("recontype") String recontype, @PathVariable("tablenames") String tablenames,
-			@PathVariable("table1name") String table1name, @PathVariable("table2name") String table2name,
-			@PathVariable("joincond") String joincond, @PathVariable("ReferenceNo") String ReferenceNo,
-			@PathVariable("CardNo") String CardNo, @PathVariable("TerminalID") String TerminalID) {
-		System.out.println("tablenames" + tablenames);
-		System.out.println("table1name" + table1name);
-		System.out.println("table1name" + table2name);
-		System.out.println("table1name" + joincond);
-		List<JSONObject> joinopt = traceService.joinopt(clientid, channeltype, tmode, recontype, tablenames, table1name,
-				table2name, joincond, ReferenceNo, CardNo, TerminalID);
-		System.out.println("joinopt" + joinopt);
+	@PostMapping("/joinopt")
+	public List<JSONObject> joinopt(@RequestBody LenghtOfidx lenghtOfidx) {
+		
+		List<JSONObject> joinopt = traceService.joinopt(lenghtOfidx.getClientid(), lenghtOfidx.getChannelid(),
+				lenghtOfidx.getModeid(), lenghtOfidx.getRuletype(), lenghtOfidx.getTableNames(),
+				lenghtOfidx.getTable1Name(), lenghtOfidx.getTable2Name(), lenghtOfidx.getJoinCond(),
+				lenghtOfidx.getJsonString());
+		System.out.println("joinopt"+joinopt.toString());
+		System.out.println("JoinCond"+lenghtOfidx.getJoinCond());
+		System.out.println("JsonString"+lenghtOfidx.getJsonString());
 		return joinopt;
+
+//		System.out.println(lenghtOfidx.getJoinCond());
+//		System.out.println(lenghtOfidx.getJsonString());
+//		return null;
 	}
 
 	@PostMapping("getinfofromjointables/{clientid}/{channelid}/{tmode}/{recontype}/{fileNameList}/{colNameList}")
