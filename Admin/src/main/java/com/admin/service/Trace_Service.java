@@ -21,7 +21,8 @@ public interface Trace_Service {
 
 	public String getRoleDetails(String clientID);
 
-	public String getRoleMaster(String roleName, String homePage, String mode, String roleID, String clientID, String createdby);
+	public String getRoleMaster(String roleName, String homePage, String mode, String roleID, String clientID,
+			String createdby);
 
 	public String getRoleAccessRights(String roleID, String clientID);
 
@@ -128,8 +129,7 @@ public interface Trace_Service {
 
 	public int[] importEJFileData(MultipartFile ej, String clientid, String createdby, String fileTypeName);
 
-	public int[] importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby,
-			String fileTypeName);
+	public int[] importGlcbsFileData(MultipartFile glCbs, String clientid, String createdby, String fileTypeName);
 
 	public int[] importSwitchFile(MultipartFile sw, String clientid, String createdby, String fileTypeName);
 
@@ -226,7 +226,8 @@ public interface Trace_Service {
 
 	public List<JSONObject> getfiletypes(String channeltype);
 
-	public List<JSONObject> joinopt(String clientid, String channeltype,String tmode,String recontype,String tablenames, String table1name, String table2name, String joincond, String jsonstring);
+	public List<JSONObject> joinopt(String clientid, String channeltype, String tmode, String recontype,
+			String tablenames, String table1name, String table2name, String joincond, String jsonstring);
 
 	public List<JSONObject> getinfofromjointables(String clientid, String channelid, String tmode, String recontype,
 			String fileNameList, String colNameList, String createdBy);

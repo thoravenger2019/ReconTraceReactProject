@@ -604,11 +604,11 @@ public class Controller {
 	public List<JSONObject> getFileFormatHistory(@PathVariable("p_VendorType") String p_VendorType,
 			@PathVariable("p_ClientID") String p_ClientID, @PathVariable("p_ChannelID") String p_ChannelID,
 			@PathVariable("p_ModeID") String p_ModeID, @PathVariable("p_VendorID") String p_VendorID,
-			@PathVariable("fileType") String fileType,@PathVariable("fileExt")  String fileExt,
+			@PathVariable("fileType") String fileType, @PathVariable("fileExt") String fileExt,
 			@PathVariable("filePrefix") String filePrefix) throws Exception {
 		List<JSONObject> getFileFormatHistory = traceService.getFileFormatHistory(p_VendorType, p_ClientID, p_ChannelID,
 				p_ModeID, p_VendorID, fileType, fileExt, filePrefix);
-		System.out.println("fileType"+fileType);
+		System.out.println("fileType" + fileType);
 		System.out.println("fileExt:  " + fileExt);
 		String statusInstr = "";
 		JSONObject status = getFileFormatHistory.get(0);
@@ -619,7 +619,7 @@ public class Controller {
 		}
 		System.out.println("statusInstr:  " + statusInstr);
 		if (statusInstr.equals("[not exist]") && p_VendorType.equalsIgnoreCase("NETWORK")
-				&& p_ModeID.equalsIgnoreCase("2")  && fileType.equalsIgnoreCase("plaintext")) {
+				&& p_ModeID.equalsIgnoreCase("2") && fileType.equalsIgnoreCase("plaintext")) {
 			String line = "", str = "";
 			StringBuffer result = new StringBuffer();
 			String link = "C:\\Users\\suyog.mate.MAXIMUS\\git\\SpringReactProject\\Admin\\src\\main\\xmlFiles\\acq_ATM_NPCI.xml";
@@ -1469,14 +1469,14 @@ public class Controller {
 
 	@PostMapping("/joinopt")
 	public List<JSONObject> joinopt(@RequestBody LenghtOfidx lenghtOfidx) {
-		
+
 		List<JSONObject> joinopt = traceService.joinopt(lenghtOfidx.getClientid(), lenghtOfidx.getChannelid(),
 				lenghtOfidx.getModeid(), lenghtOfidx.getRuletype(), lenghtOfidx.getTableNames(),
 				lenghtOfidx.getTable1Name(), lenghtOfidx.getTable2Name(), lenghtOfidx.getJoinCond(),
 				lenghtOfidx.getJsonString());
-		System.out.println("joinopt"+joinopt.toString());
-		System.out.println("JoinCond"+lenghtOfidx.getJoinCond());
-		System.out.println("JsonString"+lenghtOfidx.getJsonString());
+		System.out.println("joinopt" + joinopt.toString());
+		System.out.println("JoinCond" + lenghtOfidx.getJoinCond());
+		System.out.println("JsonString" + lenghtOfidx.getJsonString());
 		return joinopt;
 
 //		System.out.println(lenghtOfidx.getJoinCond());
