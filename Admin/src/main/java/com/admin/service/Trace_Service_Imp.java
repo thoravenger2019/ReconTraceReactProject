@@ -553,13 +553,21 @@ public class Trace_Service_Imp implements Trace_Service {
 						"{call SPIMPORTNPCIACQUIEREFILE(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
 				List<JSONObject> npcifileformatxml = traceDao.getformatfileinxml(clientid, 2);
 				JSONObject xmlFormatDescription = npcifileformatxml.get(0);
+				
+				
+				
+				
 				String tempStr = xmlFormatDescription.get("FormatDescriptionXml").toString();
+				System.out.println("tempStr"+tempStr);
 
 				DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 				DocumentBuilder db = dbf.newDocumentBuilder();
 				Document doc = db.parse(new InputSource(new StringReader(tempStr)));
 				doc.getDocumentElement().normalize();
 				NodeList nodeList = doc.getDocumentElement().getChildNodes();
+				
+				System.out.println("nodelist"+nodeList.toString());
+				
 
 				File convFile = new File(file.getOriginalFilename());
 				convFile.createNewFile();
@@ -589,6 +597,7 @@ public class Trace_Service_Imp implements Trace_Service {
 						int startPos = Integer.parseInt(nodeData.get(1));
 						int length = Integer.parseInt(nodeData.get(2));
 						String contentFieldData = contentData.substring(startPos - 1, (startPos - 1) + length).trim();
+						System.out.println("nodeName"+nodeName+"   "+"startPos"+startPos+"   "+"length"+length+"   "+"contentFieldData"+contentFieldData);
 						obj.put(nodeName, contentFieldData);
 					}
 					String nodeName = null;
@@ -924,6 +933,7 @@ public class Trace_Service_Imp implements Trace_Service {
 				Document doc = db.parse(new InputSource(new StringReader(tempStr)));
 				doc.getDocumentElement().normalize();
 				NodeList nodeList = doc.getDocumentElement().getChildNodes();
+				
 				File convFile = new File(file.getOriginalFilename());
 				convFile.createNewFile();
 				FileOutputStream fos = new FileOutputStream(convFile);

@@ -4265,11 +4265,16 @@ public class Trace_DAO_Imp implements Trace_DAO {
 			JSONObject xmlFormatDescription = cbsfileformatxml.get(0);
 			String tempStr = xmlFormatDescription.get("FormatDescriptionXml").toString();
 			System.out.println("tempStr:" + tempStr);
+			
+			
+			
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			Document doc = db.parse(new InputSource(new StringReader(tempStr)));
 			doc.getDocumentElement().normalize();
 			NodeList nodeList = doc.getDocumentElement().getChildNodes();
+			
+			
 			System.out.println("nodelistLength" + nodeList.getLength());
 			String RowName = nodeList.item(0).getNodeName();
 			int actualRowPosition = -1;
@@ -6841,7 +6846,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 
 				NodeList startPosNodeValue = startPosNode.getChildNodes();
 				String nodeValue = startPosNodeValue.item(0).getNodeValue();
-				System.out.println("nodeName  " + nodeName + " " + "nodeValue " + nodeValue);
+//				System.out.println("nodeName  " + nodeName + " " + "nodeValue " + nodeValue);
 //				hm.put(NodeName, nodeValue);
 				jsonObj.append(nodeName, nodeValue.toString());
 			}
