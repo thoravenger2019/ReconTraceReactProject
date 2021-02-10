@@ -746,9 +746,9 @@ public class Trace_Service_Imp implements Trace_Service {
 
 					}
 					if (transaction_Date != null & transaction_Time != null) {
-						String pattern = "yyyy-MM-dd HH:mm:ss";
+						String pattern = "yyyy-MM-dd hh:mm:ss";
 						String temp = transaction_Date + " " + transaction_Time;
-						SimpleDateFormat sdf = new SimpleDateFormat("yyMMdd HHmmss");
+						SimpleDateFormat sdf = new SimpleDateFormat("yyMMdd hhmmss");
 						try {
 							Date d = sdf.parse(temp);
 							sdf.applyPattern(pattern);
@@ -1122,9 +1122,9 @@ public class Trace_Service_Imp implements Trace_Service {
 					}
 
 					if (transaction_Date != null & transaction_Time != null) {
-						String pattern = "yyyy-MM-dd HH:mm:ss";
+						String pattern = "yyyy-MM-dd hh:mm:ss";
 						String temp = transaction_Date + " " + transaction_Time;
-						SimpleDateFormat sdf = new SimpleDateFormat("yyMMdd HHmmss");
+						SimpleDateFormat sdf = new SimpleDateFormat("yyMMdd hhmmss");
 						Date d = sdf.parse(temp);
 						sdf.applyPattern(pattern);
 						TxnsDateTimeMain = sdf.format(d);

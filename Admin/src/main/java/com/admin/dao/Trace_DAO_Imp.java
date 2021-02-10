@@ -156,7 +156,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 				"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", "yyyy-MM-dd'T'HH:mm:ss.SSSZ", "yyyy-MM-dd HH:mm:ss",
 				"MM/dd/yyyy HH:mm:ss", "MM/dd/yyyy'T'HH:mm:ss.SSS'Z'", "MM/dd/yyyy'T'HH:mm:ss.SSSZ",
 				"MM/dd/yyyy'T'HH:mm:ss.SSS", "MM/dd/yyyy'T'HH:mm:ssZ", "MM/dd/yyyy'T'HH:mm:ss", "yyyy:MM:dd HH:mm:ss",
-				"yyyyMMdd", "yyyy/MM/dd", "dd-MMM-yyyy" };
+				"yyyyMMdd", "yyyy/MM/dd", "dd-MMM-yyyy" ,  "yyMMdd"};
 		String tempParse = null;
 		if (sdate != null) {
 			for (String parse : formats) {
@@ -4181,13 +4181,13 @@ public class Trace_DAO_Imp implements Trace_DAO {
 					stmt.setString(65, null);
 					stmt.setString(66, createdby);
 					stmt.setString(67, null);
-					stmt.addBatch();
+//					stmt.addBatch();
 					incr++;
 					System.out.println("add batch");
 					System.out.println(incr + "       " + content.size());
 //					if (incr % batchSize == 0 || incr==content.size()) {
-
-					stmt.executeBatch();
+stmt.execute();
+//					stmt.executeBatch();
 					System.out.println("exec batch");
 					ejStatus = true;
 
@@ -5899,16 +5899,19 @@ public class Trace_DAO_Imp implements Trace_DAO {
 										TxnsDate = row.getCell(
 												Integer.parseInt(jsonObj.getJSONArray("TxnsDate").getString(0)) - 1)
 												.toString();
+										withoutFormatConvertDate = false;
+										
+									} catch (Exception e) {
+										
+										
+										TxnsDate = row.getCell(
+												Integer.parseInt(jsonObj.getJSONArray("TxnsDate").getString(0)) - 1)
+												.toString();
 										DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 										Date tempTxnsDate = DateUtil.getJavaDate(Double.parseDouble(TxnsDate));
 
 										TxnsDate = df.format(tempTxnsDate);
 										withoutFormatConvertDate = true;
-									} catch (Exception e) {
-										TxnsDate = row.getCell(
-												Integer.parseInt(jsonObj.getJSONArray("TxnsDate").getString(0)) - 1)
-												.toString();
-										withoutFormatConvertDate = false;
 									}
 
 								}
@@ -6325,6 +6328,26 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							System.out.println("TxnsDateTimeMain  " + TxnsDateTimeMain);
 						}
 					}
+					
+					if (TxnsDate != null && TxnsTime != null && (  (withoutFormatConvertDate == false
+							&& withoutFormatConvertTime == true) || (withoutFormatConvertDate == true
+							&& withoutFormatConvertTime == false))) {
+						if (txnDateTimeFormat.isEmpty() || txnDateTimeFormat == null) {
+
+						} else {
+//							String concatTxnDateTime = TxnsDate + " " + TxnsTime;
+							String concatTxnDateTimetemp=convertSimpleDateFormat(TxnsDate);
+							String concatTxnDateTimetemp1=convertSimpleTimeFormat(TxnsTime);
+							
+							
+							
+							
+							
+//							TxnsDateTimeMain = checkDateFormat("yyyy-MM-dd hh:mm:ss", concatTxnDateTime);
+//							System.out.println("TxnsDateTimeMain  " + TxnsDateTimeMain);
+						}
+					}
+					
 
 					if (txnDateTimeFormat != null && TxnsDateTime != null) {
 
@@ -7210,10 +7233,10 @@ public class Trace_DAO_Imp implements Trace_DAO {
 							TerminalID = row
 									.getCell(Integer.parseInt(jsonObj.getJSONArray("TerminalID").getString(0)) - 1)
 									.toString();
-							if (TerminalID.length() < 8) {
-								String concatStr = "00000000" + TerminalID;
-								TerminalID = concatStr.substring(concatStr.length() - 8);
-							}
+//							if (TerminalID.length() < 8) {
+//								String concatStr = "00000000" + TerminalID;
+//								TerminalID = concatStr.substring(concatStr.length() - 8);
+//							}
 						}
 					}
 					if (jsonObj.getJSONArray("TxnsPostDateTime").getString(0).equals("0")) {
