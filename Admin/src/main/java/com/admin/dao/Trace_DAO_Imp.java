@@ -6338,11 +6338,7 @@ stmt.execute();
 //							String concatTxnDateTime = TxnsDate + " " + TxnsTime;
 							String concatTxnDateTimetemp=convertSimpleDateFormat(TxnsDate);
 							String concatTxnDateTimetemp1=convertSimpleTimeFormat(TxnsTime);
-							
-							
-							
-							
-							
+
 //							TxnsDateTimeMain = checkDateFormat("yyyy-MM-dd hh:mm:ss", concatTxnDateTime);
 //							System.out.println("TxnsDateTimeMain  " + TxnsDateTimeMain);
 						}
