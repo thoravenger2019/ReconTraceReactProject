@@ -706,11 +706,13 @@ const editSwitch = (record) => {
       const values = form.getFieldsValue();
       console.log(values)
       console.log(P_VENDORID)
-      const response = await axios.get(`getFileFormatHistory/${P_VENDORTYPE}/${P_CLIENTID}/${P_CHANNELID}/${P_MODEID}/${P_VENDORID}/${values.P_FILEPREFIX}`);
+      const response = await axios.get(`getFileFormatHistory/${P_VENDORTYPE}/${P_CLIENTID}/${P_CHANNELID}/${P_MODEID}/${P_VENDORID}/${values.P_FILEType}/${values.P_FILEEXT}/${values.P_FILEPREFIX}`);
        console.log(response.data)
        const formatHistoryResponse = response.data;
-
+      const logfile=values.P_FILEType;
+      alert(logfile);
       if (P_VENDORTYPE == "NETWORK"){
+      //if(logfile=="plaintext"){
         setNPCITable(true);
         setCBSTable(false);
         setSwitchTable(false);
