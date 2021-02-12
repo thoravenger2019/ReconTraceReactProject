@@ -19,13 +19,11 @@ import {
   Input,
 } from 'antd';
 import Title from 'antd/lib/typography/Title';
-import Highlighter from "react-highlight-words";
-import { SplitButton } from 'react-bootstrap';
-import SketchExample from './SketchExample';
+
 const { Header, Content } = Layout;
 const { Option } = Select;
 const TempTableConfiguration = props => {
-  console.log(props)
+//   console.log(props)
   const [clientid, setClientID] = useState([])
   const [ruletype, setRultType] = useState([])
   const [channeldata, setChannelData] = useState([])
@@ -42,14 +40,6 @@ const TempTableConfiguration = props => {
   const [tblColNPCIISS, setNPCIISSColtblData] = useState([])
   const [tblColNPCIACQ, setNPCIACQColtblData] = useState([])
   const [tblcoltest, setSelectedRows] = useState([])
-  const [matchtbl, setMatchtblData] = useState([])
-  const [matchtblNext, setMatchtblDataNext] = useState([])
-  const [matchtblnpcidata, setMatchtblDataISSNew] = useState([])
-  const [matchtblnpciacqdata, setMatchtblDataNewACQ] = useState([])
-  const [matchtbldataNPCIACQnext,setMatchtblDataNewACQNext]=useState([])
-  const [matchtbldataNPCIISSnext,setMatchtblDataNewISSNext]=useState([])
-  const [matchtbleej, setMatchtblDataNewEJ] = useState([])
-
   const [switchTempName, setNameSwitchTempTable] = useState('')
   const [NPCIISSTempName, setNameNPCIISSTempTable] = useState('')
   const [NPCIACQTempName, setNameNPCIACQTempTable] = useState('')
@@ -57,9 +47,6 @@ const TempTableConfiguration = props => {
   const [ejTempName, setNameEJTempTable] = useState('')
   const [glTempName, setNameGLTempTable] = useState('')
 
-  const [matchtblnpciiss, setMatchWithNpciss] = useState(false)
-  const [matchtblnpciacq, setMatchWithNpciacq] = useState(false)
-  const [matchtblej, setMatchWithEJ] = useState(false)
   const [selectionType, setSelectionType] = useState('');
   const [searchText, setSearchText] = useState('');
   const [filecheck, setCheckFilename] = useState([]);
@@ -68,8 +55,6 @@ const TempTableConfiguration = props => {
   const [glCheck, setCheckFilenameGL] = useState([])
   const [npciiisCheck, setCheckFilenameNPCIISS] = useState([])
   const [ejCheck, setCheckFilenameEJ] = useState([])
-  const [columnnamematch, setMatchedTablesName] = useState('')
-  const [joincondition, setJoinCond] = useState('')
   //   const [branchdata, setBranchData] = useState([])
   const [loader, setLoader] = useState(true)
   const [gltblloader, setGLtbl] = useState(false)
@@ -85,454 +70,6 @@ const TempTableConfiguration = props => {
   const isEditing = record => record.key === editingKey;
 
   const [columnname1, setCOlumnName] = useState([])
-
-  // console.log("switch tbl data",tblColSw);
-  // console.log("gl tbl data",tblColGl);
-
-  
-  console.log("====================",matchtbldataNPCIACQnext);
-
-  //For match table with gl and switch
-
-  const EditableContext = React.createContext();
-
-  const EditableRow = ({ index, ...props }) => {
-    const [form] = Form.useForm();
-    return (
-      <Form form={form} component={false}>
-        <EditableContext.Provider value={form}>
-          <tr {...props} />
-        </EditableContext.Provider>
-      </Form>
-    );
-  };
-
-  const EditableCell = ({
-    title,
-    editable,
-    children,
-    dataIndex,
-    record,
-    //handleSave,
-    ...restProps
-  }) => {
-    const [editing, setEditing] = useState(false);
-    const inputRef = useRef();
-    const form = useContext(EditableContext);
-    useEffect(() => {
-      if (editing) {
-        inputRef.current.focus();
-      }
-    }, [editing]);
-
-    const toggleEdit = () => {
-      setEditing(!editing);
-      form.setFieldsValue({
-        [dataIndex]: record[dataIndex],
-      });
-    };
-
-    const handleSave = (row) => {
-      // const newData = [...this.state.dataSource];
-      // const index = newData.findIndex((item) => row.key === item.key);
-      // const item = newData[index];
-      // newData.splice(index, 1, { ...item, ...row });
-
-
-      //const row = await form.validateFields();
-      const newData = [...matchtbl];
-
-
-      const index = newData.findIndex((item) => row.key === item.key);
-
-      if (index > -1) {
-        const item = newData[index];
-        newData.splice(index, 1, { ...item, ...row });
-        setMatchtblData(newData);
-        // console.log(newData);
-        setEditingKey('');
-      } else {
-        newData.push(row);
-        setMatchtblData(newData);
-        setEditingKey('');
-      }
-    };
-
-    const save = async (e) => {
-      try {
-        const values = await form.validateFields();
-        toggleEdit();
-        handleSave({ ...record, ...values })
-        //debugger;
-      } catch (errInfo) {
-        console.log('Save failed:', errInfo);
-      }
-    };
-
-
-    let childNode = children;
-
-    if (editable) {
-      childNode = editing ? (
-        <Form.Item
-          style={{
-            margin: 0,
-          }}
-          name={dataIndex}
-          rules={[
-            {
-              required: true,
-              message: `${title} is required.`,
-            },
-          ]}
-        >
-          <Input ref={inputRef} onPressEnter={save} onBlur={save} />
-        </Form.Item>
-      ) : (
-          <div
-            className="editable-cell-value-wrap"
-            style={{
-              paddingRight: 24,
-            }}
-            onClick={toggleEdit}
-          >
-            {children}
-          </div>
-        );
-    }
-    return <td {...restProps}>{childNode}</td>;
-  };
-
-  //FOR NPCI
-
-  const EditableRowNPCI = ({ index, ...props }) => {
-    const [form] = Form.useForm();
-    return (
-      <Form form={form} component={false}>
-        <EditableContext.Provider value={form}>
-          <tr {...props} />
-        </EditableContext.Provider>
-      </Form>
-    );
-  };
-
-  const EditableCellNPCI = ({
-    title,
-    editable,
-    children,
-    dataIndex,
-    record,
-    //handleSave,
-    ...restProps
-  }) => {
-    const [editing, setEditing] = useState(false);
-    const inputRef = useRef();
-    const form = useContext(EditableContext);
-    useEffect(() => {
-      if (editing) {
-        inputRef.current.focus();
-      }
-    }, [editing]);
-
-    const toggleEdit = () => {
-      setEditing(!editing);
-      form.setFieldsValue({
-        [dataIndex]: record[dataIndex],
-      });
-    };
-
-    const handleSave = (row) => {
-      // const newData = [...this.state.dataSource];
-      // const index = newData.findIndex((item) => row.key === item.key);
-      // const item = newData[index];
-      // newData.splice(index, 1, { ...item, ...row });
-
-
-      //const row = await form.validateFields();
-      const newData = [...matchtblnpciacqdata];
-
-
-      const index = newData.findIndex((item) => row.key === item.key);
-
-      if (index > -1) {
-        const item = newData[index];
-        newData.splice(index, 1, { ...item, ...row });
-        setMatchtblDataNewACQ(newData);
-        // console.log(newData);
-        setEditingKey('');
-      } else {
-        newData.push(row);
-        setMatchtblDataNewACQ(newData);
-        setEditingKey('');
-      }
-    };
-
-    const save = async (e) => {
-      try {
-        const values = await form.validateFields();
-        toggleEdit();
-        handleSave({ ...record, ...values })
-        //debugger;
-      } catch (errInfo) {
-        console.log('Save failed:', errInfo);
-      }
-    };
-
-
-    let childNode = children;
-
-    if (editable) {
-      childNode = editing ? (
-        <Form.Item
-          style={{
-            margin: 0,
-          }}
-          name={dataIndex}
-          rules={[
-            {
-              required: true,
-              message: `${title} is required.`,
-            },
-          ]}
-        >
-          <Input ref={inputRef} onPressEnter={save} onBlur={save} />
-        </Form.Item>
-      ) : (
-          <div
-            className="editable-cell-value-wrap"
-            style={{
-              paddingRight: 24,
-            }}
-            onClick={toggleEdit}
-          >
-            {children}
-          </div>
-        );
-    }
-    return <td {...restProps}>{childNode}</td>;
-  };
-
-  //for EJ
-
-  //FOR NPCI
-
-  const EditableRowEJ = ({ index, ...props }) => {
-    const [form] = Form.useForm();
-    return (
-      <Form form={form} component={false}>
-        <EditableContext.Provider value={form}>
-          <tr {...props} />
-        </EditableContext.Provider>
-      </Form>
-    );
-  };
-
-  const EditableCellEJ = ({
-    title,
-    editable,
-    children,
-    dataIndex,
-    record,
-    //handleSave,
-    ...restProps
-  }) => {
-    const [editing, setEditing] = useState(false);
-    const inputRef = useRef();
-    const form = useContext(EditableContext);
-    useEffect(() => {
-      if (editing) {
-        inputRef.current.focus();
-      }
-    }, [editing]);
-
-    const toggleEdit = () => {
-      setEditing(!editing);
-      form.setFieldsValue({
-        [dataIndex]: record[dataIndex],
-      });
-    };
-
-    const handleSave = (row) => {
-      // const newData = [...this.state.dataSource];
-      // const index = newData.findIndex((item) => row.key === item.key);
-      // const item = newData[index];
-      // newData.splice(index, 1, { ...item, ...row });
-
-
-      //const row = await form.validateFields();
-      const newData = [...matchtbleej];
-
-
-      const index = newData.findIndex((item) => row.key === item.key);
-
-      if (index > -1) {
-        const item = newData[index];
-        newData.splice(index, 1, { ...item, ...row });
-        setMatchtblDataNewEJ(newData);
-        // console.log(newData);
-        setEditingKey('');
-      } else {
-        newData.push(row);
-        setMatchtblDataNewEJ(newData);
-        setEditingKey('');
-      }
-    };
-
-    const save = async (e) => {
-      try {
-        const values = await form.validateFields();
-        toggleEdit();
-        handleSave({ ...record, ...values })
-        //debugger;
-      } catch (errInfo) {
-        console.log('Save failed:', errInfo);
-      }
-    };
-
-
-    let childNode = children;
-
-    if (editable) {
-      childNode = editing ? (
-        <Form.Item
-          style={{
-            margin: 0,
-          }}
-          name={dataIndex}
-          rules={[
-            {
-              required: true,
-              message: `${title} is required.`,
-            },
-          ]}
-        >
-          <Input ref={inputRef} onPressEnter={save} onBlur={save} />
-        </Form.Item>
-      ) : (
-          <div
-            className="editable-cell-value-wrap"
-            style={{
-              paddingRight: 24,
-            }}
-            onClick={toggleEdit}
-          >
-            {children}
-          </div>
-        );
-    }
-    return <td {...restProps}>{childNode}</td>;
-  };
-
-  //for NPCI ISS
-  const EditableRowNPCIISS = ({ index, ...props }) => {
-    const [form] = Form.useForm();
-    return (
-      <Form form={form} component={false}>
-        <EditableContext.Provider value={form}>
-          <tr {...props} />
-        </EditableContext.Provider>
-      </Form>
-    );
-  };
-
-  const EditableCellNPCIISS = ({
-    title,
-    editable,
-    children,
-    dataIndex,
-    record,
-    //handleSave,
-    ...restProps
-  }) => {
-    const [editing, setEditing] = useState(false);
-    const inputRef = useRef();
-    const form = useContext(EditableContext);
-    useEffect(() => {
-      if (editing) {
-        inputRef.current.focus();
-      }
-    }, [editing]);
-
-    const toggleEdit = () => {
-      setEditing(!editing);
-      form.setFieldsValue({
-        [dataIndex]: record[dataIndex],
-      });
-    };
-
-    const handleSave = (row) => {
-      // const newData = [...this.state.dataSource];
-      // const index = newData.findIndex((item) => row.key === item.key);
-      // const item = newData[index];
-      // newData.splice(index, 1, { ...item, ...row });
-
-
-      //const row = await form.validateFields();
-      const newData = [...matchtblnpcidata];
-
-
-      const index = newData.findIndex((item) => row.key === item.key);
-
-      if (index > -1) {
-        const item = newData[index];
-        newData.splice(index, 1, { ...item, ...row });
-        setMatchtblDataISSNew(newData);
-        // console.log(newData);
-        setEditingKey('');
-      } else {
-        newData.push(row);
-        setMatchtblDataISSNew(newData);
-        setEditingKey('');
-      }
-    };
-
-    const save = async (e) => {
-      try {
-        const values = await form.validateFields();
-        toggleEdit();
-        handleSave({ ...record, ...values })
-        //debugger;
-      } catch (errInfo) {
-        console.log('Save failed:', errInfo);
-      }
-    };
-
-
-    let childNode = children;
-
-    if (editable) {
-      childNode = editing ? (
-        <Form.Item
-          style={{
-            margin: 0,
-          }}
-          name={dataIndex}
-          rules={[
-            {
-              required: true,
-              message: `${title} is required.`,
-            },
-          ]}
-        >
-          <Input ref={inputRef} onPressEnter={save} onBlur={save} />
-        </Form.Item>
-      ) : (
-          <div
-            className="editable-cell-value-wrap"
-            style={{
-              paddingRight: 24,
-            }}
-            onClick={toggleEdit}
-          >
-            {children}
-          </div>
-        );
-    }
-    return <td {...restProps}>{childNode}</td>;
-  };
-
-
-
   useEffect(() => {
     //   onDisplayUserRole();
     //   onDisplayChannel();
@@ -580,7 +117,7 @@ const TempTableConfiguration = props => {
 
   const ongetmatchingmodeinfo = async (value) => {
     try {
-      alert("inside mode")
+     // alert("inside mode")
       ///alert("client id"+ClientData);
       //alert("channel id"+value);
       //const modeResponse = await axios.get(`getmatchingmodeinfo/${clientid}/${value}`);
@@ -666,102 +203,100 @@ const TempTableConfiguration = props => {
     }
   };
 
+  
   const getFileDataCol = async (value) => {
     try {
-      ///alert("client id"+ClientData);
-      //alert("channel id"+value);
-//@GetMapping("getFileDataCol1/{fileName}")
-//public List[] getFileDataCol1(@PathVariable("fileName") String fileName)
+    
       const fileResponse = await axios.get(`getFileDataCol1/${value}`);
       console.log(fileResponse.data)
       const colResult = fileResponse.data;
-      const columnNamess = colResult[0];
-      //console.log(columnNamess);
-      const tempFileName = colResult[1]
-      //console.log(tempFileName)
+    
       setLoader(false);
       if (value == "SWITCH") {
-        const dataAll = columnNamess.map((item, index) => ({
-          colName: item.columnName,
+        const dataAll = colResult.map((item, index) => ({
+          colNameNo: item.columnNameInNumber,
+          colNameString:item.columnNameInString,
           chosen: true,
           key: index
         }));
         setSWColtblData(dataAll);
-        const tblNameSwitch = tempFileName.map((item, index) => item.tableName);
-        //console.log(tblNameSwitch)
+    
+        const tblNameSwitch = colResult.map((item, index) => item.fileName);
+        console.log(tblNameSwitch);
         setNameSwitchTempTable(tblNameSwitch[0]);
-        //    alert(tblNameSwitch[0])
+            alert(tblNameSwitch[0])
       }
       if (value == "GL") {
         // console.log(tblcoltest);
-        const columnNamess = colResult[0];
-      //  console.log(columnNamess);
-        const tempFileName = colResult[1]
+    //     const columnNamess = colResult[0];
+    //   //  console.log(columnNamess);
+    //     const tempFileName = colResult[1]
         //console.log(tempFileName)
-        const dataAll = columnNamess.map((item, index) => ({
-          colName: item.columnName,
-          chosen: false,
-          key: index
-        }));
+        const dataAll = colResult.map((item, index) => ({
+            colNameNo: item.columnNameInNumber,
+            colNameString:item.columnNameInString,
+            chosen: true,
+            key: index
+          }));
         setGLColtblData(dataAll);
-        const tblNameGL = tempFileName.map((item, index) => item.tableName);
+        const tblNameGL = colResult.map((item, index) => item.tableName);
         setNameGLTempTable(tblNameGL[0]);
 
         // console.log(tblcoltest);
       }
 
-      if (value == "NPCIISS") {
-        //console.log(tblcoltest);
-        const columnNamess = colResult[0];
-        //console.log(columnNamess);
-        const tempFileName = colResult[1]
-        //console.log(tempFileName)
-        const dataAll = columnNamess.map((item, index) => ({
-          colName: item.columnName,
-          chosen: false,
-          key: index
-        }));
-        setNPCIISSColtblData(dataAll);
-        const tblNameNPCIISS = tempFileName.map((item, index) => item.tableName);
-        setNameNPCIISSTempTable(tblNameNPCIISS[0]);
-        console.log(tblcoltest);
-      }
+    //   if (value == "NPCIISS") {
+    //     //console.log(tblcoltest);
+    //     const columnNamess = colResult[0];
+    //     //console.log(columnNamess);
+    //     const tempFileName = colResult[1]
+    //     //console.log(tempFileName)
+    //     const dataAll = columnNamess.map((item, index) => ({
+    //       colName: item.columnName,
+    //       chosen: false,
+    //       key: index
+    //     }));
+    //     setNPCIISSColtblData(dataAll);
+    //     const tblNameNPCIISS = tempFileName.map((item, index) => item.tableName);
+    //     setNameNPCIISSTempTable(tblNameNPCIISS[0]);
+    //     console.log(tblcoltest);
+    //   }
 
-      if (value == "NPCIACQ") {
-        const columnNamess = colResult[0];
-        console.log(columnNamess);
-        const tempFileName = colResult[1];
-        console.log(tempFileName);
-        const dataAll = columnNamess.map((item, index) => ({
-          colName: item.columnName,
-          chosen: false,
-          key: index
-        }));
-        setNPCIACQColtblData(dataAll);
-        const tblNameNPCIACQ = tempFileName.map((item, index) => item.tableName);
-        console.log(tblNameNPCIACQ[0]);
-        setNameNPCIACQTempTable(tblNameNPCIACQ[0]);
-        setNewNPCIACQ(tblNameNPCIACQ[0]);
-        console.log(tblcoltest);
-      }
+    //   if (value == "NPCIACQ") {
+    //     const columnNamess = colResult[0];
+    //     console.log(columnNamess);
+    //     const tempFileName = colResult[1];
+    //     console.log(tempFileName);
+    //     const dataAll = columnNamess.map((item, index) => ({
+    //       colName: item.columnName,
+    //       chosen: false,
+    //       key: index
+    //     }));
+    //     setNPCIACQColtblData(dataAll);
+    //     const tblNameNPCIACQ = tempFileName.map((item, index) => item.tableName);
+    //     console.log(tblNameNPCIACQ[0]);
+    //     setNameNPCIACQTempTable(tblNameNPCIACQ[0]);
+    //     setNewNPCIACQ(tblNameNPCIACQ[0]);
+    //     console.log(tblcoltest);
+    //   }
 
-      if (value == "EJ") {
-        alert("in ej ");
-        console.log(NPCIACQTempName);
-        const columnNamess = colResult[0];
-        console.log(columnNamess);
-        const tempFileNameej = colResult[1];
-        console.log(tempFileNameej);
-        const dataAll = columnNamess.map((item, index) => ({
-          colName: item.columnName,
-          chosen: false,
-          key: index
-        }));
-        setEJColtblData(dataAll);
-        const tblNameEJ = tempFileNameej.map((item, index) => item.tableName);
-        setNameEJTempTable(tblNameEJ[0]);
-        console.log(tblcoltest);
-      }
+    //   if (value == "EJ") {
+    //     alert("in ej ");
+    //     console.log(NPCIACQTempName);
+    //     const columnNamess = colResult[0];
+    //     console.log(columnNamess);
+    //     const tempFileNameej = colResult[1];
+    //     console.log(tempFileNameej);
+    //     const dataAll = columnNamess.map((item, index) => ({
+    //       colName: item.columnName,
+    //       chosen: false,
+    //       key: index
+    //     }));
+    //     setEJColtblData(dataAll);
+    //     const tblNameEJ = tempFileNameej.map((item, index) => item.tableName);
+    //     setNameEJTempTable(tblNameEJ[0]);
+    //     console.log(tblcoltest);
+    //   }
 
       //const modeN = modeResponse.data;
       //console.log(modeN);
@@ -775,14 +310,8 @@ const TempTableConfiguration = props => {
     }
   };
 
-  const fiterSelectedRows = tblColSw.filter(row => {
-    return row.chosen;
-  });
-
-
-  
   const menuData = props.location.state;
-  console.log(menuData);
+  //console.log(menuData);
 
   function onChangeColumnNameSwitch(e) {
     console.log(`checked = ${e.target.value}`);
@@ -792,7 +321,7 @@ const TempTableConfiguration = props => {
     if (filelistCheck == 'SWITCH') {
       getFileDataCol(filelistCheck);
       setSWtbl(true);
-      setMatchtblNew(false);
+     // setMatchtblNew(false);
     }
   }
   function onChangeColumnNameNPCIACQ(e) {
@@ -802,10 +331,10 @@ const TempTableConfiguration = props => {
     alert(filelistCheck);
     if (filelistCheck == 'NPCIACQ') {
       getFileDataCol(filelistCheck);
-      setNPCIACQ(true);
-      // setMatchtblNew(false);
-      setCheckFilenameSwitch('');
-      setCheckFilenameGL('');
+    //   setNPCIACQ(true);
+    //   // setMatchtblNew(false);
+    //   setCheckFilenameSwitch('');
+    //   setCheckFilenameGL('');
     }
   }
 
@@ -816,11 +345,11 @@ const TempTableConfiguration = props => {
     alert(filelistCheck);
     if (filelistCheck == 'EJ') {
       getFileDataCol(filelistCheck);
-      setEJ(true);
-      // setMatchtblNew(false);
-      setCheckFilenameSwitch('');
-      setCheckFilenameGL('');
-      setCheckFilenameNPCIACQ('');
+    //   setEJ(true);
+    //   // setMatchtblNew(false);
+    //   setCheckFilenameSwitch('');
+    //   setCheckFilenameGL('');
+    //   setCheckFilenameNPCIACQ('');
     }
   }
 
@@ -832,7 +361,7 @@ const TempTableConfiguration = props => {
     if (filelistCheck == 'GL') {
       getFileDataCol(filelistCheck);
       setGLtbl(true);
-      setMatchtblNew(false);
+    //   setMatchtblNew(false);
     }
   }
 
@@ -844,34 +373,13 @@ const TempTableConfiguration = props => {
     alert(filelistCheck);
     if (filelistCheck == 'NPCIISS') {
       getFileDataCol(filelistCheck);
-      setNPCIISS(true);
-      setCheckFilenameGL('');
-      setCheckFilenameSwitch('');
+    //   setNPCIISS(true);
+    //   setCheckFilenameGL('');
+    //   setCheckFilenameSwitch('');
 
     }
   }
-  function onChangeColumnName(e) {
-    console.log(`checked = ${e.target.value}`);
-    const filelistCheck = `${e.target.value}`;
-    setCheckFilename(filelistCheck);
-    console.log(filelistCheck);
-    // setCOlumnName(checkedValues);
-    var arrayofcheckfilename = [];
-    arrayofcheckfilename.push(filelistCheck);
-    console.log(arrayofcheckfilename);
-
-    if (filelistCheck == 'GL') {
-      getFileDataCol(filelistCheck);
-      setGLtbl(true);
-    }
-    if (filelistCheck == 'SWITCH') {
-      getFileDataCol(filelistCheck);
-      setSWtbl(true);
-    }
-    if (filelistCheck == 'NPCIISS') {
-      getFileDataCol(filelistCheck);
-    }
-  }
+  
 
   function onChangeReconType(value) {
     console.log(`selected ${value}`);
@@ -915,33 +423,33 @@ const TempTableConfiguration = props => {
       }
       console.log('0th ===', selectedList[0]);
 
-      if (switchCheck == 'SWITCH' && glCheck == 'GL') {
-        checkWithGL(selectedList);
-      }
-      console.log(columnnamematch);
-      if (/*columnnamematch=='GLCBSTEMP = SWITCHTEMP'*/ npciiisCheck == 'NPCIISS') {
-        checkMatchtableWithNPCI(selectedList);
-      }
+    //   if (switchCheck == 'SWITCH' && glCheck == 'GL') {
+    //     checkWithGL(selectedList);
+    //   }
+    //   console.log(columnnamematch);
+    //   if (/*columnnamematch=='GLCBSTEMP = SWITCHTEMP'*/ npciiisCheck == 'NPCIISS') {
+    //     checkMatchtableWithNPCI(selectedList);
+    //   }
 
-      if (npciacqcheck == 'NPCIACQ') {
-        checkMatchtableWithNPCIACQ(selectedList);
-      }
+    //   if (npciacqcheck == 'NPCIACQ') {
+    //     checkMatchtableWithNPCIACQ(selectedList);
+    //   }
 
-      if (ejCheck == 'EJ') {
-        checkMatchtableWithEJ(selectedList);
-      }
+    //   if (ejCheck == 'EJ') {
+    //     checkMatchtableWithEJ(selectedList);
+    //   }
 
     },
 
-    getCheckboxProps(record) {
-     // console.log(record.colName);
-      return {
-        props: {
-          name: !record.colName ? 'disabled' : '',
-          //disabled: record.isDisabled || !record.colName
-        }
-      }
-    }
+    // getCheckboxProps(record) {
+    //  // console.log(record.colName);
+    //   return {
+    //     props: {
+    //       name: !record.colName ? 'disabled' : '',
+    //       //disabled: record.isDisabled || !record.colName
+    //     }
+    //   }
+    // }
 
   };
 
@@ -962,561 +470,306 @@ const TempTableConfiguration = props => {
   //   };
 
 
-  const checkWithGL = (selectedList) => {
-    alert("checkWithGL");
-    //console.log(tblColGl);
-    // var serchString=selectedList.map((item,index)=>item);
-    var glnamess = tblColGl.map((item, index) => item.colName);
-    var swnamess = tblColSw.map((item, index) => item.colName);
-    // console.log("sw:==",swnamess);
-    //console.log(selectedList[0]);
-    //console.log(glnamess);
-    if (glnamess.includes(selectedList[0])) {
-      alert("yes");
-      //console.log("matched data",selectedList);
-      // const dataAllGLSW = selectedList.map((item, index) => ({
-      //   mappingcolumn:'sw',
-      //   colName:item,
-      //   idx:'0',
-      //   len:'0',
-      //   key:index
-      // }));
+//   const checkWithGL = (selectedList) => {
+//     alert("checkWithGL");
+//     //console.log(tblColGl);
+//     // var serchString=selectedList.map((item,index)=>item);
+//     var glnamess = tblColGl.map((item, index) => item.colName);
+//     var swnamess = tblColSw.map((item, index) => item.colName);
+//     // console.log("sw:==",swnamess);
+//     //console.log(selectedList[0]);
+//     //console.log(glnamess);
+//     if (glnamess.includes(selectedList[0])) {
+//       alert("yes");
+//       //console.log("matched data",selectedList);
+//       // const dataAllGLSW = selectedList.map((item, index) => ({
+//       //   mappingcolumn:'sw',
+//       //   colName:item,
+//       //   idx:'0',
+//       //   len:'0',
+//       //   key:index
+//       // }));
       
-      const dataAllNext = selectedList.map((item, index) => ({
-        colName:item,
-        key:index
-      }));
-      setMatchtblDataNext(dataAllNext)
-      const dataAll = selectedList.map((item, index) => ({
-        mappingcolumn:'sw',
-        colName:item,
-        idx:'0',
-        len:'0',
-        key:index
-      }));
-      const dataAll1 = selectedList.map((item, index) => ({
-        mappingcolumn: 'gl',
-        colName: item,
-        idx: '0',
-        len: '0',
-        key: index+101
-      }));
+//       const dataAllNext = selectedList.map((item, index) => ({
+//         colName:item,
+//         key:index
+//       }));
+//       setMatchtblDataNext(dataAllNext)
+//       const dataAll = selectedList.map((item, index) => ({
+//         mappingcolumn:'sw',
+//         colName:item,
+//         idx:'0',
+//         len:'0',
+//         key:index
+//       }));
+//       const dataAll1 = selectedList.map((item, index) => ({
+//         mappingcolumn: 'gl',
+//         colName: item,
+//         idx: '0',
+//         len: '0',
+//         key: index+101
+//       }));
 
-      console.log(dataAll);
-      console.log(dataAll1);
-      //  setSWColtblData(dataAll);
-      var finalObj = dataAll.concat(dataAll1);
-      console.log(finalObj);
-       setMatchtblData(finalObj);
-       //setMatchtblData1(dataAll);
-      setMatchtbl(true);
+//       console.log(dataAll);
+//       console.log(dataAll1);
+//       //  setSWColtblData(dataAll);
+//       var finalObj = dataAll.concat(dataAll1);
+//       console.log(finalObj);
+//        setMatchtblData(finalObj);
+//        //setMatchtblData1(dataAll);
+//       setMatchtbl(true);
 
-      // setMatchtblNew(true);
-    }
-    else {
-      alert("nooo");
-    }
+//       // setMatchtblNew(true);
+//     }
+//     else {
+//       alert("nooo");
+//     }
 
-  }
-
-
-  const checkMatchtableWithNPCI = (selectedList) => {
-    alert("checkMatchtableWithNPCI");
-    //alert(selectedList[0]);
-    //console.log(tblColGl);
-    var serchString = selectedList.map((item, index) => item);
-    // var glnamess=tblColGl.map((item,index)=>item.colName);
-    // var swnamess=tblColSw.map((item,index)=>item.colName);
-    var npciissnamess = tblColNPCIISS.map((item, index) => item.colName);
-    // console.log(selectedList);
+//   }
 
 
-    console.log(npciissnamess);
-    // console.log(matchtbl);
-    // console.log("sw:==",swnamess);
-    console.log(selectedList[0]);
-    // console.log(glnamess);
-    if (npciissnamess.includes(selectedList[0])) {
-      alert("yes");
-      console.log("matched data", selectedList);
-      // const dataAll = selectedList.map((item, index) => ({
-      //   colName: item,
-      //   key: index
-      // }));
-
-      const dataAllNext = selectedList.map((item, index) => ({
-        colName:item,
-        key:index
-      }));
-      setMatchtblDataNewISSNext(dataAllNext)
-      const dataAll = selectedList.map((item, index) => ({
-        mappingcolumn:'nw',
-        colName:item,
-        idx:'0',
-        len:'0',
-        key:index
-      }));
-      //  setSWColtblData(dataAll);
-      setMatchtblDataISSNew(dataAll);
-      //setMatchtbl(true);
-      setMatchWithNpciss(true);
-
-      // setMatchtblNew(true);
-    }
-    else {
-      alert("nooo");
+//   const checkMatchtableWithNPCI = (selectedList) => {
+//     alert("checkMatchtableWithNPCI");
+//     //alert(selectedList[0]);
+//     //console.log(tblColGl);
+//     var serchString = selectedList.map((item, index) => item);
+//     // var glnamess=tblColGl.map((item,index)=>item.colName);
+//     // var swnamess=tblColSw.map((item,index)=>item.colName);
+//     var npciissnamess = tblColNPCIISS.map((item, index) => item.colName);
+//     // console.log(selectedList);
 
 
-    }
-  }
+//     console.log(npciissnamess);
+//     // console.log(matchtbl);
+//     // console.log("sw:==",swnamess);
+//     console.log(selectedList[0]);
+//     // console.log(glnamess);
+//     if (npciissnamess.includes(selectedList[0])) {
+//       alert("yes");
+//       console.log("matched data", selectedList);
+//       // const dataAll = selectedList.map((item, index) => ({
+//       //   colName: item,
+//       //   key: index
+//       // }));
 
-  const checkMatchtableWithNPCIACQ = (selectedList) => {
-    alert("checkMatchtableWithNPCIACQ");
-    //alert(selectedList[0]);
-    //console.log(tblColGl);
-    var serchString = selectedList.map((item, index) => item);
-    // var glnamess=tblColGl.map((item,index)=>item.colName);
-    // var swnamess=tblColSw.map((item,index)=>item.colName);
-    var npciacqnamess = tblColNPCIACQ.map((item, index) => item.colName);
-    // console.log(selectedList);
-    // console.log(npciissnamess);
-    // console.log(matchtbl);
-    // console.log("sw:==",swnamess);
-    console.log(selectedList[0]);
-    // console.log(glnamess);
-    if (npciacqnamess.includes(selectedList[0])) {
-      alert("yes");
-      console.log("matched data", selectedList);
-      // const dataAll = selectedList.map((item, index) => ({
-      //   colName: item,
-      //   key: index
-      // }));
-      // //  setSWColtblData(dataAll);
-      // setMatchtblDataNewACQ(dataAll);
-      // console.log(dataAll);
-      const dataAllNext = selectedList.map((item, index) => ({
-        colName:item,
-        key:index
-      }));
-      setMatchtblDataNewACQNext(dataAllNext)
-      const dataAll = selectedList.map((item, index) => ({
-        mappingcolumn:'nw',
-        colName:item,
-        idx:'0',
-        len:'0',
-        key:index
-      }));
-      // const dataAll1 = selectedList.map((item, index) => ({
-      //   mappingcolumn: 'gl',
-      //   colName: item,
-      //   idx: '0',
-      //   len: '0',
-      //   key: index+1
-      // }));
+//       const dataAllNext = selectedList.map((item, index) => ({
+//         colName:item,
+//         key:index
+//       }));
+//       setMatchtblDataNewISSNext(dataAllNext)
+//       const dataAll = selectedList.map((item, index) => ({
+//         mappingcolumn:'nw',
+//         colName:item,
+//         idx:'0',
+//         len:'0',
+//         key:index
+//       }));
+//       //  setSWColtblData(dataAll);
+//       setMatchtblDataISSNew(dataAll);
+//       //setMatchtbl(true);
+//       setMatchWithNpciss(true);
 
-      console.log(dataAll);
-      // console.log(dataAll1);
-      //  setSWColtblData(dataAll);
-      // var finalObj = dataAll.concat(dataAll1);
-      // console.log(finalObj);
-      setMatchtblDataNewACQ(dataAll);
+//       // setMatchtblNew(true);
+//     }
+//     else {
+//       alert("nooo");
+
+
+//     }
+//   }
+
+//   const checkMatchtableWithNPCIACQ = (selectedList) => {
+//     alert("checkMatchtableWithNPCIACQ");
+//     //alert(selectedList[0]);
+//     //console.log(tblColGl);
+//     var serchString = selectedList.map((item, index) => item);
+//     // var glnamess=tblColGl.map((item,index)=>item.colName);
+//     // var swnamess=tblColSw.map((item,index)=>item.colName);
+//     var npciacqnamess = tblColNPCIACQ.map((item, index) => item.colName);
+//     // console.log(selectedList);
+//     // console.log(npciissnamess);
+//     // console.log(matchtbl);
+//     // console.log("sw:==",swnamess);
+//     console.log(selectedList[0]);
+//     // console.log(glnamess);
+//     if (npciacqnamess.includes(selectedList[0])) {
+//       alert("yes");
+//       console.log("matched data", selectedList);
+//       // const dataAll = selectedList.map((item, index) => ({
+//       //   colName: item,
+//       //   key: index
+//       // }));
+//       // //  setSWColtblData(dataAll);
+//       // setMatchtblDataNewACQ(dataAll);
+//       // console.log(dataAll);
+//       const dataAllNext = selectedList.map((item, index) => ({
+//         colName:item,
+//         key:index
+//       }));
+//       setMatchtblDataNewACQNext(dataAllNext)
+//       const dataAll = selectedList.map((item, index) => ({
+//         mappingcolumn:'nw',
+//         colName:item,
+//         idx:'0',
+//         len:'0',
+//         key:index
+//       }));
+//       // const dataAll1 = selectedList.map((item, index) => ({
+//       //   mappingcolumn: 'gl',
+//       //   colName: item,
+//       //   idx: '0',
+//       //   len: '0',
+//       //   key: index+1
+//       // }));
+
+//       console.log(dataAll);
+//       // console.log(dataAll1);
+//       //  setSWColtblData(dataAll);
+//       // var finalObj = dataAll.concat(dataAll1);
+//       // console.log(finalObj);
+//       setMatchtblDataNewACQ(dataAll);
      
 
 
-      //setMatchtbl(true);
-      setMatchWithNpciacq(true);
+//       //setMatchtbl(true);
+//       setMatchWithNpciacq(true);
 
 
-      // setMatchtblNew(true);
-    }
-    else {
-      alert("nooo");
-    }
-  }
+//       // setMatchtblNew(true);
+//     }
+//     else {
+//       alert("nooo");
+//     }
+//   }
 
-  const checkMatchtableWithEJ = (selectedList) => {
-    alert("checkMatchtableWithEJ");
-    //alert(selectedList[0]);
-    //console.log(tblColGl);
-    var serchString = selectedList.map((item, index) => item);
-    // var glnamess=tblColGl.map((item,index)=>item.colName);
-    // var swnamess=tblColSw.map((item,index)=>item.colName);
-    var ejnamess = tblColEJ.map((item, index) => item.colName);
-    // console.log(selectedList);
-    console.log(ejnamess);
-    // console.log(matchtbl);
-    // console.log("sw:==",swnamess);
-    console.log(selectedList[0]);
-    // console.log(glnamess);
-    if (ejnamess.includes(selectedList[0])) {
-      alert("yes");
-      console.log("matched data", selectedList);
-      const dataAll = selectedList.map((item, index) => ({
-        mappingcolumn:'ej',
-        colName:item,
-        idx:'0',
-        len:'0',
-        key:index
-      }));
-      //  setSWColtblData(dataAll);
-      setMatchtblDataNewEJ(dataAll);
-      //setMatchtbl(true);
-      setMatchWithEJ(true);
+//   const checkMatchtableWithEJ = (selectedList) => {
+//     alert("checkMatchtableWithEJ");
+//     //alert(selectedList[0]);
+//     //console.log(tblColGl);
+//     var serchString = selectedList.map((item, index) => item);
+//     // var glnamess=tblColGl.map((item,index)=>item.colName);
+//     // var swnamess=tblColSw.map((item,index)=>item.colName);
+//     var ejnamess = tblColEJ.map((item, index) => item.colName);
+//     // console.log(selectedList);
+//     console.log(ejnamess);
+//     // console.log(matchtbl);
+//     // console.log("sw:==",swnamess);
+//     console.log(selectedList[0]);
+//     // console.log(glnamess);
+//     if (ejnamess.includes(selectedList[0])) {
+//       alert("yes");
+//       console.log("matched data", selectedList);
+//       const dataAll = selectedList.map((item, index) => ({
+//         mappingcolumn:'ej',
+//         colName:item,
+//         idx:'0',
+//         len:'0',
+//         key:index
+//       }));
+//       //  setSWColtblData(dataAll);
+//       setMatchtblDataNewEJ(dataAll);
+//       //setMatchtbl(true);
+//       setMatchWithEJ(true);
 
-      // setMatchtblNew(true);
-    }
-    else {
-      alert("nooo");
+//       // setMatchtblNew(true);
+//     }
+//     else {
+//       alert("nooo");
 
 
-    }
-  }
+//     }
+//   }
 
-  console.log(selectionType);
+  //console.log(selectionType);
   // debugger;
   const columns = [
     {
-      title: 'GL Column Name',
-      dataIndex: 'colName',
-      key: 'index',
-      render: text =>
-        text ? (
-          <Highlighter
-            highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
-            searchWords={[searchText]}
-            autoescap="true"
-            textToHighlight={text.toString()}
-          />
-
-        ) : null,
-
-    }
+        title: 'GL Column Name Number',
+        dataIndex: 'colNameNo',
+        key: 'index',
+        //   width: '5%',
+       
+      },
+      {
+          title: 'GL Column Name String',
+        dataIndex: 'colNameString',
+        key: 'index',
+        //   width: '5%',
+       
+      }
   ];
 
   const columnssw = [
     {
-      title: 'SWITCH Column Name',
-      dataIndex: 'colName',
+      title: 'SWITCH Column Name Number',
+      dataIndex: 'colNameNo',
       key: 'index',
       //   width: '5%',
-      render: text =>
-        text ? (
-          <Highlighter
-            highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
-            searchWords={[searchText]}
-            autoescap="true"
-            textToHighlight={text.toString()}
-          />
-
-        ) : null,
-
+     
+    },
+    {
+        title: 'SWITCH Column Name String',
+      dataIndex: 'colNameString',
+      key: 'index',
+      //   width: '5%',
+     
     }
   ];
 
 
   const columnsnpciiss = [
     {
-      title: 'NPCI Column Name',
-      dataIndex: 'colName',
-      key: 'index',
-      //   width: '5%',
-      render: text =>
-        text ? (
-          <Highlighter
-            highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
-            searchWords={[searchText]}
-            autoescap="true"
-            textToHighlight={text.toString()}
-          />
-
-        ) : null,
-
-    }
+        title: 'NPCI Column Name Number',
+        dataIndex: 'colNameNo',
+        key: 'index',
+        //   width: '5%',
+       
+      },
+      {
+          title: 'NPCI Column Name String',
+        dataIndex: 'colNameString',
+        key: 'index',
+        //   width: '5%',
+       
+      }
   ];
 
 
   const columnsnpciacq = [
     {
-      title: 'NPCI Column Name',
-      dataIndex: 'colName',
-      key: 'index',
-      //   width: '5%',
-
-    }
+        title: 'NPCI Column Name Number',
+        dataIndex: 'colNameNo',
+        key: 'index',
+        //   width: '5%',
+       
+      },
+      {
+          title: 'NPCI Column Name String',
+        dataIndex: 'colNameString',
+        key: 'index',
+        //   width: '5%',
+       
+      }
   ];
 
   const columnsEJ = [
     {
-      title: 'EJ Column Name',
-      dataIndex: 'colName',
-      key: 'index',
-      //   width: '5%',
-      render: text =>
-        text ? (
-          <Highlighter
-            highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
-            searchWords={[searchText]}
-            autoescap="true"
-            textToHighlight={text.toString()}
-          />
-
-        ) : null,
-
-    }
-  ];
-
-  const columnsmatchNext=[
-    {
-      title: 'match Column Name gl with switch',
-      dataIndex: 'colName',
-      key: 'index',
-      //editable: true
-      //   width: '5%',
-    }
-  ];
-
-  // const columnsmatchNext=[
-  //   {
-  //     title: 'match Column Name gl with switch',
-  //     dataIndex: 'colName',
-  //     key: 'index',
-  //     //editable: true
-  //     //   width: '5%',
-  //   }
-  // ];
-  //matchtbldataNPCIACQnext
-
-  const columnsmatch = [
-     {
-    title: 'match Column Name gl with switch',
-      dataIndex: 'colName',
-      key: 'index',
-      //editable: true
-      //   width: '5%',
-    },
-    {
-      title: 'columnindex',
-      dataIndex: 'idx',
-      key: 'index',
-      editable: true
-    //   width: '5%',
-    },
-    {
-      title:'columnlen',
-      dataIndex: 'len',
-      key: 'index',
-      editable: true
-    },
-    {
-      title: 'mappingcolumn',
-      dataIndex: 'mappingcolumn',
-      key: 'index',
-     //editable: true
-    //   width: '5%',
-    }
-    
+        title: 'SWITCH Column Name Number',
+        dataIndex: 'colNameNo',
+        key: 'index',
+        //   width: '5%',
+       
+      },
+      {
+          title: 'SWITCH Column Name String',
+        dataIndex: 'colNameString',
+        key: 'index',
+        //   width: '5%',
+       
+      }
   ];
 
   
-  const columnsmatchNpciacq = [
-    {
-      title: 'match Column Name gl,switch and NPCI',
-      dataIndex: 'colName',
-      key: 'index',
-      //   width: '5%',
-    },
-    
-  ];
-
-
-
-  const columnsmatchwithNPCIISS = [
-    {
-      title: 'match Column Name with npciiss',
-      dataIndex: 'colName',
-      key: 'index',
-      //   width: '5%',
-    },
-    {
-      title: 'columnindex',
-      dataIndex: 'idx',
-      key: 'index',
-      editable: true
-    //   width: '5%',
-    },
-    {
-      title:'columnlen',
-      dataIndex: 'len',
-      key: 'index',
-      editable: true
-    },
-    {
-      title: 'mappingcolumn',
-      dataIndex: 'mappingcolumn',
-      key: 'index',
-     //editable: true
-    //   width: '5%',
-    }
-    
-
-
-  ];
-
-  const columnsmatchwithNPCIACQ = [
-    {
-      title: 'match Column Name with npciacq',
-      dataIndex: 'colName',
-      key: 'index',
-      //   width: '5%',
-    },
-    {
-      title: 'columnindex',
-      dataIndex: 'idx',
-      key: 'index',
-      editable: true
-    //   width: '5%',
-    },
-    {
-      title:'columnlen',
-      dataIndex: 'len',
-      key: 'index',
-      editable: true
-    },
-    {
-      title: 'mappingcolumn',
-      dataIndex: 'mappingcolumn',
-      key: 'index',
-     //editable: true
-    //   width: '5%',
-    }
-  ];
-
-  const columnsmatchwithEJ = [
-    {
-      title: 'match Column Name with EJ',
-      dataIndex: 'colName',
-      key: 'index',
-      //   width: '5%',
-    },
-    {
-      title: 'columnindex',
-      dataIndex: 'idx',
-      key: 'index',
-      editable: true
-    //   width: '5%',
-    },
-    {
-      title:'columnlen',
-      dataIndex: 'len',
-      key: 'index',
-      editable: true
-    },
-    {
-      title: 'mappingcolumn',
-      dataIndex: 'mappingcolumn',
-      key: 'index',
-     //editable: true
-    //   width: '5%',
-    }
-  ];
-  // const columnIndexLenght = [
-  //   {
-  //     title: 'name',
-  //     dataIndex: 'name',
-  //     key: 'index',
-  //     //   width: '5%',
-  //   },
-  //   {
-  //     title: 'Start Index',
-  //     dataIndex: 'idx',
-  //     key: 'index',
-  //     editable: true
-  //     //   width: '5%',
-  //   },
-  //   {
-  //     title: 'Lenght',
-  //     dataIndex: 'len',
-  //     key: 'index',
-  //     editable: true
-  //     //   width: '5%',
-  //   }
-  // ];
-
-
-  const mergedColumnsnpciACQ = columnsmatchwithNPCIACQ.map((col) => {
-    if (!col.editable) {
-      return col;
-    }
-
-    return {
-      ...col,
-      onCell: (record) => ({
-        record,
-        editable: col.editable,
-        dataIndex: col.dataIndex,
-        title: col.title,
-        //      handleSave: this.handleSave,
-      }),
-    };
-  });
-
-  const mergedColumnsGlSW = columnsmatch.map((col) => {
-    if (!col.editable) {
-      return col;
-    }
-
-    return {
-      ...col,
-      onCell: (record) => ({
-        record,
-        editable: col.editable,
-        dataIndex: col.dataIndex,
-        title: col.title,
-        //      handleSave: this.handleSave,
-      }),
-    };
-  });
-
-  //columnsmatchwithEJ
-
-  const mergedColumnsEJ = columnsmatchwithEJ.map((col) => {
-    if (!col.editable) {
-      return col;
-    }
-
-    return {
-      ...col,
-      onCell: (record) => ({
-        record,
-        editable: col.editable,
-        dataIndex: col.dataIndex,
-        title: col.title,
-        //      handleSave: this.handleSave,
-      }),
-    };
-  });
-
-
-  
-  //columnsmatchwithNPCIISS
-
-  const mergedColumnsNPCIISS = columnsmatchwithNPCIISS.map((col) => {
-    if (!col.editable) {
-      return col;
-    }
-
-    return {
-      ...col,
-      onCell: (record) => ({
-        record,
-        editable: col.editable,
-        dataIndex: col.dataIndex,
-        title: col.title,
-        //      handleSave: this.handleSave,
-      }),
-    };
-  });
-
   function onChangeColumnName(checkedValues) {
     console.log('checked = ', checkedValues);
     setCOlumnName(checkedValues);
@@ -1642,6 +895,37 @@ const TempTableConfiguration = props => {
                 <Col span={6} >
 
 </Col></Row>
+<Row>
+<Col span={6}>
+                      
+                      {swtblloader?(
+                          <Table dataSource={tblColSw} columns={columnssw} rowSelection={{
+                            type: selectionType,
+                            ...rowSelection,
+                          }}
+                            pagination={false}
+                            bordered
+                            scroll={{ y: 400 }}
+    
+                          />
+                          ):(" ")}
+                    </Col>
+             
+                  <Col span={6} >
+                  {gltblloader?(
+                          <Table dataSource={tblColGl} columns={columns} rowSelection={{
+                            type: selectionType,
+                            ...rowSelection,
+                          }}
+                            pagination={false}
+                            bordered
+                            scroll={{ y: 400 }}
+    
+                          />
+                          ):(" ")}
+                  
+                  </Col>
+                </Row>
              
               </Form>
             </Card>
