@@ -234,4 +234,6 @@ public interface Trace_Service {
 
 	public List[] getFileDataCol(String fileName);
 
+	public List<JSONObject> getFileDataCol1(String fileName);
+
 }

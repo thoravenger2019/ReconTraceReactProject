@@ -1466,6 +1466,19 @@ public class Controller {
 		System.out.println(getFileDataCol);
 		return getFileDataCol;
 	}
+	
+	
+	
+	@GetMapping("getFileDataCol1/{fileName}")
+	public List<JSONObject> getFileDataCol1(@PathVariable("fileName") String fileName) {
+		System.out.println("fileName+" + fileName);
+		List<JSONObject> getFileDataCol1 = traceService.getFileDataCol1(fileName);
+		System.out.println(getFileDataCol1);
+		return getFileDataCol1;
+	}
+	
+	
+	
 
 	@PostMapping("/joinopt")
 	public List<JSONObject> joinopt(@RequestBody LenghtOfidx lenghtOfidx) {

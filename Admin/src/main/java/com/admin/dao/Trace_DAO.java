@@ -316,4 +316,6 @@ public interface Trace_DAO {
 
 	public List[] getFileDataCol(String fileName);
 
+	public List<JSONObject> getFileDataCol1(String fileName);
+
 }

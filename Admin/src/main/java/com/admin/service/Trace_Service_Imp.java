@@ -553,21 +553,17 @@ public class Trace_Service_Imp implements Trace_Service {
 						"{call SPIMPORTNPCIACQUIEREFILE(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}");
 				List<JSONObject> npcifileformatxml = traceDao.getformatfileinxml(clientid, 2);
 				JSONObject xmlFormatDescription = npcifileformatxml.get(0);
-				
-				
-				
-				
+
 				String tempStr = xmlFormatDescription.get("FormatDescriptionXml").toString();
-				System.out.println("tempStr"+tempStr);
+				System.out.println("tempStr" + tempStr);
 
 				DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 				DocumentBuilder db = dbf.newDocumentBuilder();
 				Document doc = db.parse(new InputSource(new StringReader(tempStr)));
 				doc.getDocumentElement().normalize();
 				NodeList nodeList = doc.getDocumentElement().getChildNodes();
-				
-				System.out.println("nodelist"+nodeList.toString());
-				
+
+				System.out.println("nodelist" + nodeList.toString());
 
 				File convFile = new File(file.getOriginalFilename());
 				convFile.createNewFile();
@@ -597,7 +593,8 @@ public class Trace_Service_Imp implements Trace_Service {
 						int startPos = Integer.parseInt(nodeData.get(1));
 						int length = Integer.parseInt(nodeData.get(2));
 						String contentFieldData = contentData.substring(startPos - 1, (startPos - 1) + length).trim();
-						System.out.println("nodeName"+nodeName+"   "+"startPos"+startPos+"   "+"length"+length+"   "+"contentFieldData"+contentFieldData);
+						System.out.println("nodeName" + nodeName + "   " + "startPos" + startPos + "   " + "length"
+								+ length + "   " + "contentFieldData" + contentFieldData);
 						obj.put(nodeName, contentFieldData);
 					}
 					String nodeName = null;
@@ -933,7 +930,7 @@ public class Trace_Service_Imp implements Trace_Service {
 				Document doc = db.parse(new InputSource(new StringReader(tempStr)));
 				doc.getDocumentElement().normalize();
 				NodeList nodeList = doc.getDocumentElement().getChildNodes();
-				
+
 				File convFile = new File(file.getOriginalFilename());
 				convFile.createNewFile();
 				FileOutputStream fos = new FileOutputStream(convFile);
@@ -1484,9 +1481,10 @@ public class Trace_Service_Imp implements Trace_Service {
 
 	@Override
 	public List<JSONObject> getFileFormatHistory(String p_VendorType, String p_ClientID, String p_ChannelID,
-			String p_ModeID, String p_VendorID,String fileType,String fileExt ,String filePrefix) {
+			String p_ModeID, String p_VendorID, String fileType, String fileExt, String filePrefix) {
 
-		return traceDao.getFileFormatHistory(p_VendorType, p_ClientID, p_ChannelID, p_ModeID, p_VendorID,fileType,fileExt, filePrefix);
+		return traceDao.getFileFormatHistory(p_VendorType, p_ClientID, p_ChannelID, p_ModeID, p_VendorID, fileType,
+				fileExt, filePrefix);
 	}
 
 	@Override
@@ -2033,12 +2031,11 @@ public class Trace_Service_Imp implements Trace_Service {
 	public List<JSONObject> joinopt(String clientid, String channeltype, String tmode, String recontype,
 			String tablenames, String table1name, String table2name, String joincond, String jsonstring) {
 		// TODO Auto-generated method stub
-		
-		
+
 		System.out.println(joincond);
 		System.out.println(jsonstring);
-		String name = null,url = null,len = null;
-		
+		String name = null, url = null, len = null;
+
 //		JSONArray jsonarray = new JSONArray(jsonstring);
 //		for (int i = 0; i < jsonarray.length(); i++) {
 //		    org.json.JSONObject jsonobject = jsonarray.getJSONObject(i);
@@ -2046,13 +2043,14 @@ public class Trace_Service_Imp implements Trace_Service {
 //		    url = jsonobject.getString("idx");
 //		    len =jsonobject.getString("len");
 //		}
-		
+
 		System.out.println(name);
 		System.out.println(url);
 		System.out.println(len);
 //		org.json.JSONObject jsonRef=new org.json.JSONObject("")
-	
-		return traceDao.joinopt(clientid, channeltype, tmode, recontype, tablenames, table1name, table2name, joincond, jsonstring);
+
+		return traceDao.joinopt(clientid, channeltype, tmode, recontype, tablenames, table1name, table2name, joincond,
+				jsonstring);
 	}
 
 	@Override
@@ -2067,5 +2065,11 @@ public class Trace_Service_Imp implements Trace_Service {
 	public List[] getFileDataCol(String fileName) {
 		// TODO Auto-generated method stub
 		return traceDao.getFileDataCol(fileName);
+	}
+
+	@Override
+	public List<JSONObject> getFileDataCol1(String fileName) {
+		// TODO Auto-generated method stub
+		return traceDao.getFileDataCol1(fileName);
 	}
 }

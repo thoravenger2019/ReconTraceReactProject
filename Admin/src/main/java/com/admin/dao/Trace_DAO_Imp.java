@@ -156,7 +156,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 				"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", "yyyy-MM-dd'T'HH:mm:ss.SSSZ", "yyyy-MM-dd HH:mm:ss",
 				"MM/dd/yyyy HH:mm:ss", "MM/dd/yyyy'T'HH:mm:ss.SSS'Z'", "MM/dd/yyyy'T'HH:mm:ss.SSSZ",
 				"MM/dd/yyyy'T'HH:mm:ss.SSS", "MM/dd/yyyy'T'HH:mm:ssZ", "MM/dd/yyyy'T'HH:mm:ss", "yyyy:MM:dd HH:mm:ss",
-				"yyyyMMdd", "yyyy/MM/dd", "dd-MMM-yyyy" ,  "yyMMdd"};
+				"yyyyMMdd", "yyyy/MM/dd", "dd-MMM-yyyy", "yyMMdd" };
 		String tempParse = null;
 		if (sdate != null) {
 			for (String parse : formats) {
@@ -4186,7 +4186,7 @@ public class Trace_DAO_Imp implements Trace_DAO {
 					System.out.println("add batch");
 					System.out.println(incr + "       " + content.size());
 //					if (incr % batchSize == 0 || incr==content.size()) {
-stmt.execute();
+					stmt.execute();
 //					stmt.executeBatch();
 					System.out.println("exec batch");
 					ejStatus = true;
@@ -4265,16 +4265,13 @@ stmt.execute();
 			JSONObject xmlFormatDescription = cbsfileformatxml.get(0);
 			String tempStr = xmlFormatDescription.get("FormatDescriptionXml").toString();
 			System.out.println("tempStr:" + tempStr);
-			
-			
-			
+
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			Document doc = db.parse(new InputSource(new StringReader(tempStr)));
 			doc.getDocumentElement().normalize();
 			NodeList nodeList = doc.getDocumentElement().getChildNodes();
-			
-			
+
 			System.out.println("nodelistLength" + nodeList.getLength());
 			String RowName = nodeList.item(0).getNodeName();
 			int actualRowPosition = -1;
@@ -5900,10 +5897,9 @@ stmt.execute();
 												Integer.parseInt(jsonObj.getJSONArray("TxnsDate").getString(0)) - 1)
 												.toString();
 										withoutFormatConvertDate = false;
-										
+
 									} catch (Exception e) {
-										
-										
+
 										TxnsDate = row.getCell(
 												Integer.parseInt(jsonObj.getJSONArray("TxnsDate").getString(0)) - 1)
 												.toString();
@@ -6328,22 +6324,21 @@ stmt.execute();
 							System.out.println("TxnsDateTimeMain  " + TxnsDateTimeMain);
 						}
 					}
-					
-					if (TxnsDate != null && TxnsTime != null && (  (withoutFormatConvertDate == false
-							&& withoutFormatConvertTime == true) || (withoutFormatConvertDate == true
-							&& withoutFormatConvertTime == false))) {
+
+					if (TxnsDate != null && TxnsTime != null
+							&& ((withoutFormatConvertDate == false && withoutFormatConvertTime == true)
+									|| (withoutFormatConvertDate == true && withoutFormatConvertTime == false))) {
 						if (txnDateTimeFormat.isEmpty() || txnDateTimeFormat == null) {
 
 						} else {
 //							String concatTxnDateTime = TxnsDate + " " + TxnsTime;
-							String concatTxnDateTimetemp=convertSimpleDateFormat(TxnsDate);
-							String concatTxnDateTimetemp1=convertSimpleTimeFormat(TxnsTime);
+							String concatTxnDateTimetemp = convertSimpleDateFormat(TxnsDate);
+							String concatTxnDateTimetemp1 = convertSimpleTimeFormat(TxnsTime);
 
 //							TxnsDateTimeMain = checkDateFormat("yyyy-MM-dd hh:mm:ss", concatTxnDateTime);
 //							System.out.println("TxnsDateTimeMain  " + TxnsDateTimeMain);
 						}
 					}
-					
 
 					if (txnDateTimeFormat != null && TxnsDateTime != null) {
 
@@ -10816,6 +10811,31 @@ stmt.execute();
 			// TODO: handle exception
 		}
 		return null;
+
+	}
+
+	@Override
+	public List<JSONObject> getFileDataCol1(String fileName) {
+
+		StoredProcedureQuery query = entityManager.createStoredProcedureQuery("TEMPJOINRULECONFIGURATION");
+		query.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
+		query.registerStoredProcedureParameter(2, String.class, ParameterMode.REF_CURSOR);
+//		query.execute();
+
+		query.setParameter(1, fileName);
+		query.execute();
+
+		List<Object[]> result = query.getResultList();
+		List<JSONObject> JSONObjects = new ArrayList<JSONObject>(result.size());
+		for (Object record : result) {
+			Object[] fields = (Object[]) record;
+			JSONObject obj = new JSONObject();
+			obj.put("fileName", fields[0]);
+			obj.put("columnNameInString", fields[1]);
+			obj.put("columnNameInNumber", fields[2]);
+			JSONObjects.add(obj);
+		}
+		return JSONObjects;
 
 	}
 }
