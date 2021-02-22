@@ -13,7 +13,8 @@ import axios from 'axios';
 // }
 
 const instance = axios.create({
- baseURL: 'http://192.168.1.34:8080/Admin/api/',
+ baseURL: 'http://192.168.1.130:8080/Admin/api/',
+ // baseURL: 'http://192.168.1.31:8080/Admin/api/',
  //baseURL: 'http://localhost:8080/Admin/api/',
 });
 

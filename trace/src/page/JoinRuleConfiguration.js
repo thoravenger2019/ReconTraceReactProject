@@ -835,7 +835,7 @@ const JoinRuleConfiguration = props => {
           contentType: 'application/json; charset=utf-8',
           dataType: 'json',
           async: false,
-          url: "http://192.168.1.34:8080/Admin/api/joinopt",
+          url: "http://192.168.1.130:8080/Admin/api/joinopt",
           //url: "http://localhost:8080/Admin/api/getxmlfileformat",
           data: JSON.stringify(jsondata), // Note it is important
           success: function (result) {
@@ -1134,11 +1134,14 @@ const JoinRuleConfiguration = props => {
 
     //ongetMatchingRuleSetForClient(value);
   }
+
+  
+
   function onChangeTxnMode(value) {
     console.log(`selected ${value}`);
     setModeID(value);
-
   }
+  
   function onChangeChanneltName(value) {
     console.log(`selected ${value}`);
     setChannelID(value);
@@ -1863,6 +1866,7 @@ const JoinRuleConfiguration = props => {
                       </Select>
                     </Form.Item>
                   </Col>
+                 
                 </Row>
                 {/*<Col span={12} >
        <Form.Item label="Txn Mode" name="Txnmode" >         
@@ -2002,7 +2006,6 @@ const JoinRuleConfiguration = props => {
 
                     </Col>
                   ) : ("")}
-
                   <Col span={6} />
                 </Row>
                 {/* {gltblloader?(

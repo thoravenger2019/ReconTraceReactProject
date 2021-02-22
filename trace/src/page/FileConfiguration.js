@@ -1220,7 +1220,6 @@ if(P_VENDORTYPE=="NETWORK" && P_MODEID!=0)
                 <Col span={12}>
                   <Card title="File Configuration" bordered={false} style={{ width: 800 }} >
                     <Form layout={"vertical"} size={"large"} form={form} component={false}>
-
                       <Row gutter={[16, 16]} layout="inline">
                         <Col span={5}><b>
                           <Form.Item
@@ -1391,7 +1390,6 @@ if(P_VENDORTYPE=="NETWORK" && P_MODEID!=0)
                       </Row>
                       {configLoader ? (
                         <Card title={"Configured Format"} bordered={false} >
-
                           <Table columns={columnsConfigFormat} dataSource={ConfigTableData}
                             scroll={{ y: 540 }} bordered />
                         </Card>
