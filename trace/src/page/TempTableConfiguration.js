@@ -861,7 +861,8 @@ const TempTableConfiguration = props => {
         },
 
         // getCheckboxProps(record) {
-        //  // console.log(record.colName);
+        //  // console.log(record.colName);$ git remote set-url origin https://github.com/USERNAME/REPOSITORY.git
+
         //   return {
         //     props: {
         //       name: !record.colName ? 'disabled' : '',
