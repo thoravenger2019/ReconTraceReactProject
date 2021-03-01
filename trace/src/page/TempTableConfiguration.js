@@ -415,7 +415,7 @@ const TempTableConfiguration = props => {
     const onChange = e => {
         console.log('radio checked', e.target.value);
         setValue($(e.target.value));
-        console.log(checkvalue);
+        console.log('onchange for radio',checkvalue);
         if(checkvalue=='SWITCH'){
             alert('inside radio switch');
            // onChangeColumnNameSwitchReplace();
@@ -452,19 +452,12 @@ const TempTableConfiguration = props => {
                     // alert("ej gl");
                     alert(value);
                     var finalListFile = <div><Checkbox value={splitresult[4]} key={1} onChange={onChangeColumnNameSwitch}>{splitresult[4]}</Checkbox><Checkbox value={splitresult[3]} key={2} onChange={onChangeColumnNameGL}>{splitresult[3]}</Checkbox><Checkbox value={splitresult[2]} key={3} onChange={onChangeColumnNameNPCIISS}>{splitresult[2]}</Checkbox></div>
-                    // +
+                    // +fileListReplace
                     // <Checkbox value={splitresult[3]}  key={2} onChange={onChangeColumnName}>{splitresult[3]}</Checkbox>
                     // // +
-                  var finalListFile1 = <div><Checkbox value={splitresult[4]} key={1} onChange={onChangeColumnNameSwitchReplace}>{splitresult[4]}</Checkbox><Checkbox value={splitresult[3]} key={2} onChange={onChangeColumnNameGLReplace}>{splitresult[3]}</Checkbox><Checkbox value={splitresult[2]} key={3} onChange={onChangeColumnNameNPCIISSReplace}>{splitresult[2]}</Checkbox></div>
-                //    var finalListFile1 = 
-                //    <div>
-                //        <Radio.Group onChange={onChange}  size="large">
-                //            <Radio value={splitresult[4]}  >{splitresult[4]}</Radio>
-                //            <Radio value={splitresult[3]}  >{splitresult[3]}</Radio>
-                //            <Radio value={splitresult[2]} >{splitresult[2]}</Radio>
-                //         </Radio.Group>
-                //     </div>
-                    var finalListFile2 = <div><Checkbox value={splitresult[4]} key={1} onChange={onChangeColumnNameSwitchReplace1}>{splitresult[4]}</Checkbox><Checkbox value={splitresult[3]} key={2} onChange={onChangeColumnNameGLReplace1}>{splitresult[3]}</Checkbox><Checkbox value={splitresult[2]} key={3} onChange={onChangeColumnNameNPCIISSReplace1}>{splitresult[2]}</Checkbox></div>
+                //  var finalListFile1 = <div><Checkbox value={splitresult[4]} key={1} onChange={onChangeColumnNameSwitchReplace}>{splitresult[4]}</Checkbox><Checkbox value={splitresult[3]} key={2} onChange={onChangeColumnNameGLReplace}>{splitresult[3]}</Checkbox><Checkbox value={splitresult[2]} key={3} onChange={onChangeColumnNameNPCIISSReplace}>{splitresult[2]}</Checkbox></div>
+                   var finalListFile1 = <div><Radio.Group onChange={onChange}  size="large"><Radio value={splitresult[4]}  >{splitresult[4]}</Radio><Radio value={splitresult[3]}  >{splitresult[3]}</Radio><Radio value={splitresult[2]} >{splitresult[2]}</Radio></Radio.Group>                   </div>
+                   var finalListFile2 = <div><Checkbox value={splitresult[4]} key={1} onChange={onChangeColumnNameSwitchReplace1}>{splitresult[4]}</Checkbox><Checkbox value={splitresult[3]} key={2} onChange={onChangeColumnNameGLReplace1}>{splitresult[3]}</Checkbox><Checkbox value={splitresult[2]} key={3} onChange={onChangeColumnNameNPCIISSReplace1}>{splitresult[2]}</Checkbox></div>
                     //var finalListFile2 = <div><Radio value={splitresult[4]} >{splitresult[4]}</Radio><Radio value={splitresult[3]}>{splitresult[3]}</Radio><Radio value={splitresult[2]}>{splitresult[2]}</Radio></div>
 
                     // <Checkbox value={splitresult[2]}  key={3} onChange={onChangeColumnName}>{splitresult[2]}</Checkbox>;
@@ -477,7 +470,6 @@ const TempTableConfiguration = props => {
                     alert("else");
                 }
             }
-
             if (modeid == 2 && value == 4) {
                 alert(modeid);
                 alert(ruletype);
