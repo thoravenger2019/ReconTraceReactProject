@@ -61,6 +61,7 @@ const FileConfiguration = props => {
   const [cbsTable, setCBSTable] = useState(false)
   const [switchTable,setSwitchTable]=useState(false)
   const [ejtable,setEJTable]=useState(false)
+  const [cbsTabletxt, setCBSTableTxt] = useState(false)
 
   const [editingKey, setEditingKey] = useState('');
   const isEditing = record => record.key === editingKey;
@@ -383,6 +384,51 @@ const editSwitch = (record) => {
   },
   
   ];
+
+
+  const columnsCBSTxt = [{
+    title: 'Field Name',
+    dataIndex: 'FieldNameCBS',
+    render: text => <a>{text}</a>,
+  },
+  {
+    title: 'Position',
+    dataIndex: 'StartPositionCBS',
+    editable: true,
+    render: (text, record) => (
+      <Space size="middle">
+        {record.StartPositionCBS}
+      </Space>
+    ),
+  },
+  {
+    title: 'Field Length',
+    dataIndex: 'LengthNodeCBS',
+    editable: true,
+    render: (text, record) => (
+      <Space size="middle">
+        {record.LengthNodeCBS}
+      </Space>
+    ),
+  },
+  
+  ];
+  const mergedColumnsCBSTxt = columnsCBSTxt.map((col) => {
+    if (!col.editable) {
+      return col;
+    }
+
+    return {
+      ...col,
+      onCell: (record) => ({
+        record,
+        editable: col.editable,
+        dataIndex: col.dataIndex,
+        title: col.title,
+  //      handleSave: this.handleSave,
+      }),
+    };
+  });
   const mergedColumnsCBS = columnsCBS.map((col) => {
     if (!col.editable) {
       return col;
@@ -399,6 +445,9 @@ const editSwitch = (record) => {
       }),
     };
   });
+
+
+
   const columnsEJ = [{
     title: 'Field Name',
     dataIndex: 'FieldNameEJ',
@@ -763,6 +812,24 @@ const editSwitch = (record) => {
         )
         setXmlTable(listXml);
       }
+      var ext=values.P_FILEEXT
+      alert('ext file',ext);
+      if(P_VENDORTYPE == "CBS" && ext==".txt"){
+        setCBSTableTxt(true);
+        setCBSTable(false);
+      //  setCBSTable(true);
+        setNPCITable(false);
+        setSwitchTable(false);
+        setEJTable(false);
+        const listXml = formatHistoryResponse.map((item, index) => ({
+          FieldNameCBS: item.NodeName,
+          StartPositionCBS: item.startPosNodeValueNode,
+          LengthNodeCBS:item.LengthNodeValueNode,
+          key: index,
+        })
+        )
+        setXmlTable(listXml);
+      }
       
       if(P_VENDORTYPE=="EJ"){
         setEJTable(true);
@@ -914,7 +981,7 @@ const editSwitch = (record) => {
       type: "POST",
       contentType: 'application/json; charset=utf-8',
       dataType: 'json',
-      url: "http://192.168.1.34:8080/Admin/api/getxmlfileformat",
+      url: "http://192.168.1.130:8080/Admin/api/getxmlfileformat",
       //url: "http://localhost:8080/Admin/api/getxmlfileformat",
       data: JSON.stringify(xmlcls), // Note it is important
       success: function (result) {
@@ -991,7 +1058,7 @@ if(P_VENDORTYPE=="NETWORK" && P_MODEID!=0)
 
    
 
-   if(P_VENDORTYPE=="CBS")
+   if(P_VENDORTYPE=="CBS"  && fileExt!=".txt")
    {
    // alert("cbs xml");
     var nodeNameTest = xmltable.map(item => item.FieldNameCBS);
@@ -1014,6 +1081,38 @@ if(P_VENDORTYPE=="NETWORK" && P_MODEID!=0)
       //while(nodeNameTest.length!=0){
       var item = root.ele(filedNames[i],posValue[i]);
      // var item2 = root.ele('StartPosition', posValue[i]);
+    }
+   }
+
+   if(P_VENDORTYPE=="CBS" && fileExt==".txt")
+   {
+    alert("cbs text xml");
+    var nodeNameTest = xmltable.map(item => item.FieldNameCBS);
+    var filedNames = [];
+    for (var i in nodeNameTest)
+    filedNames.push(nodeNameTest[i]);
+    console.log(filedNames);
+   
+    var startPosNodeValueNodeTest = xmltable.map(item => item.StartPositionCBS);
+    var posValue = [];
+    for (var i in startPosNodeValueNodeTest)
+    posValue.push(startPosNodeValueNodeTest[i]);
+   // alert(startPosNodeValueNodeTest);
+
+    var lennode=xmltable.map(item=>item.LengthNodeCBS);
+    var lenValue=[];
+    for(var i in lennode)
+    lenValue.push(lennode[i]);
+
+    var builder = require('xmlbuilder');
+
+    var root = builder.create('FileFormat');
+    
+    for (var i = 0; i < filedNames.length; i++) {
+      //while(nodeNameTest.length!=0){
+      var item = root.ele(filedNames[i]);
+      var item2 = item.ele('StartPosition', posValue[i]);
+      var item3 = item.ele('Length', lenValue[i]);
     }
    }
 
@@ -1503,8 +1602,21 @@ if(P_VENDORTYPE=="NETWORK" && P_MODEID!=0)
                               scroll={{ y: 800 }}
                               bordered
                             />
-                          )
-                          :("")}
+                          ):cbsTabletxt?(
+                            <Table
+                              components={{
+                                body: {
+                                  cell: EditableCell,
+                                  row: EditableRow,
+                                },
+                              }}
+                              style={{ width: 800 }}
+                              columns={mergedColumnsCBSTxt} dataSource={xmltable}
+                              pagination={false}
+                              rowClassName="editable-row"
+                              scroll={{ y: 800 }}
+                              bordered/>
+                          ):("")}
                         </div>
                       </Form>
                     </Card>

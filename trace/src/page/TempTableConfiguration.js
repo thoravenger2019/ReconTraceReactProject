@@ -4,6 +4,7 @@ import axios from '../utils/axios';
 import MenuSideBar from './menuSideBar';
 import $, { data } from 'jquery';
 
+
 import {
     Form,
     Button,
@@ -17,6 +18,7 @@ import {
     Table,
     Alert,
     Input,
+    Radio,
 } from 'antd';
 import Title from 'antd/lib/typography/Title';
 
@@ -39,25 +41,32 @@ const TempTableConfiguration = props => {
     const [tblCol, setColtblData] = useState([])
     const [tblColSw, setSWColtblData] = useState([])
     const [tblColSw1, setSWColtblDatareplace] = useState([])
+    const [tblColSw2Source, setSWColtblDataSource1] = useState([])
     const [tblColSw2, setSWColtblDatareplace1] = useState([])
+
 
     const [tblColGl, setGLColtblData] = useState([])
     const [tblColGl1, setGLColtblDatareplace] = useState([])
     const [tblColGl2, setGLColtblDatareplace1] = useState([])
+    const [tblColGl2Source,setGLColtblDataSource1]=useState([])
 
     const [tblColEJ, setEJColtblData] = useState([])
     const [tblColEJ1,setEJColtblDatareplace]=useState([])
     const [tblColEJ2,setEJColtblDatareplace1]=useState([])
+    const [tblColEJ2Sourece,setEJColtblDataSource1]=useState([])
+
 
 
     const [tblColNPCIISS, setNPCIISSColtblData] = useState([])
     const [tblColNPCIISS1, setNPCIISSColtblDatareplace] = useState([])
     const [tblColNPCIISS2, setNPCIISSColtblDatareplace1] = useState([])
+    const [tblColNPCIIIS2Source,setNPCIISSColtblDataSource1]=useState([])
 
 
     const [tblColNPCIACQ, setNPCIACQColtblData] = useState([])
     const [tblColNPCIACQ1, setNPCIACQColtblDatareplace] = useState([])
     const [tblColNPCIACQ2, setNPCIACQColtblDatareplace1] = useState([])
+    const [tblColNPCIACQ2Source,setNPCIACQColtblDataSource1]=useState([])
 
 
     const [tblcoltest, setSelectedRows] = useState([])
@@ -68,6 +77,7 @@ const TempTableConfiguration = props => {
     const [ejTempName, setNameEJTempTable] = useState('')
     const [glTempName, setNameGLTempTable] = useState('')
 
+    const [selectionTypenew, setSelectionTypenew] = useState('radio');
     const [selectionType, setSelectionType] = useState('');
     const [searchText, setSearchText] = useState('');
     const [filecheck, setCheckFilename] = useState([]);
@@ -107,17 +117,44 @@ const TempTableConfiguration = props => {
     const [matchtablenpciacq, setmatchtblNewNPCIACQ] = useState(false)
     const [joinCondLoader, setJoinCondLoader] = useState(false);
     const [editingKey, setEditingKey] = useState('');
+
+
     const isEditing = record => record.key === editingKey;
     console.log(tblColGl1);
 
     const [columnname1, setCOlumnName] = useState([])
+    const [checkvalue, setValue]=useState(1);
+
+    const [checksw,setCheckWithSW]=useState()
+    const [checkgl,setCheckWithGL]=useState([])
+    const [checkej,setCheckWithEj]=useState([])
+    const [checknpciacq,setCheckWithNPCIACQ]=useState([])
+    const [checknpciiss,setCheckWithNPCIISS]=useState([])
+
+    const[replaceNPCIACQ,setCheckFilenameNPCIACQ2]=useState([])
+    const[sourceNPCIACQ,setCheckFilenameNPCIACQ1]=useState([])
+    const[sourceNPCIISS,setCheckFilenameNPCIISS1]=useState([])
+    const[replaceNPCIISS,setCheckFilenameNPCIISS2]=useState([])
+    const[replacegl,setCheckFilenameGL2]=useState([])
+    const[replaceglNew,setCheckFilenameGL2New]=useState([])
+    const[sourcegl,setCheckFilenameGL1]=useState([])
+    const[sourceglNew,setCheckFilenameGL1New]=useState([])
+    const[sourceej,setCheckFilenameEJ1]=useState([])
+    const[replaceej,setCheckFilenameEJ2]=useState([])
+    const[sourceswitch,setCheckFilenameSwitch1]=useState([])
+    const[sourceswitchNew,setCheckFilenameSwitch1New]=useState([])
+    
+    const[replaceswitch,setCheckFilenameSwitch2]=useState([])
+
+    console.log(sourceswitchNew);
+    console.log(replacegl);
+
     useEffect(() => {
         //   onDisplayUserRole();
         //   onDisplayChannel();
         //   onDisplayBranch();
         onDisplayClientNameList();
     }, [])
-
 
     const onDisplayClientNameList = async () => {
         try {
@@ -187,23 +224,42 @@ const TempTableConfiguration = props => {
     
     const onSrcRplaceClick = async () => {
         try {
-            console.log( JSON.stringify(tblcoltest));
-            //${clientid}/${channelid}/${modeid}/${ruletype}/${switchCheck
+            console.log(checksw);
+            console.log(checkgl);
+            console.log(sourceswitchNew);
+            console.log(replaceglNew);
+            var finalReplacesrc=checksw.concat(checkgl);
+            console.log(JSON.stringify(finalReplacesrc));
+            // console.log( JSON.stringify(tblcoltest));
+            // //${clientid}/${channelid}/${modeid}/${ruletype}/${switchCheck
             //const tempresp = await axios.post(`gettemptable/${clientid}/${channelid}/${modeid}/${ruletype}/${switchCheck}/${tblcoltest}`);
             var jsondata;
-            if (switchCheck == 'SWITCH') {
-                console.log(tblcoltest);
-                jsondata = {
+            // console.log(checksw);
+            // console.log(checkgl);
+            // console.log(sourceswitch);
+            // console.log(replacegl);
+            
+            
+           //if (sourceswitch == 'SWITCH' && replacegl=='GL' ) {
+                //console.log(tblcoltest);
+                // console.log("sourceswitch==",sourceswitch);
+                // console.log("sourcegl==",sourcegl);
+                // console.log("replacegl==",replacegl);
+                // console.log("replaceswitch==",replaceswitch);
+
+
+                // alert('hiiii');
+                 jsondata = {
                     "clientid": clientid,
                     "channelid": channelid,
                     "modeid": modeid,
                     "ruletype": ruletype,
-                    "tableNames": switchCheck,
-                   // "checkedColSW": JSON.stringify(tblcoltest),
-                    // "checkedColGL": JSON.stringify(tblcoltest)
+                    "sourcetbl": sourceswitchNew,
+                    "replacetbl": replaceglNew,
+                    "jsonsrcreplacestring":JSON.stringify(finalReplacesrc)
                 }
-            }
-            // if (glCheck == 'GL') {
+            //}
+            // // if (glCheck == 'GL') {
             //     console.log(tblcoltest);
             //     jsondata = {
             //         "clientid": clientid,
@@ -247,22 +303,22 @@ const TempTableConfiguration = props => {
             //         "checkedCol": JSON.stringify(tblcoltest)
             //     }
             // }
-            // var response;
-            // $.ajax({
-            //     type: "POST",
-            //     contentType: 'application/json; charset=utf-8',
-            //     dataType: 'json',
-            //     async: false,
-            //     url: "http://192.168.1.130:8080/Admin/api/gettemptable",
-            //     //url: "http://localhost:8080/Admin/api/getxmlfileformat",
-            //     data: JSON.stringify(jsondata), // Note it is important
-            //     success: function (result) {
-            //         console.log(result);
-            //         response = result;
-            //     }
-            // });
+            var response;
+            $.ajax({
+                type: "POST",
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                async: false,
+                url: "http://192.168.1.130:8080/Admin/api/gettempconfig",
+                //url: "http://localhost:8080/Admin/api/getxmlfileformat",
+                data:JSON.stringify(jsondata), // Note it is important
+                success: function (result) {
+                    console.log(result);
+                    response = result;
+                }
+            });
 
-            // console.log(response);
+             console.log(response);
 
 
         }
@@ -356,6 +412,17 @@ const TempTableConfiguration = props => {
         }
     }
 
+    const onChange = e => {
+        console.log('radio checked', e.target.value);
+        setValue($(e.target.value));
+        console.log(checkvalue);
+        if(checkvalue=='SWITCH'){
+            alert('inside radio switch');
+           // onChangeColumnNameSwitchReplace();
+        }
+
+      };
+
     const getFileList = async (value) => {
         try {
             ///alert("client id"+ClientData);
@@ -383,13 +450,22 @@ const TempTableConfiguration = props => {
                 alert(ruletype);
                 if (splitresult.includes("SWITCH") && splitresult.includes("GL") && splitresult.includes("NPCIISS")) {
                     // alert("ej gl");
+                    alert(value);
                     var finalListFile = <div><Checkbox value={splitresult[4]} key={1} onChange={onChangeColumnNameSwitch}>{splitresult[4]}</Checkbox><Checkbox value={splitresult[3]} key={2} onChange={onChangeColumnNameGL}>{splitresult[3]}</Checkbox><Checkbox value={splitresult[2]} key={3} onChange={onChangeColumnNameNPCIISS}>{splitresult[2]}</Checkbox></div>
                     // +
                     // <Checkbox value={splitresult[3]}  key={2} onChange={onChangeColumnName}>{splitresult[3]}</Checkbox>
                     // // +
-                    var finalListFile1 = <div><Checkbox value={splitresult[4]} key={1} onChange={onChangeColumnNameSwitchReplace}>{splitresult[4]}</Checkbox><Checkbox value={splitresult[3]} key={2} onChange={onChangeColumnNameGLReplace}>{splitresult[3]}</Checkbox><Checkbox value={splitresult[2]} key={3} onChange={onChangeColumnNameNPCIISSReplace}>{splitresult[2]}</Checkbox></div>
-
+                  var finalListFile1 = <div><Checkbox value={splitresult[4]} key={1} onChange={onChangeColumnNameSwitchReplace}>{splitresult[4]}</Checkbox><Checkbox value={splitresult[3]} key={2} onChange={onChangeColumnNameGLReplace}>{splitresult[3]}</Checkbox><Checkbox value={splitresult[2]} key={3} onChange={onChangeColumnNameNPCIISSReplace}>{splitresult[2]}</Checkbox></div>
+                //    var finalListFile1 = 
+                //    <div>
+                //        <Radio.Group onChange={onChange}  size="large">
+                //            <Radio value={splitresult[4]}  >{splitresult[4]}</Radio>
+                //            <Radio value={splitresult[3]}  >{splitresult[3]}</Radio>
+                //            <Radio value={splitresult[2]} >{splitresult[2]}</Radio>
+                //         </Radio.Group>
+                //     </div>
                     var finalListFile2 = <div><Checkbox value={splitresult[4]} key={1} onChange={onChangeColumnNameSwitchReplace1}>{splitresult[4]}</Checkbox><Checkbox value={splitresult[3]} key={2} onChange={onChangeColumnNameGLReplace1}>{splitresult[3]}</Checkbox><Checkbox value={splitresult[2]} key={3} onChange={onChangeColumnNameNPCIISSReplace1}>{splitresult[2]}</Checkbox></div>
+                    //var finalListFile2 = <div><Radio value={splitresult[4]} >{splitresult[4]}</Radio><Radio value={splitresult[3]}>{splitresult[3]}</Radio><Radio value={splitresult[2]}>{splitresult[2]}</Radio></div>
 
                     // <Checkbox value={splitresult[2]}  key={3} onChange={onChangeColumnName}>{splitresult[2]}</Checkbox>;
                     console.log(finalListFile);
@@ -450,12 +526,12 @@ const TempTableConfiguration = props => {
 
                 const dataAll1 = colResult.map((item, index) => ({
                     colNameString: item.columnNameInString,
+                    tabletype:'source',
+                    tblname:'SWITCH',
                     key: index
                 }));
                 setSWColtblDatareplace(dataAll1);
-                setSWColtblDatareplace1(dataAll1);
-
-
+                setSWColtblDataSource1(dataAll1);
 
                 const tblNameSwitch = colResult.map((item, index) => item.fileName);
                 console.log(tblNameSwitch);
@@ -479,6 +555,149 @@ const TempTableConfiguration = props => {
 
                 const dataAll1 = colResult.map((item, index) => ({
                     colNameString: item.columnNameInString,
+                    tabletype:'source',
+                    tblname:'GL',
+                    key: index
+                }));
+                setGLColtblDatareplace(dataAll1);
+                setGLColtblDataSource1(dataAll1);
+
+                const tblNameGL = colResult.map((item, index) => item.tableName);
+                setNameGLTempTable(tblNameGL[0]);
+
+                // console.log(tblcoltest);
+            }
+
+            if (value == "NPCIISS") {
+                const dataAll = colResult.map((item, index) => ({
+                    colNameNo: item.columnNameInNumber,
+                    colNameString: item.columnNameInString,
+                    chosen: true,
+                    key: index
+                }));
+                setNPCIISSColtblData(dataAll);
+                const dataAll1 = colResult.map((item, index) => ({
+                    colNameString: item.columnNameInString,
+                    tabletype:'source',
+                    key: index
+                }));
+                setNPCIISSColtblDatareplace(dataAll1);
+                setNPCIISSColtblDataSource1(dataAll1);
+
+
+                const tblNameNPCIISS = colResult.map((item, index) => item.tableName);
+                setNameNPCIISSTempTable(tblNameNPCIISS[0]);
+                console.log(tblcoltest);
+            }
+
+            if (value == "NPCIACQ") {
+                const dataAll = colResult.map((item, index) => ({
+                    colNameNo: item.columnNameInNumber,
+                    colNameString: item.columnNameInString,
+                    chosen: true,
+                    key: index
+                }));
+                setNPCIACQColtblData(dataAll);
+
+                const dataAll1 = colResult.map((item, index) => ({
+                    colNameString: item.columnNameInString,
+                    tabletype:'source',
+                    key: index
+
+                }));
+                setNPCIACQColtblDatareplace(dataAll1);
+                setNPCIACQColtblDataSource1(dataAll1);
+
+
+                const tblNameNPCIACQ = colResult.map((item, index) => item.tableName);
+                setNameNPCIACQTempTable(tblNameNPCIACQ[0]);
+
+            }
+
+            if (value == "EJ") {
+                // alert("in ej ");
+                // console.log(NPCIACQTempName);
+                const dataAll = colResult.map((item, index) => ({
+                    colNameNo: item.columnNameInNumber,
+                    colNameString: item.columnNameInString,
+                    chosen: true,
+                    key: index
+                }));
+                setEJColtblData(dataAll);
+
+                const dataAll1 = colResult.map((item, index) => ({
+                    colNameString: item.columnNameInString,
+                    tabletype:'source',
+                    key: index
+                }));
+                setEJColtblDatareplace(dataAll1);
+                setEJColtblDataSource1(dataAll1);
+
+
+                const tblNameEJ = colResult.map((item, index) => item.tableName);
+                setNameEJTempTable(tblNameEJ[0]);
+                console.log(tblcoltest);
+            }
+
+            //const modeN = modeResponse.data;
+            //console.log(modeN);
+            //const branch = JSON.parse(modeN.branchName);
+            //console.log(branch);
+            //const listMode = modeN.map((item, index) => <Option value={item.ModeID} key={index}>{item.TransactionMode}</Option>);
+            //setModeData(listMode);
+
+        } catch (e) {
+            console.log(e)
+        }
+    };
+
+
+    const getFileDataCol1 = async (value) => {
+        try {
+
+            const fileResponse = await axios.get(`getFileDataCol1/${value}`);
+            console.log(fileResponse.data)
+            const colResult = fileResponse.data;
+
+            setLoader(false);
+            if (value == "SWITCH") {
+                const dataAll = colResult.map((item, index) => ({
+                    colNameNo: item.columnNameInNumber,
+                    colNameString: item.columnNameInString,
+                    chosen: true,
+                    key: index
+                }));
+                setSWColtblData(dataAll);
+
+                const dataAll1 = colResult.map((item, index) => ({
+                    colNameString: item.columnNameInString,
+                    tabletype:'replace',
+                    tblname:'SWITCH',
+                    key: index
+                }));
+                setSWColtblDatareplace(dataAll1);
+                setSWColtblDatareplace1(dataAll1);
+
+                const tblNameSwitch = colResult.map((item, index) => item.fileName);
+                console.log(tblNameSwitch);
+                setNameSwitchTempTable(tblNameSwitch[0]);
+                alert(tblNameSwitch[0])
+            }
+
+            if (value == "GL") {
+                
+                const dataAll = colResult.map((item, index) => ({
+                    colNameNo: item.columnNameInNumber,
+                    colNameString: item.columnNameInString,
+                    chosen: true,
+                    key: index
+                }));
+                setGLColtblData(dataAll);
+
+                const dataAll1 = colResult.map((item, index) => ({
+                    colNameString: item.columnNameInString,
+                    tabletype:'replace',
+                    tblname:'GL',
                     key: index
                 }));
                 setGLColtblDatareplace(dataAll1);
@@ -500,6 +719,7 @@ const TempTableConfiguration = props => {
                 setNPCIISSColtblData(dataAll);
                 const dataAll1 = colResult.map((item, index) => ({
                     colNameString: item.columnNameInString,
+                    tabletype:'replace',
                     key: index
                 }));
                 setNPCIISSColtblDatareplace(dataAll1);
@@ -522,7 +742,9 @@ const TempTableConfiguration = props => {
 
                 const dataAll1 = colResult.map((item, index) => ({
                     colNameString: item.columnNameInString,
+                    tabletype:'replace',
                     key: index
+
                 }));
                 setNPCIACQColtblDatareplace(dataAll1);
                 setNPCIACQColtblDatareplace1(dataAll1);
@@ -546,6 +768,7 @@ const TempTableConfiguration = props => {
 
                 const dataAll1 = colResult.map((item, index) => ({
                     colNameString: item.columnNameInString,
+                    tabletype:'replace',
                     key: index
                 }));
                 setEJColtblDatareplace(dataAll1);
@@ -585,11 +808,17 @@ const TempTableConfiguration = props => {
         }
     }
     function onChangeColumnNameSwitchReplace(e) {
+    alert("this is source switch");
         console.log(`checked = ${e.target.value}`);
         const filelistCheck = `${e.target.value}`;
-        setCheckFilenameSwitch(filelistCheck);
-        alert(filelistCheck);
+        setCheckFilenameSwitch1(filelistCheck);
+        setCheckFilenameSwitch1New(filelistCheck);
+
+        
+
+       
         if (filelistCheck == 'SWITCH') {
+            alert("onChangeColumnNameSwitchReplace");
             getFileDataCol(filelistCheck);
             setSWtbl1(true);
             setGLtbl1(false);
@@ -598,14 +827,18 @@ const TempTableConfiguration = props => {
     }
    
     function onChangeColumnNameSwitchReplace1(e) {
+        alert('onChangeColumnNameSwitchReplace1');
         console.log(`checked = ${e.target.value}`);
         const filelistCheck = `${e.target.value}`;
-        setCheckFilenameSwitch(filelistCheck);
+        setCheckFilenameSwitch2(`${e.target.value}`);
         alert(filelistCheck);
         if (filelistCheck == 'SWITCH') {
-            getFileDataCol(filelistCheck);
+            alert("filelistCheck===",filelistCheck);
+            getFileDataCol1(filelistCheck);
             setSWtbl2(true);
             setGLtbl2(false);
+            setNPCIISS2(false);
+            setEJ2(false);
             // setMatchtblNew(false);
         }
     }
@@ -628,9 +861,10 @@ const TempTableConfiguration = props => {
     function onChangeColumnNameNPCIACQReplace(e) {
         console.log(`checked = ${e.target.value}`);
         const filelistCheck = `${e.target.value}`;
-        setCheckFilenameNPCIACQ(filelistCheck);
+        setCheckFilenameNPCIACQ1(filelistCheck);
         alert(filelistCheck);
         if (filelistCheck == 'NPCIACQ') {
+            alert("onChangeColumnNameNPCIACQReplace");
             getFileDataCol(filelistCheck);
             setNPCIACQ1(true);
             setSWtbl1(false);
@@ -644,13 +878,15 @@ const TempTableConfiguration = props => {
     function onChangeColumnNameNPCIACQReplace1(e) {
         console.log(`checked = ${e.target.value}`);
         const filelistCheck = `${e.target.value}`;
-        setCheckFilenameNPCIACQ(filelistCheck);
+        setCheckFilenameNPCIACQ2(filelistCheck);
         alert(filelistCheck);
         if (filelistCheck == 'NPCIACQ') {
-            getFileDataCol(filelistCheck);
+            alert('onChangeColumnNameNPCIACQReplace1')
+            getFileDataCol1(filelistCheck);
             setNPCIACQ2(true);
             setSWtbl2(false);
             setGLtbl2(false);
+            setNPCIISS2(false);
             //setMatchtblNew(false);
             //   setCheckFilenameSwitch('');
             //   setCheckFilenameGL('');
@@ -678,7 +914,7 @@ const TempTableConfiguration = props => {
     function onChangeColumnNameEJReplace(e) {
         console.log(`checked = ${e.target.value}`);
         const filelistCheck = `${e.target.value}`;
-        setCheckFilenameEJ(filelistCheck);
+        setCheckFilenameEJ1(filelistCheck);
         alert(filelistCheck);
         if (filelistCheck == 'EJ') {
             getFileDataCol(filelistCheck);
@@ -697,10 +933,10 @@ const TempTableConfiguration = props => {
     function onChangeColumnNameEJReplace1(e) {
         console.log(`checked = ${e.target.value}`);
         const filelistCheck = `${e.target.value}`;
-        setCheckFilenameEJ(filelistCheck);
+        setCheckFilenameEJ2(filelistCheck);
         alert(filelistCheck);
         if (filelistCheck == 'EJ') {
-            getFileDataCol(filelistCheck);
+            getFileDataCol1(filelistCheck);
             setEJ2(true);
             setSWtbl2(false);
             setGLtbl2(false);
@@ -719,6 +955,7 @@ const TempTableConfiguration = props => {
         setCheckFilenameGL(filelistCheck);
         alert(filelistCheck);
         if (filelistCheck == 'GL') {
+
             getFileDataCol(filelistCheck);
             setGLtbl(true);
             setSWtbl(false);
@@ -729,9 +966,11 @@ const TempTableConfiguration = props => {
     function onChangeColumnNameGLReplace(e) {
         console.log(`checked = ${e.target.value}`);
         const filelistCheck = `${e.target.value}`;
-        setCheckFilenameGL(filelistCheck);
+        setCheckFilenameGL1(filelistCheck);
+        setCheckFilenameGL1New(filelistCheck);
         alert(filelistCheck);
         if (filelistCheck == 'GL') {
+            alert("onChangeColumnNameGLReplace");
             getFileDataCol(filelistCheck);
             setGLtbl1(true);
             setSWtbl1(false);
@@ -745,10 +984,12 @@ const TempTableConfiguration = props => {
     function onChangeColumnNameGLReplace1(e) {
         console.log(`checked = ${e.target.value}`);
         const filelistCheck = `${e.target.value}`;
-        setCheckFilenameGL(filelistCheck);
+        setCheckFilenameGL2(filelistCheck);
+        setCheckFilenameGL2New(filelistCheck);
         alert(filelistCheck);
         if (filelistCheck == 'GL') {
-            getFileDataCol(filelistCheck);
+            alert("onChangeColumnNameGLReplace1");
+            getFileDataCol1(filelistCheck);
             setGLtbl2(true);
             setSWtbl2(false);
             setNPCIACQ2(false);
@@ -773,7 +1014,7 @@ const TempTableConfiguration = props => {
     function onChangeColumnNameNPCIISSReplace(e) {
         console.log(`checked = ${e.target.value}`);
         const filelistCheck = `${e.target.value}`;
-        setCheckFilenameNPCIISS(filelistCheck);
+        setCheckFilenameNPCIISS1(filelistCheck);
         alert(filelistCheck);
         if (filelistCheck == 'NPCIISS') {
             getFileDataCol(filelistCheck);
@@ -786,11 +1027,14 @@ const TempTableConfiguration = props => {
     function onChangeColumnNameNPCIISSReplace1(e) {
         console.log(`checked = ${e.target.value}`);
         const filelistCheck = `${e.target.value}`;
-        setCheckFilenameNPCIISS(filelistCheck);
+        setCheckFilenameNPCIISS2(filelistCheck);
         alert(filelistCheck);
         if (filelistCheck == 'NPCIISS') {
-            getFileDataCol(filelistCheck);
+            getFileDataCol1(filelistCheck);
             setNPCIISS2(true);
+            setEJ2(false);
+            setGLtbl2(false);
+            setSWtbl2(false);
             //   setCheckFilenameGL('');
             //   setCheckFilenameSwitch('');
 
@@ -824,26 +1068,50 @@ const TempTableConfiguration = props => {
 
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
-            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-            //const selectedRole = selectedRowKeys.data;
-            console.log(selectedRows);
 
-            setSelectedRows(selectedRows);
-            const selectedList = selectedRows.map((item, index) => item.colName)
-            console.log(selectedList)
 
-            //setData(selectedList);
-            //setSelectedCOl(selectedList);
-            setSelectionType(selectedList);
+           console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+           setSelectedRows(selectedRows);
 
-            for (var i = 0; i < selectedList.length; i++) {
-                console.log(selectedList[i]);
-                setSearchText(selectedList[i]);
-            }
-            console.log('0th ===', selectedList[0]);
+              if (sourceswitch == 'SWITCH') {
+                  alert("##switch##");
+                checkWithSW(selectedRows);
+                console.log(selectedRows);
+                setCheckFilenameSwitch1('');
 
-            //   if (switchCheck == 'SWITCH' && glCheck == 'GL') {
-            //     checkWithGL(selectedList);
+
+              }
+            //   if (replaceswitch == 'SWITCH' ) {
+            //     alert("replace switch");
+            //     checkWithSW(selectedRows);
+            //   }
+            //   if (sourcegl == 'GL') {
+            //     alert("source gl");
+            //     checkWithGL(selectedRows);
+            //   }
+              if (replacegl == 'GL') {
+                alert("##GL##");
+                console.log(selectedRows);
+                checkWithGL(selectedRows);
+
+              }
+            //   if (sourceej == 'EJ') {
+            //     checkWithEj(selectedRows);
+            //   }
+            //   if (replaceej == 'EJ') {
+            //     checkWithEj(selectedRows);
+            //   }
+            //   if (sourceNPCIACQ == 'NPCIACQ') {
+            //     checkWithNPCIACQ(selectedRows);
+            //   }
+            //   if (replaceNPCIACQ == 'NPCIACQ') {
+            //     checkWithNPCIACQ(selectedRows);
+            //   }
+            //   if (sourceNPCIISS == 'NPCIISS') {
+            //     checkWithNPCIISS(selectedRows);
+            //   }
+            //   if (replaceNPCIISS == 'NPCIISS') {
+            //     checkWithNPCIISS(selectedRows);
             //   }
             //   console.log(columnnamematch);
             //   if (/*columnnamematch=='GLCBSTEMP = SWITCHTEMP'*/ npciiisCheck == 'NPCIISS') {
@@ -861,8 +1129,7 @@ const TempTableConfiguration = props => {
         },
 
         // getCheckboxProps(record) {
-        //  // console.log(record.colName);$ git remote set-url origin https://github.com/USERNAME/REPOSITORY.git
-
+        //  // console.log(record.colName);
         //   return {
         //     props: {
         //       name: !record.colName ? 'disabled' : '',
@@ -873,232 +1140,44 @@ const TempTableConfiguration = props => {
 
     };
 
-    //   const rowSelectiongl = {
+    const checkWithSW = (selectedList) => {
+        alert("inside switch & gl");
+        console.log(selectedList);
+        //var sw=JSON.stringify(selectedList);
+        setCheckWithSW(selectedList);
+        //setCheckFilenameSwitch1('');
+        //setCheckFilenameSwitch2('');
+        
 
-    //     onChange:(selectedRowKeys, selectedRows) => {
-    //     console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-    //       //const selectedRole = selectedRowKeys.data;
-    //         console.log(selectedRows);
-    //         setSelectedRows(selectedRows);
-    //         const selectedList = selectedRows.map((item, index) => item.colName)
-    //         console.log(selectedList)
-    //         //setData(selectedList);
-    //      //setSelectedCOl(selectedList);
-    //       setSelectionType(selectedList);
-    //       checkWithGL(selectedList);
-    //     },
-    //   };
+    }
 
+    const checkWithEj=(selectedList)=>{
 
-    //   const checkWithGL = (selectedList) => {
-    //     alert("checkWithGL");
-    //     //console.log(tblColGl);
-    //     // var serchString=selectedList.map((item,index)=>item);
-    //     var glnamess = tblColGl.map((item, index) => item.colName);
-    //     var swnamess = tblColSw.map((item, index) => item.colName);
-    //     // console.log("sw:==",swnamess);
-    //     //console.log(selectedList[0]);
-    //     //console.log(glnamess);
-    //     if (glnamess.includes(selectedList[0])) {
-    //       alert("yes");
-    //       //console.log("matched data",selectedList);
-    //       // const dataAllGLSW = selectedList.map((item, index) => ({
-    //       //   mappingcolumn:'sw',
-    //       //   colName:item,
-    //       //   idx:'0',
-    //       //   len:'0',
-    //       //   key:index
-    //       // }));
+        console.log(selectedList);
+        setCheckWithEj(selectedList);
 
-    //       const dataAllNext = selectedList.map((item, index) => ({
-    //         colName:item,
-    //         key:index
-    //       }));
-    //       setMatchtblDataNext(dataAllNext)
-    //       const dataAll = selectedList.map((item, index) => ({
-    //         mappingcolumn:'sw',
-    //         colName:item,
-    //         idx:'0',
-    //         len:'0',
-    //         key:index
-    //       }));
-    //       const dataAll1 = selectedList.map((item, index) => ({
-    //         mappingcolumn: 'gl',
-    //         colName: item,
-    //         idx: '0',
-    //         len: '0',
-    //         key: index+101
-    //       }));
-
-    //       console.log(dataAll);
-    //       console.log(dataAll1);
-    //       //  setSWColtblData(dataAll);
-    //       var finalObj = dataAll.concat(dataAll1);
-    //       console.log(finalObj);
-    //        setMatchtblData(finalObj);
-    //        //setMatchtblData1(dataAll);
-    //       setMatchtbl(true);
-
-    //       // setMatchtblNew(true);
-    //     }
-    //     else {
-    //       alert("nooo");
-    //     }
-
-    //   }
+    }
 
 
-    //   const checkMatchtableWithNPCI = (selectedList) => {
-    //     alert("checkMatchtableWithNPCI");
-    //     //alert(selectedList[0]);
-    //     //console.log(tblColGl);
-    //     var serchString = selectedList.map((item, index) => item);
-    //     // var glnamess=tblColGl.map((item,index)=>item.colName);
-    //     // var swnamess=tblColSw.map((item,index)=>item.colName);
-    //     var npciissnamess = tblColNPCIISS.map((item, index) => item.colName);
-    //     // console.log(selectedList);
+    const checkWithNPCIACQ=(selectedList)=>{
+        console.log(selectedList);
+        setCheckWithNPCIACQ(selectedList);
 
+    }
+    const checkWithNPCIISS=(selectedList)=>{
+        console.log(selectedList);
+        setCheckWithNPCIISS(selectedList);
 
-    //     console.log(npciissnamess);
-    //     // console.log(matchtbl);
-    //     // console.log("sw:==",swnamess);
-    //     console.log(selectedList[0]);
-    //     // console.log(glnamess);
-    //     if (npciissnamess.includes(selectedList[0])) {
-    //       alert("yes");
-    //       console.log("matched data", selectedList);
-    //       // const dataAll = selectedList.map((item, index) => ({
-    //       //   colName: item,
-    //       //   key: index
-    //       // }));
+    }
+    const checkWithGL = (selectedList) => {
+        alert("inside gl");
 
-    //       const dataAllNext = selectedList.map((item, index) => ({
-    //         colName:item,
-    //         key:index
-    //       }));
-    //       setMatchtblDataNewISSNext(dataAllNext)
-    //       const dataAll = selectedList.map((item, index) => ({
-    //         mappingcolumn:'nw',
-    //         colName:item,
-    //         idx:'0',
-    //         len:'0',
-    //         key:index
-    //       }));
-    //       //  setSWColtblData(dataAll);
-    //       setMatchtblDataISSNew(dataAll);
-    //       //setMatchtbl(true);
-    //       setMatchWithNpciss(true);
-
-    //       // setMatchtblNew(true);
-    //     }
-    //     else {
-    //       alert("nooo");
-
-
-    //     }
-    //   }
-
-    //   const checkMatchtableWithNPCIACQ = (selectedList) => {
-    //     alert("checkMatchtableWithNPCIACQ");
-    //     //alert(selectedList[0]);
-    //     //console.log(tblColGl);
-    //     var serchString = selectedList.map((item, index) => item);
-    //     // var glnamess=tblColGl.map((item,index)=>item.colName);
-    //     // var swnamess=tblColSw.map((item,index)=>item.colName);
-    //     var npciacqnamess = tblColNPCIACQ.map((item, index) => item.colName);
-    //     // console.log(selectedList);
-    //     // console.log(npciissnamess);
-    //     // console.log(matchtbl);
-    //     // console.log("sw:==",swnamess);
-    //     console.log(selectedList[0]);
-    //     // console.log(glnamess);
-    //     if (npciacqnamess.includes(selectedList[0])) {
-    //       alert("yes");
-    //       console.log("matched data", selectedList);
-    //       // const dataAll = selectedList.map((item, index) => ({
-    //       //   colName: item,
-    //       //   key: index
-    //       // }));
-    //       // //  setSWColtblData(dataAll);
-    //       // setMatchtblDataNewACQ(dataAll);
-    //       // console.log(dataAll);
-    //       const dataAllNext = selectedList.map((item, index) => ({
-    //         colName:item,
-    //         key:index
-    //       }));
-    //       setMatchtblDataNewACQNext(dataAllNext)
-    //       const dataAll = selectedList.map((item, index) => ({
-    //         mappingcolumn:'nw',
-    //         colName:item,
-    //         idx:'0',
-    //         len:'0',
-    //         key:index
-    //       }));
-    //       // const dataAll1 = selectedList.map((item, index) => ({
-    //       //   mappingcolumn: 'gl',
-    //       //   colName: item,
-    //       //   idx: '0',
-    //       //   len: '0',
-    //       //   key: index+1
-    //       // }));
-
-    //       console.log(dataAll);
-    //       // console.log(dataAll1);
-    //       //  setSWColtblData(dataAll);
-    //       // var finalObj = dataAll.concat(dataAll1);
-    //       // console.log(finalObj);
-    //       setMatchtblDataNewACQ(dataAll);
-
-
-
-    //       //setMatchtbl(true);
-    //       setMatchWithNpciacq(true);
-
-
-    //       // setMatchtblNew(true);
-    //     }
-    //     else {
-    //       alert("nooo");
-    //     }
-    //   }
-
-    //   const checkMatchtableWithEJ = (selectedList) => {
-    //     alert("checkMatchtableWithEJ");
-    //     //alert(selectedList[0]);
-    //     //console.log(tblColGl);
-    //     var serchString = selectedList.map((item, index) => item);
-    //     // var glnamess=tblColGl.map((item,index)=>item.colName);
-    //     // var swnamess=tblColSw.map((item,index)=>item.colName);
-    //     var ejnamess = tblColEJ.map((item, index) => item.colName);
-    //     // console.log(selectedList);
-    //     console.log(ejnamess);
-    //     // console.log(matchtbl);
-    //     // console.log("sw:==",swnamess);
-    //     console.log(selectedList[0]);
-    //     // console.log(glnamess);
-    //     if (ejnamess.includes(selectedList[0])) {
-    //       alert("yes");
-    //       console.log("matched data", selectedList);
-    //       const dataAll = selectedList.map((item, index) => ({
-    //         mappingcolumn:'ej',
-    //         colName:item,
-    //         idx:'0',
-    //         len:'0',
-    //         key:index
-    //       }));
-    //       //  setSWColtblData(dataAll);
-    //       setMatchtblDataNewEJ(dataAll);
-    //       //setMatchtbl(true);
-    //       setMatchWithEJ(true);
-
-    //       // setMatchtblNew(true);
-    //     }
-    //     else {
-    //       alert("nooo");
-
-
-    //     }
-    //   }
+          console.log(selectedList);
+          setCheckWithGL(selectedList);
+          setCheckFilenameGL1('');
+          setCheckFilenameGL2('');
+        
+      }
 
     //console.log(selectionType);
     // debugger;
@@ -1125,7 +1204,16 @@ const TempTableConfiguration = props => {
             dataIndex: 'colNameString',
             key: 'index',
             //   width: '5%',
-
+        },
+        {
+            title: 'Table Type',
+            dataIndex: 'tabletype',
+            key: 'index',
+        },
+        {
+            title: 'Table Name',
+            dataIndex: 'tblname',
+            key: 'index',
         }
     ];
 
@@ -1153,6 +1241,16 @@ const TempTableConfiguration = props => {
             key: 'index',
             //   width: '5%',
 
+        },
+        {
+            title: 'Table Type',
+            dataIndex: 'tabletype',
+            key: 'index',
+        },
+        {
+            title: 'Table Name',
+            dataIndex: 'tblname',
+            key: 'index',
         }
     ];
 
@@ -1180,6 +1278,11 @@ const TempTableConfiguration = props => {
             key: 'index',
             //   width: '5%',
 
+        },
+        {
+            title: 'Table Type',
+            dataIndex: 'tabletype',
+            key: 'index',
         }
     ];
 
@@ -1207,6 +1310,11 @@ const TempTableConfiguration = props => {
             key: 'index',
             //   width: '5%',
 
+        },
+        {
+            title: 'Table Type',
+            dataIndex: 'tabletype',
+            key: 'index',
         }
     ];
     const columnsEJ = [
@@ -1233,7 +1341,13 @@ const TempTableConfiguration = props => {
             key: 'index',
             //   width: '5%',
 
+        },
+        {
+            title: 'Table Type',
+            dataIndex: 'tabletype',
+            key: 'index',
         }
+
     ];
 
     function onChangeColumnName(checkedValues) {
@@ -1293,6 +1407,7 @@ const TempTableConfiguration = props => {
                         <Row gutter={[16]}>
                             <Col span={12} >
                                 <Card title="Temp Table Configuration" bordered={true} style={{ width: 900 }} >
+                                    <b>
                                     <Form initialValues={{ remember: true }} layout={"vertical"} form={form} size={"large"}>
                                         <Row gutter={[16, 16]}>
                                             <Col span={5}>
@@ -1326,7 +1441,6 @@ const TempTableConfiguration = props => {
                                                     </Select>
                                                 </Form.Item>
                                             </Col>
-
                                         </Row>
 
                                         <Row>
@@ -1396,8 +1510,8 @@ const TempTableConfiguration = props => {
                                                         style={{ width: 400 }}
                                                     />
                                                 ) : (" ")}
-
-                                                {ejtblloader ? (
+                                                {
+                                                ejtblloader ? (
                                                     <Table dataSource={tblColEJ} columns={columnsEJ} rowSelection={{
                                                         type: selectionType,
                                                         ...rowSelection,
@@ -1411,17 +1525,32 @@ const TempTableConfiguration = props => {
                                             </Col>
                                         </Row>
                                     </Form>
+                                    </b>
                                 </Card>
+                        
                             </Col>
                             <Col span={6}>
-                                <Card title=" Configuration" bordered={true} style={{ width: 900 }} >
+                                <b>
+                                <Card title=" Configuration" size="default" bordered={true} style={{ width: 900 }} >
                                     <Row gutter={[8, 8]}>
                                         <Col span={12} >
                                             Source Table
                                             {fileListReplace}
                                             <br></br>
                                             {swtblloader1 ? (
-                                                <Table dataSource={tblColSw1} columns={columnsswreplace} rowSelection={{
+                                                <Table dataSource={tblColSw2Source} columns={columnsswreplace} rowSelection={{
+                                                    type: selectionTypenew,
+                                                    ...rowSelection,
+                                                    
+                                                }}
+                                                    pagination={false}
+                                                    bordered
+                                                    scroll={{ y: 400 }}
+                                                    style={{ width: 350 }}
+                                                />
+                                            ) : (" ")}
+                                            {gltblloader1 ? (
+                                                <Table dataSource={tblColGl2Source} columns={columnsGLReplace} rowSelection={{
                                                     type: selectionType,
                                                     ...rowSelection,
                                                 }}
@@ -1431,54 +1560,45 @@ const TempTableConfiguration = props => {
                                                     style={{ width: 300 }}
                                                 />
                                             ) : (" ")}
-                                            {gltblloader1 ? (
-                                                <Table dataSource={tblColGl1} columns={columnsGLReplace} rowSelection={{
-                                                    type: selectionType,
-                                                    ...rowSelection,
-                                                }}
-                                                    pagination={false}
-                                                    bordered
-                                                    scroll={{ y: 400 }}
-                                                    style={{ width: 400 }}
-                                                />
-                                            ) : (" ")}
                                             {npciiss1 ? (
-                                                <Table dataSource={tblColNPCIISS1} columns={columnsnpciissreplace} rowSelection={{
+                                                <Table dataSource={tblColNPCIIIS2Source} columns={columnsnpciissreplace} rowSelection={{
                                                     type: selectionType,
                                                     ...rowSelection,
                                                 }}
                                                     pagination={false}
                                                     bordered
                                                     scroll={{ y: 400 }}
-                                                    style={{ width: 400 }}
+                                                    style={{ width: 300 }}
                                                 />
                                             ) : (" ")}
                                             {npciacq1 ? (
-                                                <Table dataSource={tblColNPCIACQ1} columns={columnsnpciacqreplace} rowSelection={{
+                                                <Table dataSource={tblColNPCIACQ2Source} columns={columnsnpciacqreplace} rowSelection={{
                                                     type: selectionType,
                                                     ...rowSelection,
                                                 }}
                                                     pagination={false}
                                                     bordered
                                                     scroll={{ y: 400 }}
-                                                    style={{ width: 400 }}
+                                                    style={{ width: 300 }}
                                                 />
                                             ) : (" ")}
                                             {ejtblloader1 ? (
-                                                <Table dataSource={tblColEJ1} columns={columnsEJReplace} rowSelection={{
+                                                <Table dataSource={tblColEJ2Sourece} columns={columnsEJReplace} rowSelection={{
                                                     type: selectionType,
                                                     ...rowSelection,
                                                 }}
                                                     pagination={false}
                                                     bordered
                                                     scroll={{ y: 400 }}
-                                                    style={{ width: 400 }}
+                                                    style={{ width: 300 }}
                                                 />
                                             ) : (" ")}
                                         </Col>
                                         <Col span={12} >
                                             Replace Table
+                                            <br></br>
                                             {fileListReplace1}
+                                            
                                             <br></br>
                                             {swtblloader2 ? (
                                                 <Table dataSource={tblColSw2} columns={columnsswreplace} rowSelection={{
@@ -1493,13 +1613,13 @@ const TempTableConfiguration = props => {
                                             ) : (" ")}
                                             {gltblloader2 ? (
                                                 <Table dataSource={tblColGl2} columns={columnsGLReplace} rowSelection={{
-                                                    type: selectionType,
+                                                    type: selectionTypenew,
                                                     ...rowSelection,
                                                 }}
                                                     pagination={false}
                                                     bordered
                                                     scroll={{ y: 400 }}
-                                                    style={{ width: 400 }}
+                                                    style={{ width: 350 }}
                                                 />
                                             ) : (" ")}
                                             {npciiss2 ? (
@@ -1510,29 +1630,35 @@ const TempTableConfiguration = props => {
                                                     pagination={false}
                                                     bordered
                                                     scroll={{ y: 400 }}
-                                                    style={{ width: 400 }}
+                                                    style={{ width: 300 }}
                                                 />
                                             ) : (" ")}
                                             {npciacq2 ? (
-                                                <Table dataSource={tblColNPCIACQ2} columns={columnsnpciacqreplace} rowSelection={{
+                                                <Table 
+                                                    dataSource={tblColNPCIACQ2} 
+                                                    columns={columnsnpciacqreplace} 
+                                                    rowSelection={{
                                                     type: selectionType,
                                                     ...rowSelection,
                                                 }}
                                                     pagination={false}
                                                     bordered
                                                     scroll={{ y: 400 }}
-                                                    style={{ width: 400 }}
+                                                    style={{ width: 300 }}
                                                 />
                                             ) : (" ")}
                                             {ejtblloader2 ? (
-                                                <Table dataSource={tblColEJ2} columns={columnsEJReplace} rowSelection={{
+                                                <Table 
+                                                    dataSource={tblColEJ2} 
+                                                    columns={columnsEJReplace} 
+                                                    rowSelection={{
                                                     type: selectionType,
                                                     ...rowSelection,
                                                 }}
                                                     pagination={false}
                                                     bordered
                                                     scroll={{ y: 400 }}
-                                                    style={{ width: 400 }}
+                                                    style={{ width: 300 }}
                                                 />
                                             ) : (" ")}
                                         </Col>
@@ -1545,6 +1671,7 @@ const TempTableConfiguration = props => {
                                             </Form.Item>
                                         </Row>
                                 </Card>
+                                </b>
                             </Col>
                         </Row>
                     </Content>
