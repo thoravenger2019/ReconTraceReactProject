@@ -861,10 +861,7 @@ const JoinRuleConfiguration = props => {
           setmatchtblNewNPCIACQ(false);
           setJoinCondLoader(true);
         }
-     
       }
-   
-
       if (npciiisCheck == 'NPCIISS') {
         //alert("hii... ");
         // console.log(selectionType);
@@ -879,15 +876,16 @@ const JoinRuleConfiguration = props => {
           "table1Name":glTempName + "-" + switchTempName,
           "table2Name":NPCIISSTempName,
           "joinCond":JSON.stringify(selectionType),
-          "jsonString":JSON.stringify(matchtblnpcidata)
+          "jsonString":JSON.stringify(matchtblnpcidata) 
         }
+        console.log(jsondata);
         var response;
         $.ajax({
           type: "POST",
           contentType: 'application/json; charset=utf-8',
           dataType: 'json',
           async: false,
-          url: "http://192.168.1.34:8080/Admin/api/joinopt",
+          url: "http://192.168.1.130:8080/Admin/api/joinopt",
           //url: "http://localhost:8080/Admin/api/getxmlfileformat",
           data: JSON.stringify(jsondata), // Note it is important
           success: function (result) {
@@ -899,6 +897,7 @@ const JoinRuleConfiguration = props => {
         console.log(response);
         var matchtableresp = response;
        // var matchtableresp = response.data;
+       console.log('matchtableresp-----------',matchtableresp);
         var MatchedTablesName = matchtableresp.map((item, index) => item.MatchedTables);
         var joinCond = matchtableresp.map((item, index) => item.joindString);
         console.log(MatchedTablesName);
@@ -939,7 +938,7 @@ const JoinRuleConfiguration = props => {
           contentType: 'application/json; charset=utf-8',
           dataType: 'json',
           async: false,
-          url: "http://192.168.1.34:8080/Admin/api/joinopt",
+          url: "http://192.168.1.130:8080/Admin/api/joinopt",
           //url: "http://localhost:8080/Admin/api/getxmlfileformat",
           data: JSON.stringify(jsondata), // Note it is important
           success: function (result) {
@@ -997,7 +996,7 @@ const JoinRuleConfiguration = props => {
           contentType: 'application/json; charset=utf-8',
           dataType: 'json',
           async: false,
-          url: "http://192.168.1.34:8080/Admin/api/joinopt",
+          url: "http://192.168.1.130:8080/Admin/api/joinopt",
           //url: "http://localhost:8080/Admin/api/getxmlfileformat",
           data: JSON.stringify(jsondata), // Note it is important
           success: function (result) {

@@ -413,6 +413,7 @@ const TempTableConfiguration = props => {
     }
 
     const onChange = e => {
+        alert('inside onchange');
         console.log('radio checked', e.target.value);
         setValue($(e.target.value));
         console.log('onchange for radio',checkvalue);
@@ -471,7 +472,7 @@ const TempTableConfiguration = props => {
                 }
             }
             if (modeid == 2 && value == 4) {
-                alert(modeid);
+                alert(modeid);                        
                 alert(ruletype);
                 if (splitresult.includes("NPCIACQ") && splitresult.includes("GL") && splitresult.includes("SWITCH") && splitresult.includes("EJ")) {
                     var finalListFile = <div><Checkbox value={splitresult[4]} key={1} onChange={onChangeColumnNameSwitch}>{splitresult[4]}</Checkbox><Checkbox value={splitresult[3]} key={2} onChange={onChangeColumnNameGL}>{splitresult[3]}</Checkbox><Checkbox value={splitresult[1]} key={3} onChange={onChangeColumnNameNPCIACQ}>{splitresult[1]}</Checkbox><Checkbox value={splitresult[5]} key={4} onChange={onChangeColumnNameEJ}>{splitresult[5]}</Checkbox></div>

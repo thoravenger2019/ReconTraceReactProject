@@ -706,7 +706,6 @@ const editSwitch = (record) => {
       setFileLoader(true);
       setFilePlaintextLoader(false);
       setSeperator(false)
-
     }
     else if (checkedValues == 'plaintext') {
       setFilePlaintextLoader(true);
@@ -718,7 +717,6 @@ const editSwitch = (record) => {
       setFileLoader(false);
       setSeperator(true)
     }
-
   }
 
   function onChangeMode(checkedValues) {
